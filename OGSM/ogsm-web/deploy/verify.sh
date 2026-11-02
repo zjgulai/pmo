@@ -41,9 +41,11 @@ if [[ "$BASE" == https://* ]]; then
   else
     bad "缺 CSP 头"
   fi
-  # HTTP 跳转
-  http_code=$(curl -s -o /dev/null -w '%{http_code}' -m 10 "http://$host/" 2>/dev/null)
-  [ "$http_code" = "301" ] || [ "$http_code" = "308" ] && ok "HTTP→HTTPS 跳转 $http_code" || bad "HTTP 未跳转（$http_code）"
+  # HTTP 跳转（从服务器内网回环无法出公网，改用 resolve 强制走本机 nginx）
+  http_code=$(curl -s -o /dev/null -w '%{http_code}' -m 10 \
+    --resolve "$host:80:127.0.0.1" "http://$host/" 2>/dev/null)
+  [ "$http_code" = "301" ] || [ "$http_code" = "308" ] \
+    && ok "HTTP→HTTPS 跳转 $http_code" || bad "HTTP 未跳转（$http_code）"
 fi
 
 hdr "3. 结构校验（C1–C11 必须无 error）"
@@ -64,9 +66,12 @@ c=$(code "$BASE/admin")
   || bad "/admin 未登录未拒绝（$c）——存在未授权访问"
 
 hdr "5. 数据完整性"
-for probe in 'm-l1-cac@2' 'ai_answer_snapshot_id' 'S0.6' 'Know（知识生产）'; do
+for probe in 'm-l1-cac@2' 'ai_answer_snapshot_id' 'S0.6'; do
   if echo "$body" | grep -qF "$probe"; then ok "含 $probe"; else bad "缺 $probe"; fi
 done
+# Know（知识生产）在专家对齐页，首页 HTML 不含该词；单独检查 /experts
+experts_body=$(curl -s -m 10 "$BASE/experts" 2>/dev/null)
+if echo "$experts_body" | grep -qF 'Know'; then ok "含 Know（/experts 页）"; else bad "缺 Know（/experts 页）"; fi
 
 # 基线必须全部待填（不含假数据）
 if echo "$body" | grep -q '基线未锁定\|待填'; then
