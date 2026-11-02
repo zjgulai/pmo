@@ -9,7 +9,7 @@
 注意：Baseline 模型只在 models.py 定义一处。此前本文件重复定义导致
 「Table 'baseline' is already defined for this MetaData instance」，生产首次部署即中断。
 """
-from sqlmodel import Session, select
+from sqlmodel import Session, SQLModel, select
 
 from .db import engine, init_db
 from .models import Baseline
