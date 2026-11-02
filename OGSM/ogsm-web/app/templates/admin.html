@@ -54,13 +54,16 @@
     <table>
       <thead>
         <tr>
-          <th style="width:190px">能力名称</th>
+          <th style="width:160px">能力名称</th>
           <th>能力说明</th>
-          <th style="width:120px">进度状态</th>
-          <th style="width:120px">实测验证</th>
-          <th style="width:150px">待整合平台</th>
-          <th style="width:180px">整合来源 URL</th>
-          <th style="width:80px">操作</th>
+          <th style="width:95px">开发状态</th>
+          <th style="width:95px">实测验证</th>
+          <th style="width:68px">进度%</th>
+          <th style="width:122px">开始日期</th>
+          <th style="width:122px">截止日期</th>
+          <th style="width:95px">负责团队</th>
+          <th style="width:55px">里程碑</th>
+          <th style="width:72px">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -83,8 +86,11 @@
                 {% endfor %}
               </select>
             </td>
-            <td><input name="integration_name" value="{{ c.integration_name }}" style="width:100%" placeholder="选填"></td>
-            <td><input name="integration_url" value="{{ c.integration_url }}" style="width:100%" placeholder="https://..."></td>
+            <td><input type="number" name="progress_pct" min="0" max="100" value="{{ c.progress_pct }}" style="width:100%"></td>
+            <td><input type="date" name="start_date" value="{{ c.start_date }}" style="width:100%"></td>
+            <td><input type="date" name="end_date" value="{{ c.end_date }}" style="width:100%"></td>
+            <td><input name="owner" value="{{ c.owner }}" style="width:100%"></td>
+            <td style="text-align:center"><input type="checkbox" name="is_milestone" {{ 'checked' if c.is_milestone else '' }}></td>
             <td><button type="submit" class="ghost" style="padding:4px 10px">更新</button></td>
           </form>
         </tr>

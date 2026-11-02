@@ -1,22 +1,25 @@
 {% extends "base.html" %}
-{% block title %}OGSM 全景思维导图 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block title %}1. 战略全景导图 · ABI 品牌 & 营销 Agent{% endblock %}
 {% block body %}
 
 <!-- 顶部愿景横幅 -->
 <div class="hero-banner">
   <div>
-    <div class="hero-tag">ABI 应用与算法组 · 2026Q4 总体愿景 (Objective)</div>
+    <div class="hero-tag">ABI 应用与算法组 · 2026Q4 总体愿景 (Objective) · 宏观到微观战略总览</div>
     <h1 class="hero-title">{{ objective }}</h1>
     <p class="hero-sub">
-      围绕 3 大业务目标（G1–G3）、6 条专家融合策略，统筹建设 <strong>14 个品牌 Agent 产品项目</strong>。点击任意项目工作台网址即可直接进入线上系统，点击实测报告可查看 <code>/reports</code> 详情。
+      以 OGSM 为宏观骨架，以 <strong>14 个 Agent 及其验收工作台</strong> 为产品形态，通过组装 <strong>49 项产品能力图谱</strong> 自动化解决各业务场景问题。
     </p>
   </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap">
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn-chip" onclick="toggleSvgModal()" style="background:rgba(255,255,255,0.14);color:#fff;border-color:rgba(255,255,255,0.28)">
-      🖼️ 查看原版思维导图 (SVG)
+      🖼️ 原版思维导图 (SVG)
     </button>
+    <a href="/roadmap" class="btn-chip" style="background:#10b981;color:#fff;border-color:#10b981">
+      📅 甘特图与看板 ({{ stats.overall_pct }}%) →
+    </a>
     <a href="/projects" class="btn-chip" style="background:#3b82f6;color:#fff;border-color:#3b82f6">
-      📋 进入 14 大项目卡片视图 →
+      📋 14 大产品与场景流水线 →
     </a>
   </div>
 </div>
@@ -24,8 +27,8 @@
 <!-- 顶部 4 格管理仪表盘 -->
 <div class="kpi-strip">
   <div class="kpi-card">
-    <div class="kpi-label">纳管产品项目（专家 Agent）</div>
-    <div class="kpi-val">{{ stats.project_total }}<small>个项目</small></div>
+    <div class="kpi-label">产品形态：专家 Agent &amp; 工作台</div>
+    <div class="kpi-val">{{ stats.project_total }}<small>个产品项目</small></div>
     <div class="kpi-sub">
       <span class="badge badge-done">已上线 {{ stats.project_live }}</span>
       <span class="badge badge-doing">进行中 {{ stats.project_doing }}</span>
@@ -33,28 +36,116 @@
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">能力图谱进度（共 {{ stats.cap_total }} 项）</div>
-    <div class="kpi-val">{{ stats.cap_done }}<small>项已完成</small></div>
+    <div class="kpi-label">任务目标：能力图谱总体完成度</div>
+    <div class="kpi-val">{{ stats.overall_pct }}%<small>({{ stats.cap_done }}/{{ stats.cap_total }} 已完成)</small></div>
     <div class="kpi-sub">
       <span class="badge badge-doing">进行中 {{ stats.cap_doing }}</span>
       <span class="badge badge-plan">方案中 {{ stats.cap_plan }}</span>
+      <a href="/roadmap" style="font-weight:600;margin-left:auto">查看甘特排期 →</a>
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">生产实测验证（ste-zh 口径）</div>
+    <div class="kpi-label">质量验证：生产实测通过（ste-zh 口径）</div>
     <div class="kpi-val">{{ stats.cap_verified }}<small>/ {{ stats.cap_total }} 项已验证</small></div>
     <div class="kpi-sub">
-      <span class="muted">数据溯源至 9 个专家目录 12 份实测报告</span>
+      <span>💎 关键里程碑 {{ stats.milestone_count }} 个</span>
+      <a href="/docs" style="font-weight:600;margin-left:auto">查阅 12 份实测报告 →</a>
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">验收工作台与关联子平台</div>
-    <div class="kpi-val">{{ stats.site_online }}<small>/ {{ stats.site_total }} 在线可达</small></div>
+    <div class="kpi-label">线上载体：验收工作台与子站状态</div>
+    <div class="kpi-val" id="ping-summary-val">{{ stats.site_online }}<small>/ {{ stats.site_total }} 在线可达</small></div>
     <div class="kpi-sub">
-      <a href="/sites" style="font-weight:600">打开全部站点导航 →</a>
+      <button class="btn-chip" onclick="runLivePing(this)" style="padding:2px 8px;font-size:11.5px">⚡ 实时探活全部站点</button>
+      <a href="/sites" style="font-weight:600;margin-left:auto">站点清单 →</a>
     </div>
   </div>
 </div>
+
+<!-- 战略数字化图表区：宏观到微观 5 阶拆解图 + 三大目标成熟度堆叠图 -->
+<div class="strat-charts-grid">
+  <!-- 图表 1：宏观到微观 OGSM 5 阶拆解漏斗与战略流向 -->
+  <div class="chart-card">
+    <div class="chart-title">
+      <span>📐 宏观到微观：OGSM 战略五阶拆解结构</span>
+      <span class="muted" style="font-size:12px;font-weight:500">一源四投：导图 · 场景流水线 · 甘特图 · 看板</span>
+    </div>
+    <div class="funnel-steps">
+      <div class="funnel-node">
+        <div class="funnel-node-num">1</div>
+        <div class="funnel-node-lbl">总体愿景 (O)</div>
+        <div class="funnel-node-sub">声量·口碑·人效</div>
+      </div>
+      <div class="funnel-node">
+        <div class="funnel-node-num">3</div>
+        <div class="funnel-node-lbl">业务目标 (G)</div>
+        <div class="funnel-node-sub">G1增长·G2响应·G3运营</div>
+      </div>
+      <div class="funnel-node">
+        <div class="funnel-node-num">6</div>
+        <div class="funnel-node-lbl">融合策略 (S)</div>
+        <div class="funnel-node-sub">跨领域专家协同</div>
+      </div>
+      <div class="funnel-node">
+        <div class="funnel-node-num">14</div>
+        <div class="funnel-node-lbl">Agent 工作台</div>
+        <div class="funnel-node-sub">{{ stats.site_total }} 个线上站点载体</div>
+      </div>
+      <div class="funnel-node" style="background:var(--primary-soft);border-color:#bfdbfe">
+        <div class="funnel-node-num">{{ stats.cap_total }}</div>
+        <div class="funnel-node-lbl">能力图谱节点</div>
+        <div class="funnel-node-sub">已排期 {{ stats.scheduled_count }} · 待排 {{ stats.unscheduled_count }}</div>
+      </div>
+    </div>
+
+    <!-- 6 条策略进度矩阵条 -->
+    <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);display:grid;grid-template-columns:repeat(3, 1fr);gap:8px">
+      {% for gnode in goal_tree %}
+        {% for snode in gnode.strategies %}
+        <div style="background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px">
+          <div style="display:flex;justify-content:space-between;font-weight:650">
+            <span>{{ gnode.goal.code }}·{{ snode.strat.code }} ({{ snode.projects|length }}项目)</span>
+            <span style="color:var(--primary)">{{ snode.pct }}%</span>
+          </div>
+          <div class="stacked-bar" style="height:6px;margin-top:5px">
+            <div class="sb-done" style="width:{{ snode.pct }}%"></div>
+          </div>
+        </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- 图表 2：G1 / G2 / G3 能力成熟度堆叠对比图 -->
+  <div class="chart-card">
+    <div class="chart-title">
+      <span>📊 三大业务目标 (G1–G3) 能力图谱成熟度分布</span>
+      <span class="muted" style="font-size:11.5px;font-weight:500">🟢已完成 🔵进行中 ⚪方案中</span>
+    </div>
+    {% for gnode in goal_tree %}
+    {% set g = gnode.goal %}
+    <div class="goal-bar-row">
+      <div class="goal-bar-head">
+        <span>{{ g.title }} ({{ gnode.proj_count }}项目 / {{ gnode.cap_total }}能力)</span>
+        <span>综合进度 <strong>{{ gnode.pct }}%</strong> · 已验证 {{ gnode.cap_verified }}/{{ gnode.cap_total }}</span>
+      </div>
+      <div class="stacked-bar" title="已完成 {{ gnode.cap_done }} / 进行中 {{ gnode.cap_doing }} / 方案中 {{ gnode.cap_plan }}">
+        <div class="sb-done" style="width:{{ gnode.done_pct }}%"></div>
+        <div class="sb-doing" style="width:{{ gnode.doing_pct }}%"></div>
+        <div class="sb-plan" style="width:{{ gnode.plan_pct }}%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:3px">
+        <span>🟢 已完成 {{ gnode.cap_done }} ({{ gnode.done_pct }}%)</span>
+        <span>🔵 进行中 {{ gnode.cap_doing }} ({{ gnode.doing_pct }}%)</span>
+        <span>⚪ 方案中 {{ gnode.cap_plan }} ({{ gnode.plan_pct }}%)</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- 实时探活结果显示面板（点击探活时展开） -->
+<div id="ping-panel" class="card" style="display:none;margin-bottom:18px"></div>
 
 <!-- 交互筛选栏 -->
 <div class="toolbar">
@@ -74,11 +165,11 @@
   </div>
 </div>
 
-<!-- 思维导图层级表头说明（严格对齐附件1图例） -->
+<!-- 思维导图层级表头说明 -->
 <div class="mm-legend-bar" style="grid-template-columns: 240px 270px 1fr;">
   <div>① 策略 (S · 专家融合方向)</div>
   <div>② 专家昵称 → 产品构成 → 验收工作台</div>
-  <div>③ 业务场景 → 能力图谱 → 进度 &amp; 待整合子站 → /reports 实测成果</div>
+  <div>③ 业务场景 → 能力图谱（含进度%与截止日）→ 待整合子站 → /reports 实测成果</div>
 </div>
 
 <!-- 主体：严格还原附件1的 G -> S -> 专家产品 -> 场景与能力图谱 树状结构 -->
@@ -94,6 +185,7 @@
       <span class="badge badge-done">已完成 {{ gnode.cap_done }}</span>
       <span class="badge badge-doing">进行中 {{ gnode.cap_doing }}</span>
       <span class="badge badge-plan">方案中 {{ gnode.cap_plan }}</span>
+      <a href="/roadmap#gantt-goal-{{ g.code }}" class="btn-chip" style="font-size:12px;padding:3px 9px">📅 查看甘特排期 →</a>
     </div>
   </div>
 
@@ -102,7 +194,7 @@
   <div class="mm-strat-row">
     <!-- 左列：融合策略 S -->
     <div class="mm-strat-cell">
-      <div class="mm-strat-code">策略 {{ st.code }}</div>
+      <div class="mm-strat-code">策略 {{ st.code }} · 进度 {{ snode.pct }}%</div>
       <div class="mm-strat-text">{{ st.title }}</div>
     </div>
 
@@ -120,9 +212,14 @@
                 {{ p.status_summary }}
               </span>
             </span>
-            <a href="/projects#proj-{{ p.slug }}" style="font-size:12px;font-weight:600">项目详情 →</a>
+            <a href="/projects#proj-{{ p.slug }}" style="font-size:12px;font-weight:600">场景卡片 →</a>
           </div>
           <div class="mm-product-name">{{ p.product_name }}</div>
+
+          <div style="font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between">
+            <span>综合进度：<strong>{{ pv.pct }}%</strong></span>
+            {% if pv.proj_end %}<span>计划收口：{{ pv.proj_end }}</span>{% endif %}
+          </div>
 
           {% if p.workbench_url %}
           <div>
@@ -159,17 +256,21 @@
 
         <!-- 右列：业务场景 → 能力图谱与进度 → /reports 实测成果摘要 -->
         <div class="mm-branches">
-          {% for scen_line, cap_list in pv.scen_groups.items() %}
+          {% for scen_line, sgrp in pv.scen_groups.items() %}
           <div class="mm-scen-group">
             <div class="mm-scen-title">业务场景：{{ scen_line }}</div>
             <div class="mm-cap-grid">
-              {% for c in cap_list %}
+              {% for cv in sgrp.cap_views %}
+              {% set c = cv.cap %}
               <div class="mm-cap-leaf st-{{ c.status }}" data-cap-status="{{ c.status }}">
                 <div class="mm-cap-top">
-                  <span class="mm-cap-name">{{ c.name }}</span>
+                  <span class="mm-cap-name">
+                    {% if c.is_milestone %}<span title="关键里程碑">💎</span>{% endif %}
+                    {{ c.name }}
+                  </span>
                   <div style="display:flex;gap:4px;align-items:center">
                     <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">
-                      {{ c.status }}
+                      {{ c.status }} {{ c.progress_pct }}%
                     </span>
                     {% if c.verify_state == '已验证' %}
                     <span class="badge badge-verify" title="已有 /reports 实测报告或线上生产验证">✓ 已验证</span>
@@ -177,6 +278,10 @@
                   </div>
                 </div>
                 <div class="mm-cap-desc">{{ c.description }}</div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:2px">
+                  <span>👤 {{ c.owner or p.owner }}</span>
+                  <span>📅 {{ (c.start_date ~ ' → ' ~ c.end_date) if c.end_date else '待排期' }}</span>
+                </div>
                 {% if c.integration_name %}
                 <div class="mm-cap-integ">
                   <span>🔗 待整合：<strong>{{ c.integration_name }}</strong></span>
@@ -250,7 +355,7 @@ function filterCapStatus(st, btn) {
       leaf.style.opacity = '1';
       leaf.style.transform = 'scale(1)';
     } else {
-      leaf.style.opacity = '0.28';
+      leaf.style.opacity = '0.25';
       leaf.style.transform = 'scale(0.98)';
     }
   });
@@ -258,6 +363,37 @@ function filterCapStatus(st, btn) {
 function toggleSvgModal() {
   const m = document.getElementById('svg-modal');
   m.style.display = (m.style.display === 'none' || !m.style.display) ? 'flex' : 'none';
+}
+async function runLivePing(btn) {
+  const orig = btn.innerText;
+  btn.innerText = '⏳ 探测中...';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/ping-sites');
+    const data = await res.json();
+    document.getElementById('ping-summary-val').innerHTML = `${data.online}<small>/ ${data.total} 实测在线</small>`;
+    const panel = document.getElementById('ping-panel');
+    let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <strong>⚡ 23 个线上工作台与子平台实时探活结果（检测时间：${data.checked_at}）</strong>
+      <button class="btn-chip" onclick="document.getElementById('ping-panel').style.display='none'">收起</button>
+    </div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:8px">`;
+    for (const [url, info] of Object.entries(data.results)) {
+      const color = info.ok ? '#16a34a' : '#d97706';
+      const label = info.ok ? `${info.code} OK · ${info.ms}ms` : `内网/受限 (${info.err || info.code})`;
+      html += `<a href="${url}" target="_blank" style="display:flex;justify-content:space-between;padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:#f8fafc">
+        <span style="font-family:var(--mono);color:var(--ink)">${url.replace('https://','').replace('/','')}</span>
+        <strong style="color:${color}">${label}</strong>
+      </a>`;
+    }
+    html += '</div>';
+    panel.innerHTML = html;
+    panel.style.display = 'block';
+  } catch (e) {
+    alert('探活请求失败');
+  } finally {
+    btn.innerText = orig;
+    btn.disabled = false;
+  }
 }
 </script>
 

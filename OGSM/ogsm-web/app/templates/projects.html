@@ -112,26 +112,39 @@
       </div>
       {% endif %}
 
-      <!-- 4. 业务场景与能力图谱明细 -->
+      <!-- 4. 业务场景自动化流水线与能力图谱明细 -->
       <div>
-        <div class="section-label">业务场景与能力图谱</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          {% for scen_line, cap_list in pv.scen_groups.items() %}
-          <div style="background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:9px 12px">
-            <div style="font-size:12px;font-weight:650;color:#334155;margin-bottom:6px">⛓️ {{ scen_line }}</div>
+        <div class="section-label">业务场景自动化流水线 &amp; 能力图谱组成</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          {% for scen_line, sgrp in pv.scen_groups.items() %}
+          <div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 13px">
+            <!-- 可视化业务场景步骤节点流 -->
+            <div class="pipeline-flow">
+              <span style="font-size:11.5px;font-weight:700;color:var(--muted);margin-right:4px">场景链路：</span>
+              {% for step in sgrp.steps %}
+                <span class="pipe-step">{{ step }}</span>
+                {% if not loop.last %}<span class="pipe-arrow">→</span>{% endif %}
+              {% endfor %}
+            </div>
+            <!-- 支撑该场景的能力图谱列表 -->
             <div style="display:flex;flex-direction:column;gap:6px">
-              {% for c in cap_list %}
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:12.5px;border-top:1px dashed #e2e8f0;padding-top:5px">
+              {% for cv in sgrp.cap_views %}
+              {% set c = cv.cap %}
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:12.5px;border-top:1px dashed #e2e8f0;padding-top:6px">
                 <div>
+                  {% if c.is_milestone %}<span title="关键里程碑">💎</span> {% endif %}
                   <strong>{{ c.name }}</strong>：{{ c.description }}
+                  <span class="muted" style="font-size:11px;margin-left:6px">
+                    ({{ c.end_date if c.end_date else '待排期' }})
+                  </span>
                   {% if c.integration_name %}
                   <span style="margin-left:6px;font-size:11.5px;color:var(--primary)">
                     [整合：<a href="{{ c.integration_url }}" target="_blank">{{ c.integration_name }} ↗</a>]
                   </span>
                   {% endif %}
                 </div>
-                <div style="display:flex;gap:4px;flex-shrink:0">
-                  <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">{{ c.status }}</span>
+                <div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
+                  <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">{{ c.status }} {{ c.progress_pct }}%</span>
                   {% if c.verify_state == '已验证' %}
                   <span class="badge badge-verify">✓ 已验证</span>
                   {% endif %}

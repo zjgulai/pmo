@@ -589,195 +589,265 @@ CAPABILITIES = [
     # ─── 1. Emily (4 items) ───
     dict(project_slug="emily", scenario_line="社媒趋势洞察 → 内容策略 → 脚本生成",
          name="爆款/趋势洞察", description="发现社媒爆款与趋势，输出可复刻的内容结构",
-         status="已完成", verify_state="已验证", sort=1),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-01", end_date="2026-10-15", owner="社媒组", is_milestone=False, sort=1),
     dict(project_slug="emily", scenario_line="社媒趋势洞察 → 内容策略 → 脚本生成",
          name="互动追踪&评论解析", description="追踪社媒互动并解析粉丝真实反馈（情绪5档+主题×情绪）",
-         status="已完成", verify_state="已验证", sort=2),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-15", end_date="2026-10-30", owner="社媒组", is_milestone=True, sort=2),
     dict(project_slug="emily", scenario_line="社媒趋势洞察 → 内容策略 → 脚本生成",
          name="内容策略生成", description="按趋势与品牌定位生成社媒内容策略",
-         status="进行中", verify_state="部分验证", sort=3),
+         status="进行中", verify_state="部分验证", progress_pct=65,
+         start_date="2026-10-15", end_date="2026-11-20", owner="社媒组", is_milestone=False, sort=3),
     dict(project_slug="emily", scenario_line="社媒趋势洞察 → 内容策略 → 脚本生成",
          name="脚本生成", description="按爆款结构批量生成品牌投放脚本",
-         status="进行中", verify_state="部分验证", sort=4),
+         status="进行中", verify_state="部分验证", progress_pct=60,
+         start_date="2026-10-20", end_date="2026-11-30", owner="社媒组", is_milestone=True, sort=4),
 
     # ─── 2. Clone (2 items from Recipe Agent report) ───
     dict(project_slug="clone", scenario_line="爆款视频拆解 → 品牌脚本复刻",
          name="TikTok 爆款视频结构拆解", description="提取开头钩子、画面节拍、口播、字幕公式与音乐版权说明",
-         status="已完成", verify_state="已验证", sort=5),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-20", end_date="2026-10-25", owner="内容制作组", is_milestone=False, sort=5),
     dict(project_slug="clone", scenario_line="爆款视频拆解 → 品牌脚本复刻",
          name="品牌定制 Recipe 脚本生成", description="将爆款结构重绑到目标品牌，生成编导与摄影可直接执行的脚本（13/14 评测通过）",
-         status="进行中", verify_state="已验证", sort=6),
+         status="进行中", verify_state="已验证", progress_pct=90,
+         start_date="2026-10-10", end_date="2026-11-10", owner="内容制作组", is_milestone=True, sort=6),
 
     # ─── 3. Vicky (4 items) ───
     dict(project_slug="vicky", scenario_line="PR 线：竞品监测 → 风险预警 → 工作台协同",
          name="线索管理", description="PR 媒体&编辑线索管理（246 家媒体库与 347 条报道双向同步）",
-         status="已完成", verify_state="已验证", sort=7),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-01", end_date="2026-10-20", owner="公关组", is_milestone=False, sort=7),
     dict(project_slug="vicky", scenario_line="PR 线：竞品监测 → 风险预警 → 工作台协同",
          name="线索推荐", description="行业话题推荐、编辑匹配",
-         status="已完成", verify_state="已验证", sort=8),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-10", end_date="2026-10-25", owner="公关组", is_milestone=False, sort=8),
     dict(project_slug="vicky", scenario_line="舆情线：看板对话化 → 自动分类 → 工单闭环",
          name="舆情预警", description="品牌舆情监控与预警分发",
-         status="已完成", verify_state="已验证", sort=9),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-15", end_date="2026-10-28", owner="公关组", is_milestone=False, sort=9),
     dict(project_slug="vicky", scenario_line="舆情线：看板对话化 → 自动分类 → 工单闭环",
          name="数据查询与分析", description="舆情、核心媒体&编辑查询与分析（每日 09:50 自动重算）",
-         status="已完成", verify_state="已验证", sort=10),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-20", end_date="2026-10-31", owner="公关组", is_milestone=True, sort=10),
 
-    # ─── 4. GEO (6 items) ───
+    # ─── 4. GEO (6 items，11–12月排期交付) ───
     dict(project_slug="geo", scenario_line="问句库 → 采集探针 → 解析与指标 → 诊断洞察 → 内容生成 → 复测报告",
          name="配置与问句库", description="建立品牌问句库并版本化管理",
-         status="方案中", verify_state="待验证", sort=11),
+         status="方案中", verify_state="待验证", progress_pct=20,
+         start_date="2026-11-01", end_date="2026-11-12", owner="搜索与内容组", is_milestone=False, sort=11),
     dict(project_slug="geo", scenario_line="问句库 → 采集探针 → 解析与指标 → 诊断洞察 → 内容生成 → 复测报告",
          name="采集探针", description="真实采集 AI 引擎回答并留存快照",
-         status="方案中", verify_state="待验证", sort=12),
+         status="方案中", verify_state="待验证", progress_pct=15,
+         start_date="2026-11-10", end_date="2026-11-25", owner="搜索与内容组", is_milestone=True, sort=12),
     dict(project_slug="geo", scenario_line="问句库 → 采集探针 → 解析与指标 → 诊断洞察 → 内容生成 → 复测报告",
          name="解析与指标", description="解析品牌提及与排位，算出五项可见度指标",
-         status="方案中", verify_state="待验证", sort=13),
+         status="方案中", verify_state="待验证", progress_pct=10,
+         start_date="2026-11-20", end_date="2026-12-05", owner="搜索与内容组", is_milestone=False, sort=13),
     dict(project_slug="geo", scenario_line="问句库 → 采集探针 → 解析与指标 → 诊断洞察 → 内容生成 → 复测报告",
          name="诊断洞察", description="定位可见度缺口并排出优先攻占主题",
-         status="方案中", verify_state="待验证", sort=14),
+         status="方案中", verify_state="待验证", progress_pct=10,
+         start_date="2026-12-01", end_date="2026-12-12", owner="搜索与内容组", is_milestone=False, sort=14),
     dict(project_slug="geo", scenario_line="问句库 → 采集探针 → 解析与指标 → 诊断洞察 → 内容生成 → 复测报告",
          name="内容生成", description="基于事实库生成可被 AI 引用的权威内容",
-         status="方案中", verify_state="待验证", sort=15),
+         status="方案中", verify_state="待验证", progress_pct=0,
+         start_date="2026-12-08", end_date="2026-12-22", owner="搜索与内容组", is_milestone=False, sort=15),
     dict(project_slug="geo", scenario_line="问句库 → 采集探针 → 解析与指标 → 诊断洞察 → 内容生成 → 复测报告",
          name="复测与报告", description="复测效果并产出可交付月报",
-         status="方案中", verify_state="待验证", sort=16),
+         status="方案中", verify_state="待验证", progress_pct=0,
+         start_date="2026-12-18", end_date="2026-12-31", owner="搜索与内容组", is_milestone=True, sort=16),
 
-    # ─── 5. Radar (3 items) ───
+    # ─── 5. Radar (3 items，飞书表记录待排期) ───
     dict(project_slug="radar", scenario_line="粉丝分析 → 合作计划 → 动态监测 → 机会推荐",
          name="IP 合作计划制定", description="分析 IP 粉丝结构与声量，输出合作计划",
-         status="方案中", verify_state="待验证", sort=17),
+         status="方案中", verify_state="待验证", progress_pct=10,
+         start_date="", end_date="", owner="达人与IP组", is_milestone=False, sort=17),
     dict(project_slug="radar", scenario_line="粉丝分析 → 合作计划 → 动态监测 → 机会推荐",
          name="全渠道动态监测", description="跨平台追踪 IP 动态并聚类关键事件",
-         status="方案中", verify_state="待验证", sort=18),
+         status="方案中", verify_state="待验证", progress_pct=5,
+         start_date="", end_date="", owner="达人与IP组", is_milestone=False, sort=18),
     dict(project_slug="radar", scenario_line="粉丝分析 → 合作计划 → 动态监测 → 机会推荐",
          name="合作机会识别", description="识别合作机会信号并给出推荐理由",
-         status="方案中", verify_state="待验证", sort=19),
+         status="方案中", verify_state="待验证", progress_pct=0,
+         start_date="", end_date="", owner="达人与IP组", is_milestone=False, sort=19),
 
     # ─── 6. Echo (4 items) ───
     dict(project_slug="echo", scenario_line="舆情线：品牌/品类/SPU舆情预警",
          name="多渠道数据查询", description="售前、售后、独立站、Reddit 等用户反馈（已入库 2.6 万帖 / 10.2 万评）",
-         status="已完成", verify_state="已验证",
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-08-15", end_date="2026-10-15", owner="VOC与洞察组", is_milestone=False,
          integration_name="数据采集插件", integration_url="https://plugin.luteos.com/", sort=20),
     dict(project_slug="echo", scenario_line="舆情线：品牌/品类/SPU舆情预警",
          name="风险指数&机会洞察", description="量化用户风险指数并挖掘产品机会（每日自动生成选题/研发/竞品日报）",
-         status="进行中", verify_state="已验证", sort=21),
+         status="进行中", verify_state="已验证", progress_pct=85,
+         start_date="2026-10-01", end_date="2026-11-15", owner="VOC与洞察组", is_milestone=True, sort=21),
     dict(project_slug="echo", scenario_line="话题线：高质量内容机会挖掘",
          name="拖拉式多维分析", description="拖拽式多维分析用户声音",
-         status="进行中", verify_state="部分验证", sort=22),
+         status="进行中", verify_state="部分验证", progress_pct=50,
+         start_date="2026-10-20", end_date="2026-11-30", owner="VOC与洞察组", is_milestone=False, sort=22),
     dict(project_slug="echo", scenario_line="产品机会线：品类机会挖掘",
          name="自动化品类洞察报告", description="结合品类洞察平台与报告站自动生成品类机会分析",
-         status="进行中", verify_state="已验证",
+         status="进行中", verify_state="已验证", progress_pct=75,
+         start_date="2026-10-10", end_date="2026-11-25", owner="VOC与洞察组", is_milestone=True,
          integration_name="品类洞察平台 / 品类洞察报告", integration_url="https://business.luteos.com/", sort=23),
 
     # ─── 7. Market (2 items) ───
     dict(project_slug="market", scenario_line="市场洞察与跨境专家核算",
          name="市场洞察工作台", description="品类容量、价格带与竞品格局分析（mkt.luteos.com）",
-         status="进行中", verify_state="已验证", sort=24),
+         status="进行中", verify_state="已验证", progress_pct=70,
+         start_date="2026-09-25", end_date="2026-11-20", owner="市场与选品组", is_milestone=False, sort=24),
     dict(project_slug="market", scenario_line="市场洞察与跨境专家核算",
          name="跨境电商核算引擎与专家工作流", description="四大确定性核算合规引擎 + 53 位跨境专家交付工作流（Sage 实测通过）",
-         status="已完成", verify_state="已验证", sort=25),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-01", end_date="2026-11-02", owner="市场与选品组", is_milestone=True, sort=25),
 
     # ─── 8. Source (8 items) ───
     dict(project_slug="source", scenario_line="统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构 → 采集工具 → 洞察工具",
          name="统一采集平台与 monitor 层", description="统一采集调度、降级链路与多表建模（70 平台 / 284 端点，200 已实测）",
-         status="进行中", verify_state="已验证", sort=26),
+         status="进行中", verify_state="已验证", progress_pct=85,
+         start_date="2026-08-01", end_date="2026-11-15", owner="数据底座组", is_milestone=True, sort=26),
     dict(project_slug="source", scenario_line="统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构 → 采集工具 → 洞察工具",
          name="TikTok 采集MCP/skill", description="采集 TikTok 榜单、视频、评论（16 工具 / 21 表已建）",
-         status="进行中", verify_state="已验证", sort=27),
+         status="进行中", verify_state="已验证", progress_pct=90,
+         start_date="2026-09-15", end_date="2026-11-10", owner="数据底座组", is_milestone=False, sort=27),
     dict(project_slug="source", scenario_line="统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构 → 采集工具 → 洞察工具",
          name="Reddit 采集MCP/skill", description="采集 Reddit 帖子与评论树",
-         status="进行中", verify_state="已验证", sort=28),
+         status="进行中", verify_state="已验证", progress_pct=90,
+         start_date="2026-09-15", end_date="2026-11-10", owner="数据底座组", is_milestone=False, sort=28),
     dict(project_slug="source", scenario_line="统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构 → 采集工具 → 洞察工具",
          name="YouTube 采集MCP/skill", description="采集 YouTube 视频、频道、字幕",
-         status="进行中", verify_state="已验证", sort=29),
+         status="进行中", verify_state="已验证", progress_pct=80,
+         start_date="2026-10-01", end_date="2026-11-20", owner="数据底座组", is_milestone=False, sort=29),
     dict(project_slug="source", scenario_line="统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构 → 采集工具 → 洞察工具",
          name="Instagram 采集MCP/skill", description="采集 Instagram 媒体与评论",
-         status="进行中", verify_state="已验证", sort=30),
+         status="进行中", verify_state="已验证", progress_pct=80,
+         start_date="2026-10-01", end_date="2026-11-20", owner="数据底座组", is_milestone=False, sort=30),
     dict(project_slug="source", scenario_line="统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构 → 采集工具 → 洞察工具",
          name="Facebook 采集MCP/skill", description="采集 Facebook 页面与互动快照",
-         status="进行中", verify_state="已验证", sort=31),
+         status="进行中", verify_state="已验证", progress_pct=75,
+         start_date="2026-10-05", end_date="2026-11-25", owner="数据底座组", is_milestone=False, sort=31),
     dict(project_slug="source", scenario_line="统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构 → 采集工具 → 洞察工具",
          name="Google Trends 采集MCP/skill", description="采集 Google 趋势指数与关联查询",
-         status="进行中", verify_state="已验证", sort=32),
+         status="进行中", verify_state="已验证", progress_pct=80,
+         start_date="2026-10-05", end_date="2026-11-25", owner="数据底座组", is_milestone=False, sort=32),
     dict(project_slug="source", scenario_line="统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构 → 采集工具 → 洞察工具",
          name="上游数据底座支撑", description="支撑 GEO、Vicky、Echo、Signal、Emily、Radar 六方数据供给",
-         status="进行中", verify_state="部分验证", sort=33),
+         status="进行中", verify_state="部分验证", progress_pct=70,
+         start_date="2026-10-15", end_date="2026-12-15", owner="数据底座组", is_milestone=True, sort=33),
 
     # ─── 9. Signal (3 items) ───
     dict(project_slug="signal", scenario_line="多源采集 → 异动检测 → 归因分析 → 告警",
          name="品牌曝光&热度监控", description="监控品牌曝光与搜索热度日趋势",
-         status="方案中", verify_state="待验证", sort=34),
+         status="方案中", verify_state="待验证", progress_pct=20,
+         start_date="2026-11-05", end_date="2026-11-28", owner="品牌分析组", is_milestone=False, sort=34),
     dict(project_slug="signal", scenario_line="多源采集 → 异动检测 → 归因分析 → 告警",
          name="声量异动识别", description="识别声量异常波动并归因",
-         status="方案中", verify_state="待验证", sort=35),
+         status="方案中", verify_state="待验证", progress_pct=10,
+         start_date="2026-11-15", end_date="2026-12-10", owner="品牌分析组", is_milestone=True, sort=35),
     dict(project_slug="signal", scenario_line="多源采集 → 异动检测 → 归因分析 → 告警",
          name="竞品动作&发布监测", description="追踪竞品动作与新品发布节奏",
-         status="方案中", verify_state="待验证", sort=36),
+         status="方案中", verify_state="待验证", progress_pct=10,
+         start_date="2026-11-25", end_date="2026-12-20", owner="品牌分析组", is_milestone=False, sort=36),
 
     # ─── 10. 守衡 (3 items) ───
     dict(project_slug="shouheng", scenario_line="内容上传 → 模型审核 → 审计判定 → 整改推送",
          name="内容审计规则引擎", description="按品牌规则自动审计内容合规风险（两段式判定，227/227 契约自证通过）",
-         status="已完成", verify_state="已验证", sort=37),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-01", end_date="2026-10-26", owner="内容合规组", is_milestone=False, sort=37),
     dict(project_slug="shouheng", scenario_line="内容上传 → 模型审核 → 审计判定 → 整改推送",
          name="经营动作与结论复核", description="复核经营结论是否有证据支撑（文档/图片OCR/结构化已跑通，视频待接ASR）",
-         status="已完成", verify_state="已验证", sort=38),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-15", end_date="2026-10-30", owner="内容合规组", is_milestone=True, sort=38),
     dict(project_slug="shouheng", scenario_line="内容上传 → 模型审核 → 审计判定 → 整改推送",
          name="复核结论与整改清单", description="输出整改清单并推送（14 页 Web 审核工作台在线，支持签发与申诉）",
-         status="已完成", verify_state="已验证", sort=39),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-20", end_date="2026-11-01", owner="内容合规组", is_milestone=True, sort=39),
 
-    # ─── 11. Daisy (3 items) ───
+    # ─── 11. Daisy (3 items，飞书表记录通用底座2项已排期) ───
     dict(project_slug="daisy", scenario_line="知识库 → MAS → CLI",
          name="各 Agent 统一接入", description="九个 Agent 通过适配层统一接入",
-         status="方案中", verify_state="待验证", sort=40),
+         status="方案中", verify_state="待验证", progress_pct=25,
+         start_date="2026-11-10", end_date="2026-12-15", owner="平台与知识工程组", is_milestone=True, sort=40),
     dict(project_slug="daisy", scenario_line="知识库 → MAS → CLI",
          name="统一入口与品牌知识库", description="把九个 Agent 收成一个入口，沉淀品牌知识资产与 17 个可溯源技能（Know）",
-         status="方案中", verify_state="部分验证",
+         status="方案中", verify_state="部分验证", progress_pct=40,
+         start_date="2026-11-01", end_date="2026-12-20", owner="平台与知识工程组", is_milestone=True,
          integration_name="品牌知识库平台 (asset.luteos.com)", integration_url="https://asset.luteos.com/", sort=41),
     dict(project_slug="daisy", scenario_line="知识库 → MAS → CLI",
          name="对话式 CLI 界面", description="提供对话式 CLI 标准交互，联通业务 skills 平台",
-         status="进行中", verify_state="已验证",
+         status="进行中", verify_state="已验证", progress_pct=70,
+         start_date="2026-10-15", end_date="2026-11-25", owner="平台与知识工程组", is_milestone=False,
          integration_name="业务skills平台 (brand / skills)", integration_url="https://skills.luteos.com/", sort=42),
 
     # ─── 12. Main (2 items) ───
     dict(project_slug="main", scenario_line="全栈研发工作台与模型评测",
          name="全栈开发 Agent 与飞书机器人", description="单向依赖架构 runtime + 飞书长连接机器人（150/150 真实问答评测通过）",
-         status="已完成", verify_state="已验证", sort=43),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-10", end_date="2026-10-31", owner="全栈研发组", is_milestone=True, sort=43),
     dict(project_slug="main", scenario_line="全栈研发工作台与模型评测",
          name="模型选型与评测平台", description="多模型对比评测与成本核算（llm.luteos.com）",
-         status="已完成", verify_state="已验证",
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-20", end_date="2026-11-01", owner="全栈研发组", is_milestone=False,
          integration_name="模型选型与评测", integration_url="https://llm.luteos.com/", sort=44),
 
     # ─── 13. Shopify (3 items) ───
     dict(project_slug="shopify", scenario_line="ABI独立站 → 独立站360审计 → AI选品",
          name="ABI 独立站知识平台", description="14 领域 178 篇正式文档与 795 个 RAG 检索块（评测 100% 通过）",
-         status="已完成", verify_state="已验证",
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-01", end_date="2026-10-25", owner="独立站智能组", is_milestone=False,
          integration_name="ABI独立站", integration_url="https://platform-shopify.luteos.com/", sort=45),
     dict(project_slug="shopify", scenario_line="ABI独立站 → 独立站360审计 → AI选品",
          name="独立站 360 审计与 Listing 上架", description="5 个岗位 Agent（Listing 草稿上架、结构体检、SEO、去重、就绪度）+ 84 条母婴合规预检",
-         status="已完成", verify_state="已验证",
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-09-15", end_date="2026-11-01", owner="独立站智能组", is_milestone=True,
          integration_name="独立站360审计", integration_url="https://shopify.luteos.com/", sort=46),
     dict(project_slug="shopify", scenario_line="ABI独立站 → 独立站360审计 → AI选品",
          name="AI 选品平台", description="独立站智能选品辅助工具",
-         status="进行中", verify_state="已验证",
+         status="进行中", verify_state="已验证", progress_pct=65,
+         start_date="2026-10-15", end_date="2026-11-30", owner="独立站智能组", is_milestone=False,
          integration_name="AI选品", integration_url="https://product.luteos.com/", sort=47),
 
     # ─── 14. PMO (2 items) ───
     dict(project_slug="pmo", scenario_line="OGSM 全景导图 → 14 大项目管理 → 汇报演示",
          name="OGSM 全景思维导图与项目矩阵", description="还原附件1思维导图结构，纳管 14 个产品项目、23 个站点入口与 49 项能力进度",
-         status="已完成", verify_state="已验证", sort=48),
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-10-25", end_date="2026-11-02", owner="PMO 组", is_milestone=True, sort=48),
     dict(project_slug="pmo", scenario_line="OGSM 全景导图 → 14 大项目管理 → 汇报演示",
-         name="专家实测成果汇总与汇报模式", description="集成 /reports 全部实测报告，提供去 AI 味的部门汇报投屏视图",
-         status="已完成", verify_state="已验证", sort=49),
+         name="跨项目甘特图、看板与里程碑汇报", description="集成 /reports 全部实测报告，提供甘特图排期、四列看板流转与投屏汇报视图",
+         status="已完成", verify_state="已验证", progress_pct=100,
+         start_date="2026-10-30", end_date="2026-11-02", owner="PMO 组", is_milestone=True, sort=49),
 ]
 
 
+def _ensure_v3_columns() -> None:
+    """兼容已有 PostgreSQL 表，自动补齐 V3 新增的排期与甘特图列。"""
+    from sqlalchemy import text
+
+    alter_stmts = [
+        "ALTER TABLE capability_item ADD COLUMN IF NOT EXISTS progress_pct INTEGER DEFAULT 0",
+        "ALTER TABLE capability_item ADD COLUMN IF NOT EXISTS start_date VARCHAR DEFAULT ''",
+        "ALTER TABLE capability_item ADD COLUMN IF NOT EXISTS end_date VARCHAR DEFAULT ''",
+        "ALTER TABLE capability_item ADD COLUMN IF NOT EXISTS owner VARCHAR DEFAULT ''",
+        "ALTER TABLE capability_item ADD COLUMN IF NOT EXISTS is_milestone BOOLEAN DEFAULT FALSE",
+    ]
+    with engine.begin() as conn:
+        for stmt in alter_stmts:
+            try:
+                conn.execute(text(stmt))
+            except Exception:
+                pass
+
+
 def seed(force_reset: bool = True) -> None:
-    """初始化或重置为 V2 思维导图完整数据。"""
+    """初始化或重置为 V3 完整数据（含甘特图排期、进度百分比与四列看板状态）。"""
     SQLModel.metadata.create_all(engine)
+    _ensure_v3_columns()
     with Session(engine) as s:
-        existing = s.exec(select(ProductProject)).all()
-        if existing and not force_reset:
-            print(f"[seed] 已存在 {len(existing)} 个产品项目，跳过")
+        existing = s.exec(select(CapabilityItem)).all()
+        has_schedule = any(getattr(c, "start_date", "") for c in existing)
+        if existing and has_schedule and not force_reset:
+            print(f"[seed] 已存在 {len(existing)} 项带排期的能力数据，跳过")
             return
 
         for row in s.exec(select(CapabilityItem)).all():
@@ -801,8 +871,8 @@ def seed(force_reset: bool = True) -> None:
 
         s.commit()
         print(
-            f"[seed] V2 写入完成：{len(GOALS)} 个目标(G)、{len(STRATEGIES)} 条策略(S)、"
-            f"{len(PROJECTS)} 个产品项目、{len(CAPABILITIES)} 项能力点"
+            f"[seed] V3 写入完成：{len(GOALS)} 个目标(G)、{len(STRATEGIES)} 条策略(S)、"
+            f"{len(PROJECTS)} 个产品项目、{len(CAPABILITIES)} 项带排期能力点"
         )
 
 

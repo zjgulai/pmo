@@ -165,9 +165,44 @@
     </div>
   </section>
 
-  <!-- Slide 6: 下一阶段路线图与需协同事项 -->
+  <!-- Slide 6: 2026Q4 关键里程碑时间轴与下一阶段路线图 -->
   <section class="slide">
-    <div class="slide-num">Page 06 / 06 · 下一阶段重点与跨组协同</div>
+    <div class="slide-num">Page 06 / 06 · 2026Q4 关键里程碑节点与下一阶段推进重点</div>
+    <h2>💎 关键里程碑达成与排期表（共 {{ milestones | length }} 项）</h2>
+    <table style="margin-bottom:22px">
+      <thead>
+        <tr>
+          <th style="width:120px">目标截止日</th>
+          <th style="width:110px">所属目标</th>
+          <th style="width:150px">产品项目 (Agent)</th>
+          <th>关键里程碑能力点</th>
+          <th style="width:110px">负责团队</th>
+          <th style="width:140px">当前状态与进度</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mv in milestones %}
+        {% set c = mv.cap %}
+        <tr>
+          <td><strong>{{ c.end_date or '待排期' }}</strong></td>
+          <td><span class="badge badge-{{ mv.goal_code | lower }}">{{ mv.goal_code }}</span></td>
+          <td><strong>{{ mv.proj_expert }}</strong></td>
+          <td>
+            <strong>💎 {{ c.name }}</strong>
+            <span class="muted" style="font-size:12px;margin-left:6px">{{ c.description }}</span>
+          </td>
+          <td class="muted">{{ c.owner }}</td>
+          <td>
+            <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">
+              {{ c.status }} {{ c.progress_pct }}%
+            </span>
+            {% if c.verify_state == '已验证' %}<span class="badge badge-verify">✓ 已验证</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
     <h2>2026Q4（11–12 月）三大推进重点</h2>
     <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:16px">
       <div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:16px">

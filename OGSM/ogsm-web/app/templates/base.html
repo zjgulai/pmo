@@ -4,29 +4,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}ABI 品牌 & 营销 Agent 项目管理门户{% endblock %}</title>
-<link rel="stylesheet" href="/static/style.css?v=20261102">
+<link rel="stylesheet" href="/static/style.css?v=20261102v3">
 </head>
 <body>
 <header class="top">
   <div class="brand-wrap">
     <a class="brand" href="/">
       <span>🎯 ABI 应用与算法组</span>
-      <span class="brand-badge">品牌 &amp; 营销 Agent 项目管理</span>
+      <span class="brand-badge">OGSM 项目统筹与里程碑门户</span>
     </a>
   </div>
   <nav class="main-nav">
-    <a href="/" class="{{ 'active' if active_nav == 'mindmap' else '' }}">OGSM 全景导图</a>
-    <a href="/projects" class="{{ 'active' if active_nav == 'projects' else '' }}">14大产品项目</a>
-    <a href="/sites" class="{{ 'active' if active_nav == 'sites' else '' }}">工作台导航 ({{ stats.site_online if stats else 20 }})</a>
-    <a href="/present" class="{{ 'active' if active_nav == 'present' else '' }}">部门汇报模式</a>
-    <a href="/docs" class="{{ 'active' if active_nav == 'docs' else '' }}">实测报告与资料</a>
+    <a href="/" class="{{ 'active' if active_nav == 'mindmap' else '' }}">1. 战略全景导图</a>
+    <a href="/projects" class="{{ 'active' if active_nav == 'projects' else '' }}">2. 产品与场景流水线 (14)</a>
+    <a href="/roadmap" class="{{ 'active' if active_nav == 'roadmap' else '' }}">3. 甘特图与看板 ({{ stats.cap_total if stats else 49 }})</a>
+    <a href="/present" class="{{ 'active' if active_nav == 'present' else '' }}">4. 里程碑汇报</a>
+    <a href="/docs" class="{{ 'active' if active_nav == 'docs' else '' }}">实测报告库</a>
   </nav>
   <div class="nav-right">
+    <a href="/api/export.csv" class="btn-chip" title="导出与飞书 OGSM 总览表结构对齐的 CSV">⬇️ 导出飞书表 CSV</a>
     {% if is_pmo %}
-      <a href="/admin" class="btn-chip active">⚙️ 项目更新后台</a>
+      <span class="badge badge-done">PMO 已登录（支持行内直改）</span>
+      <a href="/admin" class="btn-chip">表单后台</a>
       <a href="/logout" class="muted">退出</a>
     {% else %}
-      <a href="/login" class="btn-chip">PMO 维护登录</a>
+      <a href="/login" class="btn-chip">PMO 登录</a>
     {% endif %}
   </div>
 </header>
@@ -36,8 +38,8 @@
 </main>
 
 <footer>
-  <span>ABI 应用与算法组 · 品牌 &amp; 营销域 2026Q4 OGSM 项目总览门户</span>
-  <span>主骨架：《ABIOGSM-品牌Agent》思维导图 · 成果真源：<code>/reports</code> 实测报告 · 更新于 {{ today }}</span>
+  <span>ABI 应用与算法组 · 品牌 &amp; 营销域 2026Q4 OGSM 项目统筹、进度管理与里程碑汇报门户</span>
+  <span>同源架构：1个O → 3个G → 6条策略 → 14个Agent产品工作台 → 49项能力图谱 · 更新于 {{ today }}</span>
 </footer>
 </body>
 </html>

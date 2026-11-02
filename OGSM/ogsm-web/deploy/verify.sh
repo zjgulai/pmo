@@ -18,7 +18,7 @@ echo "验收目标：$BASE"
 hdr "1. 核心路由可访问性"
 c=$(code "$BASE/health"); [ "$c" = "200" ] && ok "/health 200" || bad "/health 期望 200，实际 $c"
 
-for p in / /projects /sites /present /docs /login; do
+for p in / /projects /roadmap /sites /present /docs /login /api/export.csv; do
   c=$(code "$BASE$p")
   [ "$c" = "200" ] && ok "$p 200" || bad "$p 期望 200，实际 $c"
 done
