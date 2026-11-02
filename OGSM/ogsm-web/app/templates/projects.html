@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}14 大产品项目管理 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block body %}
+
+<div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+  <div>
+    <h1 style="margin:0;font-size:23px">14 大产品项目管理矩阵</h1>
+    <p class="muted" style="margin:4px 0 0">
+      以思维导图中的 <strong>产品名称（专家昵称 · 产品构成）</strong> 为独立项目管理单元。汇总工作台直达入口、业务场景、能力图谱进度与 <code>/reports</code> 实测数据。
+    </p>
+  </div>
+  <div style="display:flex;gap:8px">
+    <a href="/" class="btn-chip">← 返回 OGSM 全景导图</a>
+    {% if is_pmo %}
+    <a href="/admin" class="btn-chip active">⚙️ 编辑项目与进度</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- 快速筛选 -->
+<div class="toolbar">
+  <div class="toolbar-group">
+    <span class="toolbar-label">所属目标：</span>
+    <button class="btn-chip active" onclick="filterProjects('ALL', null, this)">全部项目 (14)</button>
+    <button class="btn-chip" onclick="filterProjects('G1', null, this)">G1 声量增长 (5)</button>
+    <button class="btn-chip" onclick="filterProjects('G2', null, this)">G2 敏捷响应 (4)</button>
+    <button class="btn-chip" onclick="filterProjects('G3', null, this)">G3 数字化运营 (5)</button>
+  </div>
+  <div class="toolbar-group">
+    <span class="toolbar-label">项目状态：</span>
+    <button class="btn-chip active" onclick="filterProjects(null, 'ALL', this)">全部状态</button>
+    <button class="btn-chip" onclick="filterProjects(null, '已上线', this)">🟢 已上线 ({{ stats.project_live }})</button>
+    <button class="btn-chip" onclick="filterProjects(null, '进行中', this)">🔵 进行中 ({{ stats.project_doing }})</button>
+    <button class="btn-chip" onclick="filterProjects(null, '方案中', this)">⚪ 方案中 ({{ stats.project_plan }})</button>
+  </div>
+</div>
+
+{% for gnode in goal_tree %}
+{% set g = gnode.goal %}
+<div class="goal-group-block" data-goal="{{ g.code }}" style="margin-bottom:32px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line-strong)">
+    <div>
+      <span class="badge badge-{{ g.code | lower }}" style="font-size:13px;padding:3px 10px">{{ g.code }}</span>
+      <strong style="font-size:18px;margin-left:6px">{{ g.title }}</strong>
+      <span class="muted" style="font-size:13px;margin-left:10px">{{ g.subtitle }}</span>
+    </div>
+  </div>
+
+  <div class="proj-grid">
+    {% for pv in gnode.projects %}
+    {% set p = pv.proj %}
+    <article class="proj-card" id="proj-{{ p.slug }}" data-goal="{{ p.goal_code }}" data-status="{{ p.status_summary }}">
+      <!-- 1. 项目卡片头部 -->
+      <div class="proj-card-head">
+        <div>
+          <div class="proj-title-row">
+            <span class="badge badge-{{ p.goal_code | lower }}">{{ p.goal_code }} · {{ p.strategy_code }}</span>
+            <span class="proj-expert">{{ p.expert_name }}</span>
+            <span class="proj-name">· {{ p.product_name }}</span>
+            <span class="badge {{ 'badge-done' if p.status_summary == '已上线' else ('badge-doing' if p.status_summary == '进行中' else 'badge-plan') }}">
+              {{ p.status_summary }}
+            </span>
+          </div>
+          {% if p.owner %}
+          <div class="muted" style="font-size:12px;margin-top:4px">负责团队：{{ p.owner }}</div>
+          {% endif %}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          {% if p.workbench_url %}
+          <a class="wb-link" href="{{ p.workbench_url }}" target="_blank" rel="noopener" style="font-size:12.5px;padding:5px 11px">
+            <span class="wb-dot"></span> 打开工作台 ↗
+          </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 关联子站点入口 -->
+      {% if pv.extra_sites %}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <span class="muted" style="font-size:12px">待整合/子平台：</span>
+        {% for es in pv.extra_sites %}
+        <a class="wb-link" href="{{ es[1] }}" target="_blank" rel="noopener" style="background:#f8fafc;border-color:#cbd5e1;color:#1e293b">
+          <span class="wb-dot {{ 'internal' if es[2] == 'internal' else '' }}"></span>
+          {{ es[0] }} ↗
+        </a>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- 2. 能力完成度条 -->
+      <div class="progress-bar-wrap">
+        <span>能力图谱进度：已完成 {{ pv.done_n }} / 进行中 {{ pv.doing_n }} / 方案中 {{ pv.plan_n }}</span>
+        <div class="progress-track">
+          {% if pv.total_n > 0 %}
+          <div class="progress-done" style="width:{{ (pv.done_n / pv.total_n * 100) | round(1) }}%"></div>
+          <div class="progress-doing" style="width:{{ (pv.doing_n / pv.total_n * 100) | round(1) }}%"></div>
+          {% endif %}
+        </div>
+        <strong>{{ pv.pct }}%</strong>
+      </div>
+
+      <!-- 3. 核心实测指标卡片 -->
+      {% if pv.metrics_list %}
+      <div class="metrics-grid">
+        {% for m in pv.metrics_list %}
+        <div class="metric-tile">
+          <div class="metric-tile-label">{{ m[0] }}</div>
+          <div class="metric-tile-val">{{ m[1] }}</div>
+          <div class="metric-tile-src">出处：{{ m[2] }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- 4. 业务场景与能力图谱明细 -->
+      <div>
+        <div class="section-label">业务场景与能力图谱</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          {% for scen_line, cap_list in pv.scen_groups.items() %}
+          <div style="background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:9px 12px">
+            <div style="font-size:12px;font-weight:650;color:#334155;margin-bottom:6px">⛓️ {{ scen_line }}</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              {% for c in cap_list %}
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:12.5px;border-top:1px dashed #e2e8f0;padding-top:5px">
+                <div>
+                  <strong>{{ c.name }}</strong>：{{ c.description }}
+                  {% if c.integration_name %}
+                  <span style="margin-left:6px;font-size:11.5px;color:var(--primary)">
+                    [整合：<a href="{{ c.integration_url }}" target="_blank">{{ c.integration_name }} ↗</a>]
+                  </span>
+                  {% endif %}
+                </div>
+                <div style="display:flex;gap:4px;flex-shrink:0">
+                  <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">{{ c.status }}</span>
+                  {% if c.verify_state == '已验证' %}
+                  <span class="badge badge-verify">✓ 已验证</span>
+                  {% endif %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- 5. /reports 实测成果总结 -->
+      <div>
+        <div class="section-label">实测成果总结（来自 /reports）</div>
+        <div class="verified-box">{{ p.verified_summary }}</div>
+      </div>
+
+      <!-- 6. 待补齐项 -->
+      {% if pv.gaps_list %}
+      <div>
+        <div class="section-label">下一阶段待补齐项</div>
+        <div class="gaps-box">
+          <ul>
+            {% for gap in pv.gaps_list %}
+            <li>{{ gap }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- 7. 原始报告直达 & 支撑补充抽屉 -->
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          {% if pv.reports_list %}
+            {% for rep in pv.reports_list %}
+            <a class="btn-chip" href="{{ rep[1] }}" target="_blank" style="font-size:12px">
+              📄 查看实测报告：{{ rep[0] }} ↗
+            </a>
+            {% endfor %}
+          {% else %}
+            <span class="muted" style="font-size:12px">暂无独立报告文件（方案设计阶段）</span>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if pv.support_list %}
+      <details class="support-drawer">
+        <summary>展开上下游协作与补充说明</summary>
+        <ul style="margin:6px 0 0;padding-left:18px">
+          {% for sline in pv.support_list %}
+          <li style="margin:3px 0">{{ sline }}</li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+
+<script>
+let curGoal = 'ALL';
+let curStatus = 'ALL';
+function filterProjects(goal, status, btn) {
+  if (goal !== null) curGoal = goal;
+  if (status !== null) curStatus = status;
+  btn.parentElement.querySelectorAll('.btn-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.querySelectorAll('.proj-card').forEach(card => {
+    const gMatch = (curGoal === 'ALL' || card.dataset.goal === curGoal);
+    const sMatch = (curStatus === 'ALL' || card.dataset.status === curStatus);
+    card.style.display = (gMatch && sMatch) ? '' : 'none';
+  });
+}
+</script>
+
+{% endblock %}

@@ -1,51 +1,76 @@
 {% extends "base.html" %}
-{% block title %}治理索引 · ABI OGSM{% endblock %}
+{% block title %}实测报告与资料库 · ABI 品牌 & 营销 Agent{% endblock %}
 {% block body %}
 
-<h1>治理索引</h1>
-<p class="muted">OGSM 只引用治理文档，不复述。改 Gate / 主键 / RACI 不需要回灌 OGSM。</p>
-
-<div class="card">
-  <table>
-    <thead><tr><th>文档</th><th style="width:110px">大小</th><th style="width:150px">修改时间</th><th style="width:70px"></th></tr></thead>
-    <tbody>
-    {% for f in files %}
-      <tr>
-        <td><a href="/docs/{{ f.name }}">{{ f.name }}</a></td>
-        <td class="muted">{{ (f.size / 1024)|round(1) }} KB</td>
-        <td class="muted">{{ f.mtime }}</td>
-        <td><a href="/docs/{{ f.name }}" class="muted">查看 →</a></td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  {% if not files %}<div class="empty">未找到 md 文档。检查 OGSM_DOCS_DIR 挂载。</div>{% endif %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+  <div>
+    <h1 style="margin:0;font-size:23px">专家实测成果报告 (<code>/reports</code>) 与项目资料库</h1>
+    <p class="muted" style="margin:4px 0 0">
+      汇集各专家项目生成的实测 HTML 报告与 OGSM 补充分析文档。点击即可直接在浏览器内打开阅读。
+    </p>
+  </div>
+  <a href="/static/ogsm-mindmap.svg" target="_blank" class="btn-chip active">🖼️ 查看原版《ABIOGSM-品牌Agent》SVG 思维导图 ↗</a>
 </div>
 
-<h2>文档职责</h2>
-<table>
-  <thead><tr><th style="width:190px">文件</th><th>职责</th><th style="width:150px">谁能改</th></tr></thead>
-  <tbody>
-    <tr><td><strong>OGSM-v1-整合版</strong></td><td>O / G / S / M 四层 + 管理节奏 + 修改规则。<strong>唯一的战略真源</strong></td><td>业务负责人</td></tr>
-    <tr><td>goal-restructure</td><td>G 结构与 O 的修正依据（含三处结构性错误的诊断）</td><td>PMO</td></tr>
-    <tr><td>key-registry</td><td>8 主键 schema + 写入口 + 状态机</td><td>PMO 定标准 / Source 落库</td></tr>
-    <tr><td>three-gates</td><td>claim / 授权 / 实验三道 gate 的判定规格</td><td>守衡 + PMO</td></tr>
-    <tr><td>raci-matrix</td><td>11×18 问责矩阵 + 交接契约 + 停机/降级</td><td>PMO</td></tr>
-    <tr><td>pmo-metric-and-experiment</td><td>指标字典 + 实验协议 + 12 条误用</td><td>PMO（口径）+ 财务（T1 定义）</td></tr>
-    <tr><td>p0-four-lines</td><td>四条 P0 产线的场景 / 能力 / 边界</td><td>各段 A</td></tr>
-    <tr><td>scenario-capability-completion</td><td>14 条产线的场景与能力图谱补全</td><td>各段 A</td></tr>
-    <tr><td>governance-consistency-audit</td><td>跨文档一致性审计（8 blocker + 13 Major）</td><td>PMO</td></tr>
-    <tr><td>blocker-fix-verification</td><td>blocker 修复的独立复核</td><td>PMO（独立方）</td></tr>
-    <tr><td>governance-mindmap</td><td>11 级脊梁 + 编号体系唯一口径</td><td>PMO</td></tr>
-  </tbody>
-</table>
+<div class="card">
+  <h2 style="margin:0 0 12px;font-size:17px">📊 各专家项目实测成果报告（<code>/reports</code> 目录直读）</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:130px">所属专家</th>
+        <th>报告文件名称</th>
+        <th style="width:110px">文件大小</th>
+        <th style="width:160px">更新时间</th>
+        <th style="width:110px">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rf in report_files %}
+      <tr>
+        <td><span class="badge badge-doing">{{ rf.expert }}</span></td>
+        <td>
+          <a href="/reports-view/{{ rf.rel }}" target="_blank" style="font-weight:650;color:var(--ink)">
+            {{ rf.name }}
+          </a>
+        </td>
+        <td class="muted">{{ rf.size_kb }} KB</td>
+        <td class="muted">{{ rf.mtime }}</td>
+        <td>
+          <a href="/reports-view/{{ rf.rel }}" target="_blank" class="btn-chip" style="padding:3px 10px;font-size:12px">
+            打开报告 ↗
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+      {% if not report_files %}
+      <tr><td colspan="5" class="muted">未找到 /reports 目录下的 HTML 报告文件。</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
 
-<h2>三个前置（当前 0 实现）</h2>
-<div class="card" style="font-size:13.5px">
-  <p><strong>① 8 主键 schema 落库</strong> —— 在主键落地前，S 层的三条 gate 只能作为设计依据，不能作为系统拦截依据。</p>
-  <p><strong>② B-12 判定抽检</strong> —— 没有 golden set 与抽检一致率，所有 AI 判定只能是「看着还行」。</p>
-  <p><strong>③ 规则库覆盖</strong> —— TikTok Shop 与独立站规则文件为 0，Claim Gate 一上线就面临「全阻断」与「制度失效」两难。</p>
-  <p class="muted" style="margin-top:10px">这三项没落地前，不要把 gate 排进阻断日历。</p>
+<div class="card" style="margin-top:22px">
+  <h2 style="margin:0 0 12px;font-size:17px">📁 OGSM 框架与支撑补充文档（<code>/OGSM</code> 目录）</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>文档名称</th>
+        <th style="width:110px">大小</th>
+        <th style="width:160px">修改时间</th>
+        <th style="width:110px">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in doc_files %}
+      <tr>
+        <td><a href="/docs/{{ f.name }}" style="font-weight:600;color:var(--ink)">{{ f.name }}</a></td>
+        <td class="muted">{{ f.size_kb }} KB</td>
+        <td class="muted">{{ f.mtime }}</td>
+        <td><a href="/docs/{{ f.name }}" class="btn-chip" style="padding:3px 10px;font-size:12px">在线阅读 →</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 {% endblock %}

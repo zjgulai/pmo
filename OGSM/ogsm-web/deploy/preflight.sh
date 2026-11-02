@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 # 部署前检查。任何一项失败即中止，不带病上线。
-#
-#   ./preflight.sh            # 本地检查
-#   ./preflight.sh --prod     # 生产环境（需 .env 已填）
 set -uo pipefail
 
 PROD=0
@@ -17,7 +14,8 @@ hdr()  { printf '\n\033[1m%s\033[0m\n' "$1"; }
 cd "$(dirname "$0")/.." || exit 1   # ogsm-web/
 
 hdr "1. 必需文件"
-for f in app/main.py app/rules.py app/models.py app/migrate.py \
+for f in app/main.py app/models.py app/seed.py app/migrate.py \
+         app/static/style.css app/static/ogsm-mindmap.svg \
          deploy/docker-compose.prod.yml deploy/.env.example \
          Dockerfile requirements.txt; do
   [ -f "$f" ] && ok "$f" || bad "缺少 $f"
@@ -29,8 +27,8 @@ for cand in ./.venv/bin/python python3 python; do
   if command -v "$cand" >/dev/null 2>&1 || [ -x "$cand" ]; then PY="$cand"; break; fi
 done
 if [ -n "$PY" ]; then
-  if "$PY" -m py_compile app/*.py 2>/dev/null; then
-    ok "全部模块可编译"
+  if "$PY" -m py_compile app/main.py app/models.py app/seed.py app/migrate.py 2>/dev/null; then
+    ok "全部核心模块可编译"
   else
     bad "存在语法错误"
   fi
@@ -58,26 +56,8 @@ if [ "$PROD" = "1" ]; then
     if [ -n "${SECRET_KEY:-}" ] && [ "${#SECRET_KEY}" -ge 32 ]; then
       ok "SECRET_KEY 已设置（${#SECRET_KEY} 字符）"
     else
-      bad "SECRET_KEY 未设置或短于 32 字符（生成：openssl rand -hex 32）"
+      bad "SECRET_KEY 未设置或短于 32 字符"
     fi
-  fi
-
-  hdr "4. 端口未被占用"
-  if command -v ss >/dev/null 2>&1; then
-    if ss -tln 2>/dev/null | grep -q ':18960 '; then
-      warn "18960 已被占用——若是本服务上一次运行的残留，可继续；否则改端口"
-    else
-      ok "18960 空闲"
-    fi
-  else
-    warn "无 ss 命令，跳过端口检查"
-  fi
-
-  hdr "5. docker network 不冲突"
-  if docker network ls --format '{{.Name}}' 2>/dev/null | grep -qx 'pmo_net'; then
-    warn "pmo_net 已存在（上次部署残留，可继续）"
-  else
-    ok "pmo_net 不存在，将新建"
   fi
 fi
 

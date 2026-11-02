@@ -1,8 +1,9 @@
-"""OGSM 管理站。
+"""ABI 品牌 & 营销 Agent 多项目管理与汇报门户 (V2)。
 
-形态：Postgres + 单体 FastAPI + 服务端渲染。
-写入口：仅 PMO（口令登录），前台全只读。
-核心：每次渲染前跑 rules.run_checks()，把结构问题摆在页面顶部。
+设计核心：
+1. 严格以《ABIOGSM-品牌Agent》思维导图为唯一主骨架（O → G1~G3 → 6条融合策略 → 14个产品项目）
+2. 以「产品名称（专家代号 + 产品构成）」为项目管理单元，直连 20+ 个线上验收工作台
+3. 深度整合 /reports 目录下的实测成果，遵循附件2（格赖斯准则 + lieflat 去 AI 味 + ste-zh 规范）
 """
 import os
 from datetime import date, datetime, timezone
@@ -17,30 +18,26 @@ from sqlmodel import Session, select
 
 from . import models
 from .db import get_session
-from .rules import run_checks
+from .seed import OBJECTIVE_TEXT, seed
 
-app = FastAPI(title="ABI OGSM")
+app = FastAPI(title="ABI 品牌 & 营销 Agent 项目管理门户")
 BASE = Path(__file__).parent
 templates = Jinja2Templates(directory=str(BASE / "templates"))
-# 本地 Python 3.15 上 jinja2 的 LRU 缓存键不可哈希，关掉缓存即可（模板量小，无性能影响）
 templates.env.cache = None
 
-# 静态文件必须挂载，否则 style.css 404，页面退化成无样式纯文本。
-# 2026-11-02 生产首版就漏了这一行——只验 HTTP 200 不验资源加载，等于没验。
 app.mount("/static", StaticFiles(directory=str(BASE / "static")), name="static")
 
 PMO_PASSWORD = os.getenv("OGSM_PMO_PASSWORD", "pmo")
 SECRET = os.getenv("SECRET_KEY", "change-me-in-production")
 signer = URLSafeSerializer(SECRET, salt="ogsm-pmo")
-DOCS_DIR = Path(os.getenv("OGSM_DOCS_DIR", str(BASE.parent.parent)))
+
+# /docs 挂载到仓库根（容器内为 /docs，本地为 /Users/lute/Project/PMO）
+REPO_ROOT = Path(os.getenv("OGSM_DOCS_DIR", str(BASE.parent.parent)))
+OGSM_DOCS_DIR = REPO_ROOT / "OGSM" if (REPO_ROOT / "OGSM").exists() else REPO_ROOT
+REPORTS_DIR = REPO_ROOT / "reports"
 
 
 def render(request: Request, name: str, context: dict, status_code: int = 200):
-    """统一渲染入口。
-
-    Starlette 新签名是 (request, name, context)；旧的位置参数顺序已被移除。
-    集中在这里适配一次，避免每个路由各写一遍。
-    """
     return templates.TemplateResponse(
         request=request, name=name, context=context, status_code=status_code
     )
@@ -56,195 +53,258 @@ def is_pmo(request: Request) -> bool:
         return False
 
 
-def ctx(request: Request, session: Session, **kw):
-    """所有页面共享的上下文：校验结果 + 登录态 + 导航。"""
-    checks = run_checks(session)
-    base = {
-        "request": request,
-        "checks": checks,
-        "is_pmo": is_pmo(request),
-        "today": date.today().isoformat(),
+def _parse_pipe_lines(raw: str, cols: int) -> list[list[str]]:
+    out = []
+    for line in (raw or "").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        parts = [p.strip() for p in line.split("|")]
+        while len(parts) < cols:
+            parts.append("")
+        out.append(parts[:cols])
+    return out
+
+
+def build_tree_data(s: Session) -> dict:
+    """加载完整 OGSM 树与统计概览。"""
+    goals = s.exec(select(models.GoalGroup).order_by(models.GoalGroup.sort)).all()
+    strategies = s.exec(select(models.StrategyGroup).order_by(models.StrategyGroup.sort)).all()
+    projects = s.exec(select(models.ProductProject).order_by(models.ProductProject.sort)).all()
+    caps = s.exec(select(models.CapabilityItem).order_by(models.CapabilityItem.sort)).all()
+
+    caps_by_proj: dict[str, list[models.CapabilityItem]] = {}
+    for c in caps:
+        caps_by_proj.setdefault(c.project_slug, []).append(c)
+
+    # 为每个项目预解析多字段与能力进度统计
+    proj_views = []
+    proj_by_strat: dict[str, list[dict]] = {}
+    proj_by_goal: dict[str, list[dict]] = {}
+
+    all_sites = []
+    for p in projects:
+        p_caps = caps_by_proj.get(p.slug, [])
+        done_n = sum(1 for c in p_caps if c.status == "已完成")
+        doing_n = sum(1 for c in p_caps if c.status == "进行中")
+        plan_n = sum(1 for c in p_caps if c.status == "方案中")
+        total_n = len(p_caps)
+        pct = int(round((done_n + doing_n * 0.5) / total_n * 100)) if total_n else 0
+
+        # 按业务场景分组能力
+        scen_groups: dict[str, list[models.CapabilityItem]] = {}
+        for c in p_caps:
+            key = c.scenario_line or "核心能力"
+            scen_groups.setdefault(key, []).append(c)
+
+        extra_sites = _parse_pipe_lines(p.extra_sites, 3)
+        if p.workbench_url:
+            all_sites.append((p.expert_name, p.product_name, p.workbench_url, "online" if p.workbench_online else "internal"))
+        for es in extra_sites:
+            all_sites.append((p.expert_name, es[0], es[1], es[2] or "online"))
+
+        pv = {
+            "proj": p,
+            "caps": p_caps,
+            "scen_groups": scen_groups,
+            "done_n": done_n,
+            "doing_n": doing_n,
+            "plan_n": plan_n,
+            "total_n": total_n,
+            "pct": pct,
+            "scenarios_list": [x.strip() for x in (p.scenarios or "").splitlines() if x.strip()],
+            "metrics_list": _parse_pipe_lines(p.metrics_highlights, 3),
+            "gaps_list": [x.strip() for x in (p.pending_gaps or "").splitlines() if x.strip()],
+            "reports_list": _parse_pipe_lines(p.report_links, 2),
+            "extra_sites": extra_sites,
+            "support_list": [x.strip() for x in (p.support_notes or "").splitlines() if x.strip()],
+        }
+        proj_views.append(pv)
+        proj_by_strat.setdefault(p.strategy_code, []).append(pv)
+        proj_by_goal.setdefault(p.goal_code, []).append(pv)
+
+    strat_by_goal: dict[str, list[dict]] = {}
+    for st in strategies:
+        strat_by_goal.setdefault(st.goal_code, []).append(
+            {"strat": st, "projects": proj_by_strat.get(st.code, [])}
+        )
+
+    goal_tree = []
+    for g in goals:
+        g_projs = proj_by_goal.get(g.code, [])
+        g_caps = [c for pv in g_projs for c in pv["caps"]]
+        goal_tree.append(
+            {
+                "goal": g,
+                "strategies": strat_by_goal.get(g.code, []),
+                "projects": g_projs,
+                "proj_count": len(g_projs),
+                "cap_done": sum(1 for c in g_caps if c.status == "已完成"),
+                "cap_doing": sum(1 for c in g_caps if c.status == "进行中"),
+                "cap_plan": sum(1 for c in g_caps if c.status == "方案中"),
+                "cap_total": len(g_caps),
+            }
+        )
+
+    stats = {
+        "project_total": len(projects),
+        "project_live": sum(1 for p in projects if p.status_summary == "已上线"),
+        "project_doing": sum(1 for p in projects if p.status_summary == "进行中"),
+        "project_plan": sum(1 for p in projects if p.status_summary == "方案中"),
+        "cap_total": len(caps),
+        "cap_done": sum(1 for c in caps if c.status == "已完成"),
+        "cap_doing": sum(1 for c in caps if c.status == "进行中"),
+        "cap_plan": sum(1 for c in caps if c.status == "方案中"),
+        "cap_verified": sum(1 for c in caps if c.verify_state == "已验证"),
+        "site_total": len(all_sites),
+        "site_online": sum(1 for s_item in all_sites if s_item[3] == "online"),
     }
-    base.update(kw)
-    return base
+
+    return {
+        "objective": OBJECTIVE_TEXT,
+        "goal_tree": goal_tree,
+        "goals": goals,
+        "strategies": strategies,
+        "proj_views": proj_views,
+        "stats": stats,
+        "all_sites": all_sites,
+    }
 
 
-# ───────────────────────────── 只读视图 ─────────────────────────────
+def ctx(request: Request, session: Session, active_nav: str = "mindmap", **kw) -> dict:
+    data = build_tree_data(session)
+    data.update(
+        {
+            "request": request,
+            "is_pmo": is_pmo(request),
+            "active_nav": active_nav,
+            "today": date.today().isoformat(),
+        }
+    )
+    data.update(kw)
+    return data
+
+
+# ───────────────────────────── 核心视图 ─────────────────────────────
 
 
 @app.get("/", response_class=HTMLResponse)
-def one_pager(request: Request, s: Session = Depends(get_session)):
-    """一页纸：O + 三个 G + 十一条 S。给全员和汇报看。"""
-    obj = s.exec(select(models.Objective)).first()
-    goals = s.exec(select(models.Goal).order_by(models.Goal.sort)).all()
-    results = s.exec(select(models.ResultVariable).order_by(models.ResultVariable.sort)).all()
-    strategies = s.exec(select(models.Strategy).order_by(models.Strategy.sort)).all()
-    by_goal: dict[str, list] = {}
-    for st in strategies:
-        by_goal.setdefault(st.goal_code, []).append(st)
-    return render(request, "onepager.html",
-                  ctx(request, s, obj=obj, goals=goals, results=results, by_goal=by_goal))
+def overview_mindmap(request: Request, s: Session = Depends(get_session)):
+    """首页：OGSM 全景思维导图 + 顶部管理总览仪表盘。"""
+    return render(request, "mindmap.html", ctx(request, s, active_nav="mindmap"))
 
 
-@app.get("/board", response_class=HTMLResponse)
-def board(request: Request, s: Session = Depends(get_session)):
-    """结算看板：目标 vs 实际 + 四象限续投判定 + 熔断状态。"""
-    goals = s.exec(select(models.Goal).order_by(models.Goal.sort)).all()
-    results = s.exec(select(models.ResultVariable).order_by(models.ResultVariable.sort)).all()
-    snaps = s.exec(select(models.MetricSnapshot).order_by(models.MetricSnapshot.id.desc())).all()
-    latest: dict[str, models.MetricSnapshot] = {}
-    for sn in snaps:
-        latest.setdefault(f"{sn.line_name}|{sn.metric_id}", sn)
-
-    # 四象限判定
-    lines = s.exec(select(models.Line)).all()
-    quad = []
-    for ln in lines:
-        if ln.kind == "out":
-            continue
-        consumed = bool((ln.consumer or "").strip())
-        has_metric = any(k.startswith(f"{ln.name}|") for k in latest)
-        actual = next((v for k, v in latest.items() if k.startswith(f"{ln.name}|")), None)
-        hit = None
-        if actual and actual.actual and actual.target:
-            try:
-                a, t = float(actual.actual), float(actual.target)
-                hit = a >= t * 0.8
-            except ValueError:
-                hit = None
-        if hit is None:
-            verdict = "待结算"
-        elif hit and consumed:
-            verdict = "续投"
-        elif hit and not consumed:
-            verdict = "条件续投（6 个月）"
-        elif not hit and consumed:
-            verdict = "条件续投（预算减半）"
-        else:
-            verdict = "关停"
-        quad.append({"line": ln, "verdict": verdict, "consumed": consumed, "has_metric": has_metric})
-
-    return render(request, "board.html",
-                  ctx(request, s, goals=goals, results=results, quad=quad, latest=latest))
+@app.get("/projects", response_class=HTMLResponse)
+def projects_matrix(request: Request, goal: str = "", status: str = "", s: Session = Depends(get_session)):
+    """14 大产品项目管理矩阵（以产品名称为项目名称）。"""
+    return render(
+        request,
+        "projects.html",
+        ctx(request, s, active_nav="projects", filter_goal=goal, filter_status=status),
+    )
 
 
-@app.get("/lines", response_class=HTMLResponse)
-def lines(request: Request, s: Session = Depends(get_session)):
-    """产线台账：18 项登记 + 成熟度 + 消费方 + work_item。"""
-    rows = s.exec(select(models.Line)).all()
-    items = s.exec(select(models.WorkItem).order_by(models.WorkItem.id.desc())).all()
-    grouped: dict[str, list] = {}
-    for ln in rows:
-        grouped.setdefault(ln.layer, []).append(ln)
-    order = ["G1", "G2", "G3", "support", "governance", "out"]
-    grouped = {k: grouped[k] for k in order if k in grouped}
-    return render(request, "lines.html", ctx(request, s, grouped=grouped, items=items))
+@app.get("/present", response_class=HTMLResponse)
+def presentation_mode(request: Request, s: Session = Depends(get_session)):
+    """部门项目汇报演示视图（对齐附件2的汇报结构与去 AI 味表达）。"""
+    return render(request, "present.html", ctx(request, s, active_nav="present"))
 
 
-@app.get("/metrics", response_class=HTMLResponse)
-def metrics(request: Request, s: Session = Depends(get_session)):
-    rows = s.exec(select(models.Metric).order_by(models.Metric.layer, models.Metric.metric_id)).all()
-    grouped: dict[str, list] = {}
-    for m in rows:
-        grouped.setdefault(m.layer, []).append(m)
-    return render(request, "metrics.html", ctx(request, s, grouped=grouped))
+@app.get("/sites", response_class=HTMLResponse)
+def workbenches_directory(request: Request, s: Session = Depends(get_session)):
+    """全部 23 个线上工作台与子平台直达导航页。"""
+    return render(request, "sites.html", ctx(request, s, active_nav="sites"))
 
 
-@app.get("/baselines", response_class=HTMLResponse)
-def baselines(request: Request, s: Session = Depends(get_session)):
-    """基线台账：B1–B6 / D 的口径、窗口、来源、数值、锁定人。
-
-    这是 T0 唯一必须关闭的清单。C5/C5b 的警告能不能消失，取决于这张表。
-    """
-    rows = s.exec(select(models.Baseline).order_by(models.Baseline.sort)).all()
-    locked = [b for b in rows if b.value]
-    return render(request, "baselines.html",
-                  ctx(request, s, rows=rows, locked_n=len(locked), total=len(rows)))
+# compatibility redirects for old routes
+@app.get("/board")
+@app.get("/lines")
+@app.get("/experts")
+@app.get("/baselines")
+@app.get("/metrics")
+def legacy_redirect():
+    return RedirectResponse("/projects", status_code=302)
 
 
-@app.post("/admin/baseline")
-def lock_baseline(
-    request: Request,
-    key: str = Form(...),
-    value: str = Form(...),
-    locked_by: str = Form(...),
-    note: str = Form(default=""),
-    s: Session = Depends(get_session),
-):
-    """锁定一条基线。
-
-    强制要求 locked_by：无人认账的基线不能用于考核（对应 C5b）。
-    value 为空则拒绝——不允许用空白冒充「已锁定」。
-    """
-    if not is_pmo(request):
-        return RedirectResponse("/login", status_code=303)
-    if not value.strip() or not locked_by.strip():
-        return RedirectResponse("/baselines", status_code=303)
-    b = s.exec(select(models.Baseline).where(models.Baseline.key == key)).first()
-    if b:
-        b.value = value.strip()
-        b.locked_by = locked_by.strip()
-        b.locked_at = datetime.now(timezone.utc)
-        if note:
-            b.note = note
-        s.add(b)
-        s.commit()
-    return RedirectResponse("/baselines", status_code=303)
-
-
-@app.get("/experts", response_class=HTMLResponse)
-def experts(request: Request, s: Session = Depends(get_session)):
-    """专家 × OGSM 对齐：承诺与资源是否对齐。
-
-    与 /lines 的区别：/lines 看「每条产线是谁」，/experts 看「每个人挂在哪条线」。
-    两个方向都看，才能发现「承诺了没做」与「做了没承诺」。
-    """
-    rows = s.exec(select(models.Expert).order_by(models.Expert.sort)).all()
-    by_status: dict[str, list] = {}
-    for e in rows:
-        by_status.setdefault(e.status, []).append(e)
-    counts = {k: len(v) for k, v in by_status.items()}
-    for k in ("aligned", "has_real_no_name", "orphan", "name_no_build", "excluded"):
-        counts.setdefault(k, 0)
-    return render(request, "experts.html", ctx(request, s, by_status=by_status, counts=counts))
+# ───────────────────────────── 实测报告与文档查阅 ─────────────────────────────
 
 
 @app.get("/docs", response_class=HTMLResponse)
 def docs_index(request: Request, s: Session = Depends(get_session)):
-    """治理索引：列出原始 md 文档（只读）。"""
-    files = []
-    if DOCS_DIR.exists():
-        for p in sorted(DOCS_DIR.glob("*.md")):
-            files.append({"name": p.name, "size": p.stat().st_size, "mtime": datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%d %H:%M")})
-    return render(request, "docs.html", ctx(request, s, files=files))
+    """实测报告（/reports）与 OGSM 资料库索引。"""
+    report_files = []
+    if REPORTS_DIR.exists():
+        for p in sorted(REPORTS_DIR.rglob("*.html")):
+            rel = p.relative_to(REPORTS_DIR)
+            expert = rel.parts[0] if len(rel.parts) > 1 else "综合"
+            report_files.append(
+                {
+                    "expert": expert,
+                    "name": p.name,
+                    "rel": str(rel),
+                    "size_kb": round(p.stat().st_size / 1024, 1),
+                    "mtime": datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%d %H:%M"),
+                }
+            )
+
+    doc_files = []
+    if OGSM_DOCS_DIR.exists():
+        for p in sorted(OGSM_DOCS_DIR.rglob("*.md")):
+            if "ogsm-web" in p.parts:
+                continue
+            rel = p.relative_to(OGSM_DOCS_DIR)
+            doc_files.append(
+                {
+                    "name": str(rel),
+                    "size_kb": round(p.stat().st_size / 1024, 1),
+                    "mtime": datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%d %H:%M"),
+                }
+            )
+
+    return render(
+        request,
+        "docs.html",
+        ctx(request, s, active_nav="docs", report_files=report_files, doc_files=doc_files),
+    )
 
 
-@app.get("/docs/{name}", response_class=HTMLResponse)
+@app.get("/reports-view/{expert}/{filename}", response_class=HTMLResponse)
+def view_expert_report(expert: str, filename: str):
+    """直接在线打开 /reports 下的专家实测 HTML 报告。"""
+    target = (REPORTS_DIR / expert / filename).resolve()
+    if not target.exists() or REPORTS_DIR.resolve() not in target.parents:
+        return RedirectResponse("/docs", status_code=303)
+    return HTMLResponse(target.read_text(encoding="utf-8", errors="replace"))
+
+
+@app.get("/docs/{name:path}", response_class=HTMLResponse)
 def docs_view(name: str, request: Request, s: Session = Depends(get_session)):
-    p = (DOCS_DIR / name).resolve()
-    if not p.exists() or p.suffix != ".md" or DOCS_DIR.resolve() not in p.parents:
+    p = (OGSM_DOCS_DIR / name).resolve()
+    if not p.exists() or p.suffix != ".md" or OGSM_DOCS_DIR.resolve() not in p.parents:
         return RedirectResponse("/docs", status_code=303)
     text = p.read_text(encoding="utf-8", errors="replace")
-    return render(request, "doc.html", ctx(request, s, name=name, text=text))
+    return render(request, "doc.html", ctx(request, s, active_nav="docs", name=name, text=text))
 
 
-# ───────────────────────────── PMO 写入口 ─────────────────────────────
+# ───────────────────────────── PMO 管理后台 ─────────────────────────────
 
 
 @app.get("/login", response_class=HTMLResponse)
 def login_form(request: Request, s: Session = Depends(get_session)):
-    return render(request, "login.html", ctx(request, s, err=None))
+    return render(request, "login.html", ctx(request, s, active_nav="admin", err=None))
 
 
 @app.post("/login")
-def login(request: Request, password: str = Form(...)):
+def login(request: Request, password: str = Form(...), s: Session = Depends(get_session)):
     if password != PMO_PASSWORD:
-        return render(request, "login.html",
-                      {"err": "口令不正确", "is_pmo": False, "checks": None,
-                       "today": date.today().isoformat()},
-                      status_code=401)
+        return render(
+            request,
+            "login.html",
+            ctx(request, s, active_nav="admin", err="口令不正确"),
+            status_code=401,
+        )
     resp = RedirectResponse("/admin", status_code=303)
-    resp.set_cookie("ogsm_pmo", signer.dumps("pmo"), httponly=True, samesite="lax", max_age=86400)
+    resp.set_cookie("ogsm_pmo", signer.dumps("pmo"), httponly=True, samesite="lax", max_age=86400 * 7)
     return resp
 
 
@@ -256,103 +316,104 @@ def logout():
 
 
 @app.get("/admin", response_class=HTMLResponse)
-def admin(request: Request, s: Session = Depends(get_session)):
+def admin_panel(request: Request, s: Session = Depends(get_session)):
     if not is_pmo(request):
         return RedirectResponse("/login", status_code=303)
-    goals = s.exec(select(models.Goal).order_by(models.Goal.sort)).all()
-    lines_rows = s.exec(select(models.Line)).all()
-    items = s.exec(select(models.WorkItem).order_by(models.WorkItem.id.desc())).all()
-    return render(request, "admin.html", ctx(request, s, goals=goals, lines=lines_rows, items=items))
+    return render(request, "admin.html", ctx(request, s, active_nav="admin"))
 
 
-@app.post("/admin/goal/{goal_id}")
-def update_goal(
-    goal_id: int,
+@app.post("/admin/project/{project_id}")
+def update_project(
+    project_id: int,
     request: Request,
-    baseline_locked: str = Form(default=""),
-    ga: str = Form(default=""),
+    product_name: str = Form(...),
+    workbench_url: str = Form(default=""),
+    status_summary: str = Form(default="进行中"),
+    owner: str = Form(default=""),
+    scenarios: str = Form(default=""),
+    verified_summary: str = Form(default=""),
+    pending_gaps: str = Form(default=""),
     s: Session = Depends(get_session),
 ):
     if not is_pmo(request):
         return RedirectResponse("/login", status_code=303)
-    g = s.get(models.Goal, goal_id)
-    if g:
-        g.ga = ga or g.ga
-        g.baseline_locked = baseline_locked == "on"
-        s.add(g)
+    p = s.get(models.ProductProject, project_id)
+    if p:
+        p.product_name = product_name.strip() or p.product_name
+        p.workbench_url = workbench_url.strip()
+        p.status_summary = status_summary
+        p.owner = owner.strip()
+        p.scenarios = scenarios.strip()
+        p.verified_summary = verified_summary.strip()
+        p.pending_gaps = pending_gaps.strip()
+        p.updated_at = datetime.now(timezone.utc)
+        s.add(p)
         s.commit()
-    return RedirectResponse("/admin", status_code=303)
+    return RedirectResponse("/admin#proj-" + (p.slug if p else ""), status_code=303)
 
 
-@app.post("/admin/line/{line_id}")
-def update_line(
-    line_id: int,
+@app.post("/admin/capability/{cap_id}")
+def update_capability(
+    cap_id: int,
     request: Request,
-    maturity: str = Form(default=""),
-    seg_a: str = Form(default=""),
-    consumer: str = Form(default=""),
-    status: str = Form(default=""),
+    name: str = Form(...),
+    description: str = Form(default=""),
+    status: str = Form(default="进行中"),
+    verify_state: str = Form(default="已验证"),
+    integration_name: str = Form(default=""),
+    integration_url: str = Form(default=""),
     s: Session = Depends(get_session),
 ):
     if not is_pmo(request):
         return RedirectResponse("/login", status_code=303)
-    ln = s.get(models.Line, line_id)
-    if ln:
-        if maturity:
-            ln.maturity = maturity
-        if seg_a:
-            ln.seg_a = seg_a
-        if consumer:
-            ln.consumer = consumer
-        if status:
-            ln.status = status
-        s.add(ln)
+    c = s.get(models.CapabilityItem, cap_id)
+    if c:
+        c.name = name.strip() or c.name
+        c.description = description.strip()
+        c.status = status
+        c.verify_state = verify_state
+        c.integration_name = integration_name.strip()
+        c.integration_url = integration_url.strip()
+        s.add(c)
         s.commit()
-    return RedirectResponse("/admin", status_code=303)
+    return RedirectResponse("/admin#proj-" + (c.project_slug if c else ""), status_code=303)
 
 
-@app.post("/admin/snapshot")
-def add_snapshot(
+@app.post("/admin/capability-add")
+def add_capability(
     request: Request,
-    line_name: str = Form(...),
-    metric_id: str = Form(...),
-    period: str = Form(...),
-    baseline: str = Form(default=""),
-    target: str = Form(default=""),
-    actual: str = Form(default=""),
-    note: str = Form(default=""),
+    project_slug: str = Form(...),
+    scenario_line: str = Form(default=""),
+    name: str = Form(...),
+    description: str = Form(default=""),
+    status: str = Form(default="方案中"),
+    verify_state: str = Form(default="待验证"),
     s: Session = Depends(get_session),
 ):
     if not is_pmo(request):
         return RedirectResponse("/login", status_code=303)
-    s.add(models.MetricSnapshot(
-        line_name=line_name, metric_id=metric_id, period=period,
-        baseline=baseline, target=target, actual=actual, note=note,
-    ))
-    s.commit()
-    return RedirectResponse("/board", status_code=303)
-
-
-@app.post("/admin/workitem/{item_id}")
-def update_workitem(
-    item_id: int,
-    request: Request,
-    status: str = Form(default=""),
-    evidence: str = Form(default=""),
-    blocker: str = Form(default=""),
-    s: Session = Depends(get_session),
-):
-    if not is_pmo(request):
-        return RedirectResponse("/login", status_code=303)
-    wi = s.get(models.WorkItem, item_id)
-    if wi:
-        if status:
-            wi.status = status
-        wi.evidence = evidence or wi.evidence
-        wi.blocker = blocker
-        wi.updated_at = datetime.now(timezone.utc)
-        s.add(wi)
+    if name.strip():
+        s.add(
+            models.CapabilityItem(
+                project_slug=project_slug,
+                scenario_line=scenario_line.strip(),
+                name=name.strip(),
+                description=description.strip(),
+                status=status,
+                verify_state=verify_state,
+                sort=99,
+            )
+        )
         s.commit()
+    return RedirectResponse(f"/admin#proj-{project_slug}", status_code=303)
+
+
+@app.post("/admin/reset-seed")
+def reset_seed_data(request: Request):
+    """一键恢复为思维导图与 /reports 的标准初始数据。"""
+    if not is_pmo(request):
+        return RedirectResponse("/login", status_code=303)
+    seed(force_reset=True)
     return RedirectResponse("/admin", status_code=303)
 
 

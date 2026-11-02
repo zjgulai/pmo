@@ -1,106 +1,117 @@
 {% extends "base.html" %}
-{% block title %}PMO 后台 · ABI OGSM{% endblock %}
+{% block title %}项目更新后台 · ABI 品牌 & 营销 Agent{% endblock %}
 {% block body %}
 
-<h1>PMO 后台</h1>
-<p class="muted">唯一写入口。所有改动落 Postgres，前台立即生效。结构校验在每次渲染时重跑。</p>
-
-<h2>G 基线锁定</h2>
-<table>
-  <thead><tr><th style="width:56px">G</th><th>名称</th><th style="width:280px">G-A / 基线</th></tr></thead>
-  <tbody>
-  {% for g in goals %}
-    <tr>
-      <td><code>{{ g.code }}</code></td>
-      <td>{{ g.name }} · <code>{{ g.main_metric_id }}</code></td>
-      <td>
-        <form class="inline" method="post" action="/admin/goal/{{ g.id }}">
-          <input name="ga" value="{{ g.ga }}" style="width:110px" placeholder="G-A">
-          <label style="font-size:12.5px;display:flex;align-items:center;gap:5px">
-            <input type="checkbox" name="baseline_locked" {% if g.baseline_locked %}checked{% endif %}>
-            基线已锁定
-          </label>
-          <button class="ghost">保存</button>
-        </form>
-      </td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
-
-<h2>产线台账</h2>
-<table>
-  <thead><tr><th style="width:170px">产线</th><th>编辑</th></tr></thead>
-  <tbody>
-  {% for ln in lines %}
-    <tr {% if ln.status == 'out' %}style="opacity:.55"{% endif %}>
-      <td><strong>{{ ln.name }}</strong><div class="muted" style="font-size:11.5px">{{ ln.layer }} · {{ ln.kind }}</div></td>
-      <td>
-        <form class="inline" method="post" action="/admin/line/{{ ln.id }}">
-          <select name="maturity" style="width:78px">
-            {% for m in ['M0','M1','M2','M3','M4'] %}
-              <option value="{{ m }}" {% if ln.maturity == m %}selected{% endif %}>{{ m }}</option>
-            {% endfor %}
-          </select>
-          <input name="seg_a" value="{{ ln.seg_a or '' }}" placeholder="段 A" style="width:110px">
-          <input name="consumer" value="{{ ln.consumer or '' }}" placeholder="消费方（逗号分隔）" style="width:200px">
-          <select name="status" style="width:96px">
-            {% for st in ['active','watch','retire','out'] %}
-              <option value="{{ st }}" {% if ln.status == st %}selected{% endif %}>{{ st }}</option>
-            {% endfor %}
-          </select>
-          <button class="ghost">保存</button>
-        </form>
-      </td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
-
-<h2>交付台账</h2>
-<table>
-  <thead><tr><th style="width:150px">产线</th><th>交付物</th><th>更新</th></tr></thead>
-  <tbody>
-  {% for wi in items %}
-    <tr>
-      <td>{{ wi.line_name }}</td>
-      <td>{{ wi.title }}</td>
-      <td>
-        <form class="inline" method="post" action="/admin/workitem/{{ wi.id }}">
-          <select name="status" style="width:92px">
-            {% for st in ['方案中','进行中','已完成'] %}
-              <option value="{{ st }}" {% if wi.status == st %}selected{% endif %}>{{ st }}</option>
-            {% endfor %}
-          </select>
-          <input name="evidence" value="{{ wi.evidence }}" placeholder="验收证据" style="width:170px">
-          <input name="blocker" value="{{ wi.blocker }}" placeholder="blocker" style="width:200px">
-          <button class="ghost">保存</button>
-        </form>
-      </td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
-
-<h2>录入结算快照</h2>
-<form class="card inline" method="post" action="/admin/snapshot">
-  <input name="line_name" placeholder="产线名" required style="width:170px">
-  <input name="metric_id" placeholder="m-l1-cac@2" required style="width:150px">
-  <input name="period" placeholder="2027Q1" required style="width:96px">
-  <input name="baseline" placeholder="基线" style="width:96px">
-  <input name="target" placeholder="目标数值" style="width:110px">
-  <input name="actual" placeholder="实际数值" style="width:110px">
-  <input name="note" placeholder="备注" style="width:150px">
-  <button>写入</button>
-</form>
-
-<h2>当前校验状态</h2>
-<div class="card">
-  <p><strong>{{ checks.summary() }}</strong></p>
-  <ul style="font-size:13px;margin:8px 0 0;padding-left:20px">
-  {% for f in checks.findings %}<li class="{{ 'err' if f.level == 'error' else 'warn' }}"><code>{{ f.code }}</code> {{ f.message }}</li>{% endfor %}
-  {% if not checks.findings %}<li class="muted">无</li>{% endif %}
-  </ul>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+  <div>
+    <h1 style="margin:0;font-size:23px">⚙️ PMO 项目与能力进度更新台</h1>
+    <p class="muted" style="margin:4px 0 0">
+      围绕 14 个产品项目直接修改工作台地址、项目状态、实测成果摘要，或更新细分能力点的进度（已完成 / 进行中 / 方案中）。保存后前台立即生效。
+    </p>
+  </div>
+  <form method="post" action="/admin/reset-seed" onsubmit="return confirm('确认将全部 14 个项目与能力重置为思维导图与 /reports 的标准初始数据吗？')">
+    <button class="ghost" type="submit">🔄 恢复标准初始数据</button>
+  </form>
 </div>
+
+{% for pv in proj_views %}
+{% set p = pv.proj %}
+<div class="card" id="proj-{{ p.slug }}" style="margin-bottom:20px">
+  <form method="post" action="/admin/project/{{ p.id }}">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="badge badge-{{ p.goal_code | lower }}">{{ p.goal_code }} · {{ p.strategy_code }}</span>
+        <strong style="font-size:17px">{{ p.expert_name }}</strong>
+        <input name="product_name" value="{{ p.product_name }}" style="width:210px;font-weight:600" placeholder="产品构成名称">
+        <input name="workbench_url" value="{{ p.workbench_url }}" style="width:240px;font-family:var(--mono)" placeholder="https://...">
+        <select name="status_summary">
+          {% for st in ['已上线', '进行中', '方案中'] %}
+          <option value="{{ st }}" {{ 'selected' if p.status_summary == st else '' }}>项目状态：{{ st }}</option>
+          {% endfor %}
+        </select>
+        <input name="owner" value="{{ p.owner }}" style="width:130px" placeholder="负责团队">
+      </div>
+      <button type="submit">💾 保存项目信息</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+      <div>
+        <div class="section-label">业务场景（每行一条）</div>
+        <textarea name="scenarios" rows="2" style="width:100%">{{ p.scenarios }}</textarea>
+        <div class="section-label" style="margin-top:8px">待补齐项（每行一条）</div>
+        <textarea name="pending_gaps" rows="3" style="width:100%">{{ p.pending_gaps }}</textarea>
+      </div>
+      <div>
+        <div class="section-label">实测成果总结（/reports 提炼，遵循去 AI 味规范）</div>
+        <textarea name="verified_summary" rows="6" style="width:100%">{{ p.verified_summary }}</textarea>
+      </div>
+    </div>
+  </form>
+
+  <!-- 能力图谱行级编辑 -->
+  <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line-strong)">
+    <div class="section-label">细分能力图谱与进度（共 {{ pv.caps | length }} 项）</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:190px">能力名称</th>
+          <th>能力说明</th>
+          <th style="width:120px">进度状态</th>
+          <th style="width:120px">实测验证</th>
+          <th style="width:150px">待整合平台</th>
+          <th style="width:180px">整合来源 URL</th>
+          <th style="width:80px">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in pv.caps %}
+        <tr>
+          <form method="post" action="/admin/capability/{{ c.id }}">
+            <td><input name="name" value="{{ c.name }}" style="width:100%"></td>
+            <td><input name="description" value="{{ c.description }}" style="width:100%"></td>
+            <td>
+              <select name="status" style="width:100%">
+                {% for st in ['已完成', '进行中', '方案中'] %}
+                <option value="{{ st }}" {{ 'selected' if c.status == st else '' }}>{{ st }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <select name="verify_state" style="width:100%">
+                {% for vs in ['已验证', '部分验证', '待验证'] %}
+                <option value="{{ vs }}" {{ 'selected' if c.verify_state == vs else '' }}>{{ vs }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td><input name="integration_name" value="{{ c.integration_name }}" style="width:100%" placeholder="选填"></td>
+            <td><input name="integration_url" value="{{ c.integration_url }}" style="width:100%" placeholder="https://..."></td>
+            <td><button type="submit" class="ghost" style="padding:4px 10px">更新</button></td>
+          </form>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- 新增能力项 -->
+    <form method="post" action="/admin/capability-add" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px">
+      <input type="hidden" name="project_slug" value="{{ p.slug }}">
+      <input name="scenario_line" placeholder="所属场景线（选填）" style="width:180px">
+      <input name="name" placeholder="新增能力名称" required style="width:170px">
+      <input name="description" placeholder="能力说明" style="width:280px">
+      <select name="status">
+        <option value="方案中">方案中</option>
+        <option value="进行中">进行中</option>
+        <option value="已完成">已完成</option>
+      </select>
+      <select name="verify_state">
+        <option value="待验证">待验证</option>
+        <option value="部分验证">部分验证</option>
+        <option value="已验证">已验证</option>
+      </select>
+      <button type="submit" class="ghost">+ 新增能力点</button>
+    </form>
+  </div>
+</div>
+{% endfor %}
 
 {% endblock %}

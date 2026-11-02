@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}OGSM 全景思维导图 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block body %}
+
+<!-- 顶部愿景横幅 -->
+<div class="hero-banner">
+  <div>
+    <div class="hero-tag">ABI 应用与算法组 · 2026Q4 总体愿景 (Objective)</div>
+    <h1 class="hero-title">{{ objective }}</h1>
+    <p class="hero-sub">
+      围绕 3 大业务目标（G1–G3）、6 条专家融合策略，统筹建设 <strong>14 个品牌 Agent 产品项目</strong>。点击任意项目工作台网址即可直接进入线上系统，点击实测报告可查看 <code>/reports</code> 详情。
+    </p>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn-chip" onclick="toggleSvgModal()" style="background:rgba(255,255,255,0.14);color:#fff;border-color:rgba(255,255,255,0.28)">
+      🖼️ 查看原版思维导图 (SVG)
+    </button>
+    <a href="/projects" class="btn-chip" style="background:#3b82f6;color:#fff;border-color:#3b82f6">
+      📋 进入 14 大项目卡片视图 →
+    </a>
+  </div>
+</div>
+
+<!-- 顶部 4 格管理仪表盘 -->
+<div class="kpi-strip">
+  <div class="kpi-card">
+    <div class="kpi-label">纳管产品项目（专家 Agent）</div>
+    <div class="kpi-val">{{ stats.project_total }}<small>个项目</small></div>
+    <div class="kpi-sub">
+      <span class="badge badge-done">已上线 {{ stats.project_live }}</span>
+      <span class="badge badge-doing">进行中 {{ stats.project_doing }}</span>
+      <span class="badge badge-plan">方案中 {{ stats.project_plan }}</span>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">能力图谱进度（共 {{ stats.cap_total }} 项）</div>
+    <div class="kpi-val">{{ stats.cap_done }}<small>项已完成</small></div>
+    <div class="kpi-sub">
+      <span class="badge badge-doing">进行中 {{ stats.cap_doing }}</span>
+      <span class="badge badge-plan">方案中 {{ stats.cap_plan }}</span>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">生产实测验证（ste-zh 口径）</div>
+    <div class="kpi-val">{{ stats.cap_verified }}<small>/ {{ stats.cap_total }} 项已验证</small></div>
+    <div class="kpi-sub">
+      <span class="muted">数据溯源至 9 个专家目录 12 份实测报告</span>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">验收工作台与关联子平台</div>
+    <div class="kpi-val">{{ stats.site_online }}<small>/ {{ stats.site_total }} 在线可达</small></div>
+    <div class="kpi-sub">
+      <a href="/sites" style="font-weight:600">打开全部站点导航 →</a>
+    </div>
+  </div>
+</div>
+
+<!-- 交互筛选栏 -->
+<div class="toolbar">
+  <div class="toolbar-group">
+    <span class="toolbar-label">按目标(G)筛选：</span>
+    <button class="btn-chip active" onclick="filterGoal('ALL', this)">全部目标 (G1–G3)</button>
+    <button class="btn-chip" onclick="filterGoal('G1', this)">G1 加速多渠道声量增长 (5)</button>
+    <button class="btn-chip" onclick="filterGoal('G2', this)">G2 敏捷响应声量影响与机会 (4)</button>
+    <button class="btn-chip" onclick="filterGoal('G3', this)">G3 数据资产AI数字化运营 (5)</button>
+  </div>
+  <div class="toolbar-group">
+    <span class="toolbar-label">按能力状态高亮：</span>
+    <button class="btn-chip active" onclick="filterCapStatus('ALL', this)">全部 ({{ stats.cap_total }})</button>
+    <button class="btn-chip" onclick="filterCapStatus('已完成', this)">🟢 已完成 ({{ stats.cap_done }})</button>
+    <button class="btn-chip" onclick="filterCapStatus('进行中', this)">🔵 进行中 ({{ stats.cap_doing }})</button>
+    <button class="btn-chip" onclick="filterCapStatus('方案中', this)">⚪ 方案中 ({{ stats.cap_plan }})</button>
+  </div>
+</div>
+
+<!-- 思维导图层级表头说明（严格对齐附件1图例） -->
+<div class="mm-legend-bar" style="grid-template-columns: 240px 270px 1fr;">
+  <div>① 策略 (S · 专家融合方向)</div>
+  <div>② 专家昵称 → 产品构成 → 验收工作台</div>
+  <div>③ 业务场景 → 能力图谱 → 进度 &amp; 待整合子站 → /reports 实测成果</div>
+</div>
+
+<!-- 主体：严格还原附件1的 G -> S -> 专家产品 -> 场景与能力图谱 树状结构 -->
+{% for gnode in goal_tree %}
+{% set g = gnode.goal %}
+<section class="mm-goal-section mm-goal-{{ g.code }}" data-goal="{{ g.code }}">
+  <div class="mm-goal-header">
+    <div>
+      <div class="mm-goal-title">{{ g.title }}</div>
+      <div class="mm-goal-sub">{{ g.subtitle }}</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="badge badge-done">已完成 {{ gnode.cap_done }}</span>
+      <span class="badge badge-doing">进行中 {{ gnode.cap_doing }}</span>
+      <span class="badge badge-plan">方案中 {{ gnode.cap_plan }}</span>
+    </div>
+  </div>
+
+  {% for snode in gnode.strategies %}
+  {% set st = snode.strat %}
+  <div class="mm-strat-row">
+    <!-- 左列：融合策略 S -->
+    <div class="mm-strat-cell">
+      <div class="mm-strat-code">策略 {{ st.code }}</div>
+      <div class="mm-strat-text">{{ st.title }}</div>
+    </div>
+
+    <!-- 右侧：该策略下的专家产品项目列表 -->
+    <div class="mm-projects-col">
+      {% for pv in snode.projects %}
+      {% set p = pv.proj %}
+      <div class="mm-proj-row" id="node-{{ p.slug }}">
+        <!-- 中列：专家昵称 + 产品构成 + 验收工作台 + 关联子站 -->
+        <div class="mm-proj-node">
+          <div class="mm-expert-head">
+            <span class="mm-expert-tag">
+              {{ p.expert_name }}
+              <span class="badge {{ 'badge-done' if p.status_summary == '已上线' else ('badge-doing' if p.status_summary == '进行中' else 'badge-plan') }}">
+                {{ p.status_summary }}
+              </span>
+            </span>
+            <a href="/projects#proj-{{ p.slug }}" style="font-size:12px;font-weight:600">项目详情 →</a>
+          </div>
+          <div class="mm-product-name">{{ p.product_name }}</div>
+
+          {% if p.workbench_url %}
+          <div>
+            <a class="wb-link" href="{{ p.workbench_url }}" target="_blank" rel="noopener">
+              <span class="wb-dot"></span>
+              {{ p.workbench_url | replace('https://', '') | replace('http://', '') | replace('/', '') }} ↗
+            </a>
+          </div>
+          {% endif %}
+
+          {% if pv.extra_sites %}
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px">
+            <span class="muted" style="font-size:11px;font-weight:600">关联/待整合平台：</span>
+            {% for es in pv.extra_sites %}
+            <a class="wb-link" href="{{ es[1] }}" target="_blank" rel="noopener" style="background:#f8fafc;border-color:#e2e8f0;color:#334155;font-size:11.5px">
+              <span class="wb-dot {{ 'internal' if es[2] == 'internal' else '' }}"></span>
+              {{ es[0] }} ({{ es[1] | replace('https://', '') | replace('/', '') }}) ↗
+            </a>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if pv.metrics_list %}
+          <div style="margin-top:6px;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:3px">
+            {% for m in pv.metrics_list[:2] %}
+            <div style="font-size:11.5px;display:flex;justify-content:space-between;gap:6px">
+              <span class="muted">{{ m[0] }}</span>
+              <strong style="color:var(--ink)">{{ m[1] }}</strong>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- 右列：业务场景 → 能力图谱与进度 → /reports 实测成果摘要 -->
+        <div class="mm-branches">
+          {% for scen_line, cap_list in pv.scen_groups.items() %}
+          <div class="mm-scen-group">
+            <div class="mm-scen-title">业务场景：{{ scen_line }}</div>
+            <div class="mm-cap-grid">
+              {% for c in cap_list %}
+              <div class="mm-cap-leaf st-{{ c.status }}" data-cap-status="{{ c.status }}">
+                <div class="mm-cap-top">
+                  <span class="mm-cap-name">{{ c.name }}</span>
+                  <div style="display:flex;gap:4px;align-items:center">
+                    <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">
+                      {{ c.status }}
+                    </span>
+                    {% if c.verify_state == '已验证' %}
+                    <span class="badge badge-verify" title="已有 /reports 实测报告或线上生产验证">✓ 已验证</span>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="mm-cap-desc">{{ c.description }}</div>
+                {% if c.integration_name %}
+                <div class="mm-cap-integ">
+                  <span>🔗 待整合：<strong>{{ c.integration_name }}</strong></span>
+                  {% if c.integration_url %}
+                  <a href="{{ c.integration_url }}" target="_blank" rel="noopener" style="font-family:var(--mono)">
+                    {{ c.integration_url | replace('https://', '') | replace('/', '') }} ↗
+                  </a>
+                  {% endif %}
+                </div>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+
+          <!-- /reports 实测总结条 -->
+          <div class="mm-report-strip">
+            <div style="flex:1">
+              <strong style="color:#0f172a">📊 实测进展：</strong>{{ p.verified_summary }}
+            </div>
+            {% if pv.reports_list %}
+            <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+              {% for rep in pv.reports_list %}
+              <a class="btn-chip" href="{{ rep[1] }}" target="_blank" style="font-size:11.5px;padding:3px 9px;background:#fff">
+                📄 {{ rep[0] }} ↗
+              </a>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</section>
+{% endfor %}
+
+<!-- 原版 SVG 思维导图全屏查看弹窗 -->
+<div id="svg-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.82);z-index:200;padding:24px;flex-direction:column">
+  <div style="background:#fff;border-radius:12px 12px 0 0;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)">
+    <div>
+      <strong>《ABIOGSM-品牌Agent》原始思维导图 (SVG 矢量全图)</strong>
+      <span class="muted" style="font-size:12.5px;margin-left:10px">支持滚轮或双指缩放浏览细节</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a href="/static/ogsm-mindmap.svg" target="_blank" class="btn-chip">在新标签页打开原图 ↗</a>
+      <button class="btn-chip active" onclick="toggleSvgModal()">关闭 ✕</button>
+    </div>
+  </div>
+  <div style="flex:1;background:#fff;border-radius:0 0 12px 12px;overflow:auto;padding:16px;text-align:center">
+    <img src="/static/ogsm-mindmap.svg" alt="ABIOGSM-品牌Agent 思维导图" style="max-width:none;width:1800px;height:auto">
+  </div>
+</div>
+
+<script>
+function filterGoal(code, btn) {
+  btn.parentElement.querySelectorAll('.btn-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.mm-goal-section').forEach(sec => {
+    sec.style.display = (code === 'ALL' || sec.dataset.goal === code) ? '' : 'none';
+  });
+}
+function filterCapStatus(st, btn) {
+  btn.parentElement.querySelectorAll('.btn-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.mm-cap-leaf').forEach(leaf => {
+    if (st === 'ALL' || leaf.dataset.capStatus === st) {
+      leaf.style.opacity = '1';
+      leaf.style.transform = 'scale(1)';
+    } else {
+      leaf.style.opacity = '0.28';
+      leaf.style.transform = 'scale(0.98)';
+    }
+  });
+}
+function toggleSvgModal() {
+  const m = document.getElementById('svg-modal');
+  m.style.display = (m.style.display === 'none' || !m.style.display) ? 'flex' : 'none';
+}
+</script>
+
+{% endblock %}

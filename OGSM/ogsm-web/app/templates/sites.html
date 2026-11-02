@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}工作台导航 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block body %}
+
+<div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+  <div>
+    <h1 style="margin:0;font-size:23px">全部验收工作台与关联子站导航</h1>
+    <p class="muted" style="margin:4px 0 0">
+      汇总《ABIOGSM-品牌Agent》思维导图中的 14 个主验收工作台与 8 个待整合/关联子平台。绿灯代表公网 HTTPS 实测 200 可达。
+    </p>
+  </div>
+  <a href="/" class="btn-chip">← 返回 OGSM 全景导图</a>
+</div>
+
+{% for gnode in goal_tree %}
+{% set g = gnode.goal %}
+<div class="card" style="margin-bottom:20px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <span class="badge badge-{{ g.code | lower }}" style="font-size:13px;padding:3px 10px">{{ g.code }}</span>
+    <strong style="font-size:16.5px">{{ g.title }}</strong>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:120px">专家代号</th>
+        <th style="width:200px">产品项目名称</th>
+        <th style="width:260px">主验收工作台 (点击直达)</th>
+        <th>关联 / 待整合子平台</th>
+        <th style="width:100px">项目状态</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pv in gnode.projects %}
+      {% set p = pv.proj %}
+      <tr>
+        <td><strong>{{ p.expert_name }}</strong></td>
+        <td><a href="/projects#proj-{{ p.slug }}" style="font-weight:600;color:var(--ink)">{{ p.product_name }}</a></td>
+        <td>
+          {% if p.workbench_url %}
+          <a class="wb-link" href="{{ p.workbench_url }}" target="_blank" rel="noopener">
+            <span class="wb-dot"></span> {{ p.workbench_url }} ↗
+          </a>
+          {% else %}
+          <span class="muted">—</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if pv.extra_sites %}
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            {% for es in pv.extra_sites %}
+            <a class="wb-link" href="{{ es[1] }}" target="_blank" rel="noopener" style="background:#f8fafc;border-color:#cbd5e1;color:#1e293b">
+              <span class="wb-dot {{ 'internal' if es[2] == 'internal' else '' }}"></span>
+              {{ es[0] }} ({{ es[1] | replace('https://', '') | replace('/', '') }}) ↗
+            </a>
+            {% endfor %}
+          </div>
+          {% else %}
+          <span class="muted">无附属子站</span>
+          {% endif %}
+        </td>
+        <td>
+          <span class="badge {{ 'badge-done' if p.status_summary == '已上线' else ('badge-doing' if p.status_summary == '进行中' else 'badge-plan') }}">
+            {{ p.status_summary }}
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endfor %}
+
+{% endblock %}

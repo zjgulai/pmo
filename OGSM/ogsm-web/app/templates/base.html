@@ -3,53 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% block title %}ABI OGSM{% endblock %}</title>
-<link rel="stylesheet" href="/static/style.css">
+<title>{% block title %}ABI 品牌 & 营销 Agent 项目管理门户{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css?v=20261102">
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="/">ABI OGSM <span class="ver">v1.0</span></a>
-  <nav>
-    <a href="/">一页纸</a>
-    <a href="/board">结算看板</a>
-    <a href="/baselines">基线台账</a>
-    <a href="/lines">产线台账</a>
-    <a href="/experts">专家对齐</a>
-    <a href="/metrics">指标字典</a>
-    <a href="/docs">治理索引</a>
+  <div class="brand-wrap">
+    <a class="brand" href="/">
+      <span>🎯 ABI 应用与算法组</span>
+      <span class="brand-badge">品牌 &amp; 营销 Agent 项目管理</span>
+    </a>
+  </div>
+  <nav class="main-nav">
+    <a href="/" class="{{ 'active' if active_nav == 'mindmap' else '' }}">OGSM 全景导图</a>
+    <a href="/projects" class="{{ 'active' if active_nav == 'projects' else '' }}">14大产品项目</a>
+    <a href="/sites" class="{{ 'active' if active_nav == 'sites' else '' }}">工作台导航 ({{ stats.site_online if stats else 20 }})</a>
+    <a href="/present" class="{{ 'active' if active_nav == 'present' else '' }}">部门汇报模式</a>
+    <a href="/docs" class="{{ 'active' if active_nav == 'docs' else '' }}">实测报告与资料</a>
+  </nav>
+  <div class="nav-right">
     {% if is_pmo %}
-      <a href="/admin" class="pmo">PMO 后台</a>
+      <a href="/admin" class="btn-chip active">⚙️ 项目更新后台</a>
       <a href="/logout" class="muted">退出</a>
     {% else %}
-      <a href="/login" class="muted">PMO 登录</a>
+      <a href="/login" class="btn-chip">PMO 维护登录</a>
     {% endif %}
-  </nav>
-</header>
-
-{% if checks %}
-  {% set errs = checks.errors %}
-  {% set warns = checks.warns %}
-  {% if errs or warns %}
-  <div class="band {{ 'band-err' if errs else 'band-warn' }}">
-    <strong>结构校验：{{ checks.summary() }}</strong>
-    <details>
-      <summary>展开 {{ errs|length }} 错误 / {{ warns|length }} 警告</summary>
-      <ul>
-      {% for f in errs %}<li class="err"><code>{{ f.code }}</code> {{ f.message }}</li>{% endfor %}
-      {% for f in warns %}<li class="warn"><code>{{ f.code }}</code> {{ f.message }}</li>{% endfor %}
-      </ul>
-    </details>
   </div>
-  {% endif %}
-{% endif %}
+</header>
 
 <main>
 {% block body %}{% endblock %}
 </main>
 
 <footer>
-  <span>ABI · 品牌 &amp; 营销域 · 2026Q4 制定</span>
-  <span class="muted">数据真源：Postgres · 写入口：PMO · {{ today }}</span>
+  <span>ABI 应用与算法组 · 品牌 &amp; 营销域 2026Q4 OGSM 项目总览门户</span>
+  <span>主骨架：《ABIOGSM-品牌Agent》思维导图 · 成果真源：<code>/reports</code> 实测报告 · 更新于 {{ today }}</span>
 </footer>
 </body>
 </html>
