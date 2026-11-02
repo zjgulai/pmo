@@ -123,7 +123,7 @@ def _kanban_col_for(c: models.CapabilityItem) -> str:
 
 
 def _assemble_scenario_stations(steps: list[str], cap_views: list[dict]) -> list[dict]:
-    """将业务场景的步骤条（Step 1 → Step 2...）与该场景下的能力模块组装成可视化装配工位。"""
+    """将业务场景的步骤条（Step 1 → Step 2...）与该场景下的能力模块精准装配到对应工位。"""
     if not steps:
         steps = ["核心能力工位"]
     stations = [{"step_name": s, "caps": [], "state": "plan", "pct": 0} for s in steps]
@@ -132,21 +132,27 @@ def _assemble_scenario_stations(steps: list[str], cap_views: list[dict]) -> list
 
     for idx, cv in enumerate(cap_views):
         c_name = cv["cap"].name
-        c_desc = cv["cap"].description
-        placed = False
-        # 优先按关键词语义匹配工位
+        best_st = None
+        best_score = 0
         for st_obj in stations:
             st_clean = st_obj["step_name"].split("：")[-1].strip()
-            tokens = [t for t in [st_clean[:2], st_clean[-2:]] if len(t) >= 2]
-            if any(tok in c_name or tok in c_desc for tok in tokens):
-                st_obj["caps"].append(cv)
-                placed = True
-                break
-        if not placed:
-            target_idx = min(n_st - 1, int(idx * n_st / max(1, n_caps)))
-            stations[target_idx]["caps"].append(cv)
+            # 用 2 字词片只在能力标题(c_name)上计算重合度，避免长描述里的通用词误吸
+            grams = {st_clean[i : i + 2] for i in range(max(1, len(st_clean) - 1)) if len(st_clean[i : i + 2]) == 2}
+            score = sum(2 for g in grams if g in c_name)
+            if score > best_score:
+                best_score = score
+                best_st = st_obj
+        if best_st is not None and best_score > 0:
+            best_st["caps"].append(cv)
+        else:
+            # 按顺序均匀落位到空工位或对应比例工位
+            empty_sts = [s for s in stations if not s["caps"]]
+            if empty_sts and n_caps >= n_st:
+                empty_sts[0]["caps"].append(cv)
+            else:
+                target_idx = min(n_st - 1, int(idx * n_st / max(1, n_caps)))
+                stations[target_idx]["caps"].append(cv)
 
-    # 若某个工位未直接挂上能力，但整体有能力，则按整体进度给工位赋状态
     all_pct = int(round(sum(x["cap"].progress_pct or 0 for x in cap_views) / max(1, n_caps)))
     for i, st_obj in enumerate(stations):
         scaps = st_obj["caps"]
@@ -160,7 +166,6 @@ def _assemble_scenario_stations(steps: list[str], cap_views: list[dict]) -> list
             else:
                 st_obj["state"] = "plan"
         else:
-            # 推导工位通电状态
             threshold = int((i + 1) / n_st * 100)
             st_obj["pct"] = all_pct
             if all_pct >= threshold:
