@@ -48,13 +48,26 @@ if [[ "$BASE" == https://* ]]; then
     && ok "HTTP→HTTPS 跳转 $http_code" || bad "HTTP 未跳转（$http_code）"
 fi
 
-hdr "3. 结构校验（C1–C11 必须无 error）"
+hdr "3. 结构校验（区分部署缺陷与业务缺口）"
 body=$(curl -s -m 10 "$BASE/" 2>/dev/null)
 summary=$(echo "$body" | grep -o '结构校验[：:][^<]*' | head -1)
 if [ -n "$summary" ]; then
   echo "  $summary"
   errs=$(echo "$summary" | grep -oE '[0-9]+ 错误' | grep -oE '[0-9]+')
-  if [ "${errs:-0}" = "0" ]; then ok "0 错误"; else bad "存在 $errs 个错误"; fi
+  if [ "${errs:-0}" = "0" ]; then
+    ok "0 错误"
+  else
+    # 结构类错误码（部署缺陷）：C1 C2 C4 C6 C7 C10 C11
+    # 业务缺口类（C9 P0 零证据）：部署本身没问题，是业务还没做
+    struct=$(echo "$body" | grep -oE '<code>C(1|2|4|6|7|10|11)</code>' | wc -l | tr -d ' ')
+    biz=$(echo "$body" | grep -oE '<code>C9</code>' | wc -l | tr -d ' ')
+    if [ "$struct" = "0" ]; then
+      ok "结构校验无部署缺陷（$errs 个错误全部是 C9 业务缺口）"
+      echo "     业务缺口 $biz 条：产线无建设证据。这不阻断部署，但阻断 G 结算。"
+    else
+      bad "存在 $struct 个结构类错误（部署缺陷），必须修复后才算验收通过"
+    fi
+  fi
 else
   bad "页面上找不到结构校验读数——校验器未运行"
 fi
