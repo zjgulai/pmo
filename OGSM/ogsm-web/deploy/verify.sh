@@ -23,7 +23,28 @@ for p in / /board /baselines /lines /experts /metrics /docs /login; do
   [ "$c" = "200" ] && ok "$p 200" || bad "$p 期望 200，实际 $c"
 done
 
-hdr "2. HTTPS 与证书"
+hdr "2. 静态资源（页面能返回 200 不等于能看）"
+for asset in /static/style.css; do
+  ac=$(code "$BASE$asset")
+  if [ "$ac" = "200" ]; then
+    ok "$asset 200"
+  else
+    bad "$asset 期望 200，实际 $ac —— 页面会退化成无样式纯文本"
+  fi
+done
+# CSS 必须真的被引用且真的返回 CSS 类型
+ctype=$(curl -s -o /dev/null -w '%{content_type}' -m 10 "$BASE/static/style.css" 2>/dev/null)
+case "$ctype" in
+  text/css*) ok "style.css Content-Type=$ctype" ;;
+  *) bad "style.css Content-Type 异常：$ctype" ;;
+esac
+if curl -s -m 10 "$BASE/" 2>/dev/null | grep -q 'static/style.css'; then
+  ok "页面已引用 style.css"
+else
+  bad "页面未引用 style.css"
+fi
+
+hdr "3. HTTPS 与证书"
 if [[ "$BASE" == https://* ]]; then
   host=$(echo "$BASE" | sed -E 's#https://([^/:]+).*#\1#')
   if echo | openssl s_client -servername "$host" -connect "$host:443" 2>/dev/null | grep -q 'Verify return code: 0'; then

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from fastapi import Depends, FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from itsdangerous import BadSignature, URLSafeSerializer
 from sqlmodel import Session, select
@@ -23,6 +24,10 @@ BASE = Path(__file__).parent
 templates = Jinja2Templates(directory=str(BASE / "templates"))
 # 本地 Python 3.15 上 jinja2 的 LRU 缓存键不可哈希，关掉缓存即可（模板量小，无性能影响）
 templates.env.cache = None
+
+# 静态文件必须挂载，否则 style.css 404，页面退化成无样式纯文本。
+# 2026-11-02 生产首版就漏了这一行——只验 HTTP 200 不验资源加载，等于没验。
+app.mount("/static", StaticFiles(directory=str(BASE / "static")), name="static")
 
 PMO_PASSWORD = os.getenv("OGSM_PMO_PASSWORD", "pmo")
 SECRET = os.getenv("SECRET_KEY", "change-me-in-production")
