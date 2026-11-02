@@ -114,14 +114,14 @@ def _calc_gantt_bar(start_str: str, end_str: str, today_d: date, status: str) ->
 def _kanban_col_for(c: models.CapabilityItem) -> str:
     """四列看板归类：
     1. plan: 方案中
-    2. doing: 进行中
-    3. pending_verify: 已完成但待实测验证（或进行中且进度>=85%进入联调验收）
-    4. verified: 已完成且已验证
+    2. doing: 进行中（研发实现中，进度 < 80%）
+    3. pending_verify: 联调收口 / 待最终验收（已完成但未实测验证，或进行中且进度 >= 80%）
+    4. verified: 已完成且已验证（生产实测通过）
     """
     if c.status == "已完成":
         return "verified" if c.verify_state == "已验证" else "pending_verify"
     if c.status == "进行中":
-        if c.verify_state == "部分验证" and (c.progress_pct or 0) >= 85:
+        if (c.progress_pct or 0) >= 80:
             return "pending_verify"
         return "doing"
     return "plan"
