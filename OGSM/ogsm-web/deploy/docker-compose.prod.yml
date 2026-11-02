@@ -49,9 +49,12 @@ services:
       OGSM_PMO_PASSWORD: ${OGSM_PMO_PASSWORD:?OGSM_PMO_PASSWORD 必须设置}
       SECRET_KEY: ${SECRET_KEY:?SECRET_KEY 必须设置}
       OGSM_DOCS_DIR: /docs
+      FEISHU_WEBHOOK_URL: ${FEISHU_WEBHOOK_URL:-}
     volumes:
       # 治理索引读取的 md 文档：只读挂载，更新文档不需重建镜像
       - ../../..:/docs:ro
+      # /reports 目录可写挂载，支持各专家 Agent 定时通过 API 自动上报最新 HTML 报告
+      - ../../../reports:/docs/reports:rw
     ports:
       - "172.20.0.1:18960:8000"
     networks:

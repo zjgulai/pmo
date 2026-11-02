@@ -1054,5 +1054,26 @@ html:lang(th) body, html:lang(th) .lbl { font-family: "JetBrains Mono", "SF Mono
 })();
 
 </script>
+
+<script>
+// ABI PMO Architecture -> Parent Drawer Bridge
+document.addEventListener('DOMContentLoaded', () => {
+  const validSlugs = new Set(['pmo','daisy','echo','market','signal','emily','clone','vicky','geo','radar','shouheng','shopify','source','main']);
+  document.querySelectorAll('[id]').forEach(el => {
+    const id = el.getAttribute('id');
+    if (validSlugs.has(id)) {
+      el.style.cursor = 'pointer';
+      el.setAttribute('title', '点击展开 ' + id.toUpperCase() + ' 项目详情与排期抽屉');
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.parent && typeof window.parent.openProjectDrawer === 'function') {
+          window.parent.openProjectDrawer(id);
+        }
+      });
+    }
+  });
+});
+</script>
+
 </body>
 </html>

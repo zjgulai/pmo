@@ -24,7 +24,7 @@ for p in / /projects /roadmap /sites /present /docs /login /api/export.csv /api/
 done
 
 hdr "2. 静态资源、架构全景图与原版 SVG 导图"
-for asset in /static/style.css /static/ogsm-mindmap.svg /static/abi-arch-diagram.html; do
+for asset in /static/style.css /static/ogsm-mindmap.svg /static/abi-arch-diagram.html /static/abi-arch-diagram.png /static/abi-arch-diagram.mmd; do
   ac=$(code "$BASE$asset")
   if [ "$ac" = "200" ]; then
     ok "$asset 200"

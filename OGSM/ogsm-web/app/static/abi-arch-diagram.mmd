@@ -1,0 +1,44 @@
+flowchart TB
+  %% ABI 品牌 & 营销 Agent 全景系统架构 · 14 大产品与数据流向
+  pmo["<b>PMO · OGSM管理工作台 pmo.luteos.com</b><br/>1O-3G-6S-14产品统筹 · 两级甘特排期 · 四列看板 · 实测报告中心<br/>战略全景与甘特看板 · 49项能力同源驱动<br/>实测报告中心 · 9大专家12份报告直读"]:::portal
+  daisy["<b>Daisy · 多智能体门户 mas.luteos.com</b><br/>9大Agent统一适配层 · 品牌知识库(asset) · 业务Skills转化管线(Know)<br/>品牌知识库 · 品牌事实沉淀<br/>Skills平台(Know) · 17技能/1089条IR"]:::portal
+  echo["<b>Echo · VOC消费者之声 radar.luteos.com</b><br/>2.6万帖/10.2万评 · 10步无人值守日更 · 86倍提速<br/>子站: 品类洞察 business · 品类报告 report · 插件 plugin<br/>每日自动产出: 18选题 / 7研发痛点线索 / 12竞品对比"]:::g2
+  market["<b>Market · 市场洞察 mkt.luteos.com</b><br/>品类容量与价格带分析 · 竞品格局拆解<br/>联动 Sage 跨境专家台 (53位专家工作流)<br/>4大跨境电商确定性核算合规引擎 (3088测试通过)"]:::g2
+  signal["<b>Signal · 品牌声量 signal.luteos.com</b><br/>多源采集 → 异动检测 → 归因分析 → 告警<br/>品牌曝光与搜索热度日趋势监控<br/>声量异常波动归因与竞品新品发布节奏追踪"]:::g2
+  emily["<b>Emily · 社媒Agent</b><br/>social.luteos.com<br/>28/41能力上线 · 4表888行镜像<br/>趋势洞察→内容策略→脚本生成"]:::g1
+  clone["<b>Clone · 爆款复刻</b><br/>video.luteos.com<br/>Recipe引擎 · 13/14评测通过<br/>钩子/节拍/口播/字幕拆解复刻"]:::g1
+  vicky["<b>Vicky · GEO · Radar</b><br/>pr / geo / magpie.luteos.com<br/>Vicky: 246媒体库/347报道同步<br/>GEO: AI引擎可见度6步闭环<br/>Radar: IP粉丝分析与动态监测"]:::g1
+  shouheng["<b>守衡 · 内容治理</b><br/>ca.luteos.com<br/>227/227契约自证 · 14页审核台<br/>36规则/24控制点 · 合规放行闸"]:::commerce
+  shopify["<b>Shopify · 独立站</b><br/>shopify.luteos.com<br/>知识站 platform-shopify (178篇)<br/>AI选品 product · 5岗Agent上架"]:::commerce
+  source["<b>Source · 多平台数据采集中台 (Data Intelligence Hub) scrapy.luteos.com</b><br/>70 平台 / 284 唯一采集端点 (200 已实测) · 39 个 MCP 工具 · 55 个前后端页面 · 2807 项测试<br/>统一采集调度与Monitor → TikTok/Reddit/YT/IG/FB/Trends MCP → 统一表结构建模 → 支撑上游六大Agent"]:::infra
+  main["<b>Main · 全栈研发与模型评测底座 main.luteos.com</b><br/>单向依赖 Agent SDK Runtime · 150/150 问答评测通过 (均分 0.99)<br/>模型选型与评测站: llm.luteos.com (264单元测试全过)<br/>为全仓 Agent 提供统一运行时、预算控制与 Eval 门禁"]:::infra
+  pmo -.->|"OGSM排期与日报回传"| echo
+  daisy -.->|"品牌事实库与Skills下发"| market
+  daisy -.->|"统一适配层接入"| signal
+  echo -->|"用户痛点→社媒选题"| emily
+  market -->|"竞品与品类机会输入"| vicky
+  emily -->|"脚本"| clone
+  clone -->|"分发"| vicky
+  vicky -->|"提审"| shouheng
+  shouheng -->|"放行"| shopify
+  source -->|"TK/IG/YT趋势供给"| emily
+  source -->|"70平台/284端点采集供给"| vicky
+  main -.->|"Runtime与模型评测"| shouheng
+  linkStyle 0 stroke:#b48cff,stroke-width:1.5px
+  linkStyle 1 stroke:#5ad1e6,stroke-width:1.5px
+  linkStyle 2 stroke:#5ad1e6,stroke-width:1.5px
+  linkStyle 3 stroke:#6fdc8c,stroke-width:1.5px
+  linkStyle 4 stroke:#6fdc8c,stroke-width:1.5px
+  linkStyle 5 stroke:#6fdc8c,stroke-width:1.5px
+  linkStyle 6 stroke:#6fdc8c,stroke-width:1.5px
+  linkStyle 7 stroke:#6fdc8c,stroke-width:1.5px
+  linkStyle 8 stroke:#6fdc8c,stroke-width:1.5px
+  linkStyle 9 stroke:#e8b25d,stroke-width:1.5px
+  linkStyle 10 stroke:#e8b25d,stroke-width:1.5px
+  linkStyle 11 stroke:#5ad1e6,stroke-width:1.5px
+  classDef portal fill:#0e141b,stroke:#6fdc8c,color:#c9d1d9
+  classDef g2 fill:#0e141b,stroke:#79a8ff,color:#c9d1d9
+  classDef g1 fill:#0e141b,stroke:#5ad1e6,color:#c9d1d9
+  classDef commerce fill:#0e141b,stroke:#b48cff,color:#c9d1d9
+  classDef infra fill:#0e141b,stroke:#e8b25d,color:#c9d1d9
+  classDef none fill:#0e141b,stroke:#3a4450,color:#c9d1d9

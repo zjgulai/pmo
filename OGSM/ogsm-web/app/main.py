@@ -852,6 +852,262 @@ def export_ogsm_csv(s: Session = Depends(get_session)):
     )
 
 
+def _check_write_auth(request: Request) -> bool:
+    """支持 PMO Cookie 登录态，或外部 Agent 定时任务携带 X-PMO-Token 请求头。"""
+    if is_pmo(request):
+        return True
+    tok = request.headers.get("X-PMO-Token", "").strip()
+    return bool(tok and tok == PMO_PASSWORD)
+
+
+@app.post("/api/ingest/report")
+def api_ingest_expert_report(
+    request: Request,
+    payload: dict = Body(...),
+    s: Session = Depends(get_session),
+):
+    """能力 1A：各专家 Agent 定时任务自动上报实测日报与指标 API。
+
+    支持字段：
+    - slug: 项目代号 (如 echo, emily, vicky, source, shouheng, shopify, main, daisy, market)
+    - expert_dir: 报告存放子目录 (如 Echo, Emily...)，默认使用项目 expert_name
+    - filename: 报告 HTML 文件名 (如 Echo-项目成果总结-20261103.html)
+    - html_content: 报告 HTML 全文（可选，传入则落盘保存至 /reports/{expert_dir}/{filename}）
+    - report_title: 报告显示标题
+    - verified_summary: 更新已验证实测总结
+    - metrics_highlights: 更新 4 格核心指标（每行 指标名|数值|出处）
+    - pending_gaps: 更新待补齐项
+    """
+    if not _check_write_auth(request):
+        return JSONResponse({"ok": False, "error": "未授权：请登录 PMO 或提供 X-PMO-Token 请求头"}, status_code=403)
+
+    slug = str(payload.get("slug") or "").strip().lower()
+    p = s.exec(select(models.ProductProject).where(models.ProductProject.slug == slug)).first()
+    if not p:
+        return JSONResponse({"ok": False, "error": f"未找到 slug={slug} 的产品项目"}, status_code=404)
+
+    expert_dir = str(payload.get("expert_dir") or p.expert_name).strip()
+    filename = Path(str(payload.get("filename") or "")).name
+    html_content = payload.get("html_content")
+
+    saved_url = ""
+    if filename and html_content:
+        target_dir = (REPORTS_DIR / expert_dir).resolve()
+        if REPORTS_DIR.resolve() in target_dir.parents or target_dir == REPORTS_DIR.resolve():
+            target_dir.mkdir(parents=True, exist_ok=True)
+            target_file = target_dir / filename
+            target_file.write_text(str(html_content), encoding="utf-8")
+            saved_url = f"/reports-view/{expert_dir}/{filename}"
+            title = str(payload.get("report_title") or filename.replace(".html", "")).strip()
+            new_entry = f"{title}|{saved_url}"
+            existing_lines = [x.strip() for x in (p.report_links or "").splitlines() if x.strip()]
+            if not any(saved_url in line for line in existing_lines):
+                existing_lines.insert(0, new_entry)
+                p.report_links = "\n".join(existing_lines[:5])
+
+    if payload.get("verified_summary"):
+        p.verified_summary = str(payload["verified_summary"]).strip()
+    if payload.get("metrics_highlights"):
+        p.metrics_highlights = str(payload["metrics_highlights"]).strip()
+    if payload.get("pending_gaps"):
+        p.pending_gaps = str(payload["pending_gaps"]).strip()
+
+    p.updated_at = datetime.now(timezone.utc)
+    s.add(p)
+    s.commit()
+    return {"ok": True, "slug": p.slug, "saved_url": saved_url, "updated_at": p.updated_at.isoformat()}
+
+
+@app.post("/api/sync-reports")
+def api_sync_reports_directory(request: Request, s: Session = Depends(get_session)):
+    """能力 1B：扫描 /reports 目录下的最新 HTML 报告并自动绑定到对应产品项目。"""
+    dir_to_slug = {
+        "emily": "emily",
+        "vicky": "vicky",
+        "echo": "echo",
+        "source": "source",
+        "守衡": "shouheng",
+        "shopify": "shopify",
+        "main": "main",
+        "know": "daisy",
+        "sage": "market",
+    }
+    scanned = _scan_latest_reports()
+    projects = {p.slug: p for p in s.exec(select(models.ProductProject)).all()}
+    bound_count = 0
+
+    for item in scanned:
+        slug = dir_to_slug.get(item["expert"].lower())
+        if not slug or slug not in projects:
+            continue
+        p = projects[slug]
+        existing = [x.strip() for x in (p.report_links or "").splitlines() if x.strip()]
+        if not any(item["url"] in line for line in existing):
+            existing.insert(0, f"{item['name']}|{item['url']}")
+            p.report_links = "\n".join(existing[:6])
+            p.updated_at = datetime.now(timezone.utc)
+            s.add(p)
+            bound_count += 1
+
+    s.commit()
+    return {"ok": True, "scanned_total": len(scanned), "newly_bound": bound_count}
+
+
+@app.post("/api/import.csv")
+async def import_ogsm_csv(
+    request: Request,
+    payload: dict = Body(...),
+    s: Session = Depends(get_session),
+):
+    """能力 2：从飞书 OGSM 总览表导出的 CSV 文本一键双向同步排期、状态与进度%。"""
+    if not _check_write_auth(request):
+        return JSONResponse({"ok": False, "error": "需要先登录 PMO 维护账号"}, status_code=403)
+
+    csv_text = str(payload.get("csv_text") or "").lstrip("﻿").strip()
+    if not csv_text:
+        return JSONResponse({"ok": False, "error": "CSV 内容为空"}, status_code=400)
+
+    reader = csv.DictReader(io.StringIO(csv_text))
+    projects = {p.expert_name.lower(): p.slug for p in s.exec(select(models.ProductProject)).all()}
+    all_caps = s.exec(select(models.CapabilityItem)).all()
+    cap_by_key = {(c.project_slug, c.name.strip()): c for c in all_caps}
+    cap_by_name = {c.name.strip(): c for c in all_caps}
+
+    updated = 0
+    created = 0
+    for row in reader:
+        cap_name = (row.get("能力图谱名称") or row.get("能力名称") or "").strip()
+        expert = (row.get("专家代号") or "").strip()
+        if not cap_name:
+            continue
+        slug = projects.get(expert.lower(), "")
+        c = cap_by_key.get((slug, cap_name)) or cap_by_name.get(cap_name)
+
+        status_val = (row.get("开发状态") or row.get("状态") or "").strip()
+        verify_val = (row.get("验证状态") or "").strip()
+        pct_raw = (row.get("进度%") or row.get("进度") or "").replace("%", "").strip()
+        s_date = (row.get("开始日期") or "").replace("待排期", "").strip()[:10]
+        e_date = (row.get("截止日期") or "").replace("待排期", "").strip()[:10]
+        owner_val = (row.get("负责团队") or row.get("负责人") or "").strip()
+        ms_val = (row.get("是否里程碑") or "").strip()
+
+        if c:
+            if status_val in ("已完成", "进行中", "方案中"):
+                c.status = status_val
+            if verify_val in ("已验证", "部分验证", "待验证"):
+                c.verify_state = verify_val
+            if pct_raw.isdigit():
+                c.progress_pct = max(0, min(100, int(pct_raw)))
+            elif pct_raw:
+                try:
+                    val = float(pct_raw)
+                    c.progress_pct = int(round(val * 100)) if val <= 1.0 else int(round(val))
+                except ValueError:
+                    pass
+            if s_date:
+                c.start_date = s_date
+            if e_date:
+                c.end_date = e_date
+            if owner_val:
+                c.owner = owner_val
+            if ms_val in ("是", "否"):
+                c.is_milestone = ms_val == "是"
+            s.add(c)
+            updated += 1
+        elif slug:
+            new_c = models.CapabilityItem(
+                project_slug=slug,
+                scenario_line=(row.get("业务场景线") or "核心业务场景").strip(),
+                name=cap_name,
+                description=(row.get("能力说明") or "").strip(),
+                status=status_val if status_val in ("已完成", "进行中", "方案中") else "方案中",
+                verify_state=verify_val if verify_val in ("已验证", "部分验证", "待验证") else "待验证",
+                progress_pct=int(pct_raw) if pct_raw.isdigit() else 0,
+                start_date=s_date,
+                end_date=e_date,
+                owner=owner_val,
+                is_milestone=(ms_val == "是"),
+                sort=99,
+            )
+            s.add(new_c)
+            created += 1
+
+    s.commit()
+    return {"ok": True, "updated": updated, "created": created}
+
+
+@app.post("/api/feishu/push-weekly")
+def push_weekly_to_feishu(
+    request: Request,
+    payload: dict = Body(default={}),
+    s: Session = Depends(get_session),
+):
+    """能力 4：向飞书群 Webhook 一键或定时推送《ABI 品牌 Agent 里程碑周报卡片》。"""
+    webhook_url = str(payload.get("webhook_url") or os.getenv("FEISHU_WEBHOOK_URL") or "").strip()
+    brief = generate_weekly_brief(s)
+    card_payload = {
+        "msg_type": "interactive",
+        "card": {
+            "config": {"wide_screen_mode": True},
+            "header": {
+                "template": "green",
+                "title": {
+                    "tag": "plain_text",
+                    "content": f"ABI 品牌 & 营销 Agent 里程碑周报 ({date.today().isoformat()})",
+                },
+            },
+            "elements": [
+                {
+                    "tag": "markdown",
+                    "content": brief["markdown"],
+                },
+                {"tag": "hr"},
+                {
+                    "tag": "action",
+                    "actions": [
+                        {
+                            "tag": "button",
+                            "text": {"tag": "plain_text", "content": "打开 PMO 战略全景与甘特图门户"},
+                            "type": "primary",
+                            "url": "https://pmo.luteos.com/",
+                        },
+                        {
+                            "tag": "button",
+                            "text": {"tag": "plain_text", "content": "查看 14 大产品系统架构图"},
+                            "type": "default",
+                            "url": "https://pmo.luteos.com/sites",
+                        },
+                    ],
+                },
+            ],
+        },
+    }
+
+    if not webhook_url:
+        return {
+            "ok": False,
+            "pushed": False,
+            "error": "尚未填写飞书群机器人 Webhook 地址（可在弹窗内直接输入，或在服务器 .env 配置 FEISHU_WEBHOOK_URL）",
+            "card_preview": card_payload,
+        }
+
+    if not webhook_url.startswith("https://open.feishu.cn/") and not webhook_url.startswith("https://open.larksuite.com/"):
+        return JSONResponse({"ok": False, "error": "仅支持标准飞书/Lark Webhook 地址"}, status_code=400)
+
+    try:
+        req = urllib.request.Request(
+            webhook_url,
+            data=json.dumps(card_payload, ensure_ascii=False).encode("utf-8"),
+            headers={"Content-Type": "application/json; charset=utf-8"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            resp_body = resp.read().decode("utf-8", errors="replace")
+        return {"ok": True, "pushed": True, "feishu_response": resp_body}
+    except Exception as e:
+        return JSONResponse({"ok": False, "pushed": False, "error": f"推送失败：{e}"}, status_code=502)
+
+
 # ───────────────────────────── 实测报告与文档查阅 ─────────────────────────────
 
 
