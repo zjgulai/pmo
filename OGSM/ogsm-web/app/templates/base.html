@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}ABI 品牌 & 营销 Agent 项目管理门户{% endblock %}</title>
-<link rel="stylesheet" href="/static/style.css?v=20261102v3">
+<link rel="stylesheet" href="/static/style.css?v=20261102v4">
 </head>
 <body>
 <header class="top">
@@ -16,16 +16,17 @@
   </div>
   <nav class="main-nav">
     <a href="/" class="{{ 'active' if active_nav == 'mindmap' else '' }}">1. 战略全景导图</a>
-    <a href="/projects" class="{{ 'active' if active_nav == 'projects' else '' }}">2. 产品与场景流水线 (14)</a>
+    <a href="/projects" class="{{ 'active' if active_nav == 'projects' else '' }}">2. 场景装配流水线 (14)</a>
     <a href="/roadmap" class="{{ 'active' if active_nav == 'roadmap' else '' }}">3. 甘特图与看板 ({{ stats.cap_total if stats else 49 }})</a>
     <a href="/present" class="{{ 'active' if active_nav == 'present' else '' }}">4. 里程碑汇报</a>
     <a href="/docs" class="{{ 'active' if active_nav == 'docs' else '' }}">实测报告库</a>
   </nav>
   <div class="nav-right">
-    <a href="/api/export.csv" class="btn-chip" title="导出与飞书 OGSM 总览表结构对齐的 CSV">⬇️ 导出飞书表 CSV</a>
+    <button class="btn-chip" onclick="openWeeklyBriefModal()" title="自动对比上次快照并生成可复制发飞书群的周报">📸 周报快照与对比</button>
+    <a href="/api/export.csv" class="btn-chip" title="导出与飞书 OGSM 总览表结构对齐的 CSV">⬇️ 导出 CSV</a>
     {% if is_pmo %}
-      <span class="badge badge-done">PMO 已登录（支持行内直改）</span>
-      <a href="/admin" class="btn-chip">表单后台</a>
+      <span class="badge badge-done">PMO 已登录</span>
+      <a href="/admin" class="btn-chip">后台</a>
       <a href="/logout" class="muted">退出</a>
     {% else %}
       <a href="/login" class="btn-chip">PMO 登录</a>
@@ -37,9 +38,237 @@
 {% block body %}{% endblock %}
 </main>
 
+<!-- ═══════════════════ 全局组件 1：右侧滑出项目与能力详情抽屉 ═══════════════════ -->
+<div id="drawer-backdrop" class="drawer-backdrop" onclick="closeProjectDrawer()"></div>
+<aside id="global-drawer" class="slide-drawer" aria-hidden="true">
+  <div class="drawer-header">
+    <div id="drawer-title-area">
+      <strong style="font-size:17px">项目详情</strong>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a id="drawer-wb-btn" href="#" target="_blank" class="wb-link" style="display:none">
+        <span class="wb-dot"></span> 打开工作台 ↗
+      </a>
+      <button class="btn-chip active" onclick="closeProjectDrawer()">关闭 ✕</button>
+    </div>
+  </div>
+  <div id="drawer-body" class="drawer-body"></div>
+</aside>
+
+<!-- ═══════════════════ 全局组件 2：实测报告页内同屏预览器 (Split/Iframe Modal) ═══════════════════ -->
+<div id="report-preview-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.82);z-index:220;padding:20px;flex-direction:column">
+  <div style="background:#fff;border-radius:12px 12px 0 0;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge badge-verify">📄 实测报告页内同屏预览</span>
+      <strong id="report-preview-title" style="font-size:15px">报告预览</strong>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a id="report-preview-ext" href="#" target="_blank" class="btn-chip">在新标签页打开 ↗</a>
+      <button class="btn-chip active" onclick="closeReportPreview()">关闭预览 ✕</button>
+    </div>
+  </div>
+  <div style="flex:1;background:#fff;border-radius:0 0 12px 12px;overflow:hidden">
+    <iframe id="report-preview-iframe" src="about:blank" style="width:100%;height:100%;border:none"></iframe>
+  </div>
+</div>
+
+<!-- ═══════════════════ 全局组件 3：一键周报快照与对比生成弹窗 ═══════════════════ -->
+<div id="brief-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.75);z-index:230;padding:28px;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;width:min(820px, 95vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,0.25)">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <strong style="font-size:16px">📸 PMO 周度进展快照与里程碑简报生成器</strong>
+        <span id="brief-prev-tag" class="muted" style="font-size:12px;margin-left:8px"></span>
+      </div>
+      <button class="btn-chip" onclick="document.getElementById('brief-modal').style.display='none'">关闭 ✕</button>
+    </div>
+    <div style="padding:16px 20px;flex:1;overflow-y:auto">
+      <textarea id="brief-markdown-box" rows="18" style="width:100%;font-family:var(--mono);font-size:12.5px;line-height:1.6;padding:12px;background:#f8fafc"></textarea>
+    </div>
+    <div style="padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:#f8fafc;border-radius:0 0 14px 14px">
+      <button class="btn-chip" onclick="saveNewSnapshot(this)">📌 保存当前状态为新基准快照</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="copyBriefMarkdown(this)">📋 一键复制 Markdown（直接发飞书群）</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <span>ABI 应用与算法组 · 品牌 &amp; 营销域 2026Q4 OGSM 项目统筹、进度管理与里程碑汇报门户</span>
   <span>同源架构：1个O → 3个G → 6条策略 → 14个Agent产品工作台 → 49项能力图谱 · 更新于 {{ today }}</span>
 </footer>
+
+<script>
+const DRAWER_PROJECTS = {{ drawer_json | safe if drawer_json else '{}' }};
+const IS_PMO_USER = {{ 'true' if is_pmo else 'false' }};
+
+function openProjectDrawer(slug, highlightCapId) {
+  const p = DRAWER_PROJECTS[slug];
+  if (!p) return;
+  const drawer = document.getElementById('global-drawer');
+  const backdrop = document.getElementById('drawer-backdrop');
+  const titleArea = document.getElementById('drawer-title-area');
+  const wbBtn = document.getElementById('drawer-wb-btn');
+  const body = document.getElementById('drawer-body');
+
+  const stClass = p.status_summary === '已上线' ? 'badge-done' : (p.status_summary === '进行中' ? 'badge-doing' : 'badge-plan');
+  titleArea.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span class="badge badge-${p.goal_code.toLowerCase()}">${p.goal_code} · ${p.strategy_code}</span>
+      <strong style="font-size:18px">${p.expert}</strong>
+      <span style="font-size:14.5px;color:var(--ink2);font-weight:600">· ${p.product_name}</span>
+      <span class="badge ${stClass}">${p.status_summary} (${p.pct}%)</span>
+    </div>
+    <div class="muted" style="font-size:12px;margin-top:2px">负责团队：${p.owner || '待定'}</div>
+  `;
+
+  if (p.workbench_url) {
+    wbBtn.href = p.workbench_url;
+    wbBtn.style.display = 'inline-flex';
+  } else {
+    wbBtn.style.display = 'none';
+  }
+
+  let html = '';
+
+  // 1. 关联子站与实测报告页内同屏预览按钮
+  if ((p.extra_sites && p.extra_sites.length) || (p.reports && p.reports.length)) {
+    html += `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">`;
+    (p.extra_sites || []).forEach(es => {
+      html += `<a class="wb-link" href="${es[1]}" target="_blank" style="background:#f8fafc;border-color:#cbd5e1;color:#1e293b">
+        <span class="wb-dot"></span> ${es[0]} ↗
+      </a>`;
+    });
+    (p.reports || []).forEach(rep => {
+      html += `<button class="btn-chip" onclick="openReportPreview('${rep[0]}', '${rep[1]}')" style="border-color:#2563eb;color:#2563eb;background:#eff6ff">
+        📄 页内预览报告：${rep[0]}
+      </button>`;
+    });
+    html += `</div>`;
+  }
+
+  // 2. 4格实测指标
+  if (p.metrics && p.metrics.length) {
+    html += `<div><div class="section-label">核心实测指标（溯源 /reports）</div><div class="metrics-grid">`;
+    p.metrics.forEach(m => {
+      html += `<div class="metric-tile">
+        <div class="metric-tile-label">${m[0]}</div>
+        <div class="metric-tile-val">${m[1]}</div>
+        <div class="metric-tile-src">出处：${m[2]}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // 3. 能力图谱与进度（支持 PMO 在抽屉里直接修改）
+  html += `<div><div class="section-label">产品能力图谱与排期明细 (${p.caps.length} 项)</div><div style="display:flex;flex-direction:column;gap:8px">`;
+  p.caps.forEach(c => {
+    const isHl = (highlightCapId && c.id === highlightCapId);
+    const bCls = c.status === '已完成' ? 'badge-done' : (c.status === '进行中' ? 'badge-doing' : 'badge-plan');
+    html += `<div style="border:1.5px solid ${isHl ? '#2563eb' : 'var(--line)'};background:${isHl ? '#eff6ff' : '#f8fafc'};border-radius:8px;padding:9px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <strong style="font-size:13px">${c.is_milestone ? '💎 ' : ''}${c.name}</strong>
+        <div style="display:flex;gap:4px;align-items:center">
+          <span class="badge ${bCls}">${c.status} ${c.pct}%</span>
+          ${c.verify_state === '已验证' ? '<span class="badge badge-verify">✓ 已验证</span>' : ''}
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--ink2);margin-top:3px">${c.desc}</div>
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:4px">
+        <span>👤 ${c.owner}</span>
+        <span>📅 ${c.end_date ? (c.start_date + ' → ' + c.end_date) : '待排期'}</span>
+      </div>`;
+    if (IS_PMO_USER) {
+      html += `<div class="inline-edit-bar" style="margin-top:6px">
+        <select onchange="drawerQuickSave(${c.id}, {status: this.value})">
+          <option value="方案中" ${c.status==='方案中'?'selected':''}>方案中</option>
+          <option value="进行中" ${c.status==='进行中'?'selected':''}>进行中</option>
+          <option value="已完成" ${c.status==='已完成'?'selected':''}>已完成</option>
+        </select>
+        <select onchange="drawerQuickSave(${c.id}, {verify_state: this.value})">
+          <option value="待验证" ${c.verify_state==='待验证'?'selected':''}>待验证</option>
+          <option value="部分验证" ${c.verify_state==='部分验证'?'selected':''}>部分验证</option>
+          <option value="已验证" ${c.verify_state==='已验证'?'selected':''}>已验证</option>
+        </select>
+        <input type="number" min="0" max="100" step="5" value="${c.pct}" style="width:55px" onchange="drawerQuickSave(${c.id}, {progress_pct: this.value})" title="进度%">
+        <input type="date" value="${c.end_date}" onchange="drawerQuickSave(${c.id}, {end_date: this.value})" title="截止日">
+      </div>`;
+    }
+    html += `</div>`;
+  });
+  html += `</div></div>`;
+
+  // 4. 实测成果总结
+  html += `<div><div class="section-label">实测成果总结</div><div class="verified-box">${p.verified_summary}</div></div>`;
+
+  // 5. 待补齐项
+  if (p.gaps && p.gaps.length) {
+    html += `<div><div class="section-label">下一阶段待补齐卡点</div><div class="gaps-box"><ul>`;
+    p.gaps.forEach(g => { html += `<li>${g}</li>`; });
+    html += `</ul></div></div>`;
+  }
+
+  body.innerHTML = html;
+  backdrop.style.display = 'block';
+  drawer.classList.add('open');
+}
+
+function closeProjectDrawer() {
+  document.getElementById('global-drawer').classList.remove('open');
+  document.getElementById('drawer-backdrop').style.display = 'none';
+}
+
+function openReportPreview(title, url) {
+  document.getElementById('report-preview-title').innerText = title;
+  document.getElementById('report-preview-ext').href = url;
+  document.getElementById('report-preview-iframe').src = url;
+  document.getElementById('report-preview-modal').style.display = 'flex';
+}
+
+function closeReportPreview() {
+  document.getElementById('report-preview-modal').style.display = 'none';
+  document.getElementById('report-preview-iframe').src = 'about:blank';
+}
+
+async function drawerQuickSave(capId, payload) {
+  const res = await fetch(`/api/cap/${capId}/inline`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!data.ok) alert(data.error || '保存失败');
+}
+
+async function openWeeklyBriefModal() {
+  const modal = document.getElementById('brief-modal');
+  const box = document.getElementById('brief-markdown-box');
+  const tag = document.getElementById('brief-prev-tag');
+  box.value = '正在生成周度进展与里程碑对比简报...';
+  modal.style.display = 'flex';
+  const res = await fetch('/api/weekly-brief');
+  const data = await res.json();
+  box.value = data.markdown || '';
+  tag.innerText = data.has_prev ? `（对比基准：${data.prev_label}）` : '（尚无历史快照，可点击左下角保存基准）';
+}
+
+async function saveNewSnapshot(btn) {
+  btn.disabled = true;
+  btn.innerText = '保存中...';
+  await fetch('/api/snapshot/save', {method: 'POST'});
+  btn.innerText = '✓ 已保存为最新基准快照';
+  setTimeout(() => { btn.disabled = false; openWeeklyBriefModal(); }, 800);
+}
+
+function copyBriefMarkdown(btn) {
+  const box = document.getElementById('brief-markdown-box');
+  box.select();
+  navigator.clipboard.writeText(box.value);
+  const orig = btn.innerText;
+  btn.innerText = '✓ 已复制！可直接粘贴到飞书群';
+  setTimeout(() => { btn.innerText = orig; }, 2000);
+}
+</script>
 </body>
 </html>

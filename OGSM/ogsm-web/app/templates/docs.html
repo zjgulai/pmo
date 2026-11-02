@@ -29,15 +29,18 @@
       <tr>
         <td><span class="badge badge-doing">{{ rf.expert }}</span></td>
         <td>
-          <a href="/reports-view/{{ rf.rel }}" target="_blank" style="font-weight:650;color:var(--ink)">
-            {{ rf.name }}
+          <a href="javascript:void(0)" onclick="openReportPreview('{{ rf.expert }} · {{ rf.name }}', '{{ rf.url }}')" style="font-weight:650;color:var(--ink)">
+            {{ rf.filename }}
           </a>
         </td>
         <td class="muted">{{ rf.size_kb }} KB</td>
         <td class="muted">{{ rf.mtime }}</td>
-        <td>
-          <a href="/reports-view/{{ rf.rel }}" target="_blank" class="btn-chip" style="padding:3px 10px;font-size:12px">
-            打开报告 ↗
+        <td style="display:flex;gap:6px">
+          <button class="btn-chip" onclick="openReportPreview('{{ rf.expert }} · {{ rf.name }}', '{{ rf.url }}')" style="padding:3px 10px;font-size:12px;border-color:#2563eb;color:#2563eb;background:#eff6ff">
+            📄 页内预览
+          </button>
+          <a href="{{ rf.url }}" target="_blank" class="btn-chip" style="padding:3px 10px;font-size:12px">
+            新窗口 ↗
           </a>
         </td>
       </tr>

@@ -5,21 +5,21 @@
 <!-- 顶部愿景横幅 -->
 <div class="hero-banner">
   <div>
-    <div class="hero-tag">ABI 应用与算法组 · 2026Q4 总体愿景 (Objective) · 宏观到微观战略总览</div>
+    <div class="hero-tag">ABI 应用与算法组 · 2026Q4 总体愿景 (Objective) · 紧凑一屏战略全景</div>
     <h1 class="hero-title">{{ objective }}</h1>
     <p class="hero-sub">
-      以 OGSM 为宏观骨架，以 <strong>14 个 Agent 及其验收工作台</strong> 为产品形态，通过组装 <strong>49 项产品能力图谱</strong> 自动化解决各业务场景问题。
+      点击任意 <strong>专家 Agent</strong> 或 <strong>能力胶囊</strong> 可直接从右侧滑出完整详情（含业务场景、实测指标、内嵌报告预览与进度修改），无需离开当前全景页。
     </p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn-chip" onclick="toggleSvgModal()" style="background:rgba(255,255,255,0.14);color:#fff;border-color:rgba(255,255,255,0.28)">
       🖼️ 原版思维导图 (SVG)
     </button>
+    <button class="btn-chip" onclick="openWeeklyBriefModal()" style="background:#f59e0b;color:#fff;border-color:#f59e0b">
+      📸 生成本周汇报简报
+    </button>
     <a href="/roadmap" class="btn-chip" style="background:#10b981;color:#fff;border-color:#10b981">
       📅 甘特图与看板 ({{ stats.overall_pct }}%) →
-    </a>
-    <a href="/projects" class="btn-chip" style="background:#3b82f6;color:#fff;border-color:#3b82f6">
-      📋 14 大产品与场景流水线 →
     </a>
   </div>
 </div>
@@ -41,7 +41,7 @@
     <div class="kpi-sub">
       <span class="badge badge-doing">进行中 {{ stats.cap_doing }}</span>
       <span class="badge badge-plan">方案中 {{ stats.cap_plan }}</span>
-      <a href="/roadmap" style="font-weight:600;margin-left:auto">查看甘特排期 →</a>
+      <a href="/roadmap" style="font-weight:600;margin-left:auto">甘特排期 →</a>
     </div>
   </div>
   <div class="kpi-card">
@@ -49,7 +49,7 @@
     <div class="kpi-val">{{ stats.cap_verified }}<small>/ {{ stats.cap_total }} 项已验证</small></div>
     <div class="kpi-sub">
       <span>💎 关键里程碑 {{ stats.milestone_count }} 个</span>
-      <a href="/docs" style="font-weight:600;margin-left:auto">查阅 12 份实测报告 →</a>
+      <a href="/docs" style="font-weight:600;margin-left:auto">12 份实测报告 →</a>
     </div>
   </div>
   <div class="kpi-card">
@@ -62,13 +62,79 @@
   </div>
 </div>
 
+<!-- 实时探活结果显示面板 -->
+<div id="ping-panel" class="card" style="display:none;margin-bottom:18px"></div>
+
+<!-- 新增：PMO 本周焦点与风险雷达栏（3秒抓出近期里程碑、核心卡点、最新实测报告） -->
+<div class="radar-strip">
+  <!-- 雷达 1：近 4 周即将到期里程碑 -->
+  <div class="radar-box">
+    <div class="radar-box-head">
+      <span>💎 近 4 周待交付关键里程碑 ({{ radar_focus.upcoming_milestones | length }})</span>
+      <a href="/roadmap" style="font-size:11.5px">查看甘特图 →</a>
+    </div>
+    <ul class="radar-list">
+      {% for m in radar_focus.upcoming_milestones %}
+      {% set c = m.cap %}
+      <li class="radar-item" onclick="openProjectDrawer('{{ c.project_slug }}', {{ c.id }})">
+        <div>
+          <span class="badge badge-{{ m.goal_code | lower }}">{{ m.proj_expert }}</span>
+          <strong style="margin-left:4px">{{ c.name }}</strong>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <span class="muted">{{ c.end_date[5:] }} (剩{{ m.days_left }}天)</span>
+          <span class="badge badge-doing">{{ c.progress_pct }}%</span>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- 雷达 2：跨项目核心待补齐卡点 -->
+  <div class="radar-box">
+    <div class="radar-box-head">
+      <span>🔴 跨项目重点待补齐卡点 (点击查看项目)</span>
+      <a href="/projects" style="font-size:11.5px">场景装配图 →</a>
+    </div>
+    <ul class="radar-list">
+      {% for b in radar_focus.top_blockers %}
+      <li class="radar-item" onclick="openProjectDrawer('{{ b.slug }}')">
+        <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+          <span class="badge badge-{{ b.goal | lower }}">{{ b.expert }}</span>
+          <span style="margin-left:4px;color:var(--ink2)">{{ b.gap }}</span>
+        </div>
+        <span style="color:var(--primary);font-weight:600;flex-shrink:0">详情 →</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- 雷达 3：/reports 最新实测报告动态（点击直接在页内同屏预览） -->
+  <div class="radar-box">
+    <div class="radar-box-head">
+      <span>🟢 最新实测成果报告 (点击页内同屏预览)</span>
+      <a href="/docs" style="font-size:11.5px">全部报告 →</a>
+    </div>
+    <ul class="radar-list">
+      {% for rf in radar_focus.latest_reports %}
+      <li class="radar-item" onclick="openReportPreview('{{ rf.expert }} · {{ rf.name }}', '{{ rf.url }}')">
+        <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+          <span class="badge badge-verify">{{ rf.expert }}</span>
+          <strong style="margin-left:4px">{{ rf.name }}</strong>
+        </div>
+        <span class="muted" style="flex-shrink:0">{{ rf.mtime }} · 预览 ↗</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
 <!-- 战略数字化图表区：宏观到微观 5 阶拆解图 + 三大目标成熟度堆叠图 -->
 <div class="strat-charts-grid">
-  <!-- 图表 1：宏观到微观 OGSM 5 阶拆解漏斗与战略流向 -->
   <div class="chart-card">
     <div class="chart-title">
       <span>📐 宏观到微观：OGSM 战略五阶拆解结构</span>
-      <span class="muted" style="font-size:12px;font-weight:500">一源四投：导图 · 场景流水线 · 甘特图 · 看板</span>
+      <span class="muted" style="font-size:12px;font-weight:500">一源四投：导图 · 场景装配 · 甘特图 · 看板</span>
     </div>
     <div class="funnel-steps">
       <div class="funnel-node">
@@ -98,16 +164,15 @@
       </div>
     </div>
 
-    <!-- 6 条策略进度矩阵条 -->
-    <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);display:grid;grid-template-columns:repeat(3, 1fr);gap:8px">
+    <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);display:grid;grid-template-columns:repeat(3, 1fr);gap:8px">
       {% for gnode in goal_tree %}
         {% for snode in gnode.strategies %}
-        <div style="background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px">
+        <div style="background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px">
           <div style="display:flex;justify-content:space-between;font-weight:650">
             <span>{{ gnode.goal.code }}·{{ snode.strat.code }} ({{ snode.projects|length }}项目)</span>
             <span style="color:var(--primary)">{{ snode.pct }}%</span>
           </div>
-          <div class="stacked-bar" style="height:6px;margin-top:5px">
+          <div class="stacked-bar" style="height:5px;margin-top:4px">
             <div class="sb-done" style="width:{{ snode.pct }}%"></div>
           </div>
         </div>
@@ -116,7 +181,6 @@
     </div>
   </div>
 
-  <!-- 图表 2：G1 / G2 / G3 能力成熟度堆叠对比图 -->
   <div class="chart-card">
     <div class="chart-title">
       <span>📊 三大业务目标 (G1–G3) 能力图谱成熟度分布</span>
@@ -129,12 +193,12 @@
         <span>{{ g.title }} ({{ gnode.proj_count }}项目 / {{ gnode.cap_total }}能力)</span>
         <span>综合进度 <strong>{{ gnode.pct }}%</strong> · 已验证 {{ gnode.cap_verified }}/{{ gnode.cap_total }}</span>
       </div>
-      <div class="stacked-bar" title="已完成 {{ gnode.cap_done }} / 进行中 {{ gnode.cap_doing }} / 方案中 {{ gnode.cap_plan }}">
+      <div class="stacked-bar">
         <div class="sb-done" style="width:{{ gnode.done_pct }}%"></div>
         <div class="sb-doing" style="width:{{ gnode.doing_pct }}%"></div>
         <div class="sb-plan" style="width:{{ gnode.plan_pct }}%"></div>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:3px">
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:2px">
         <span>🟢 已完成 {{ gnode.cap_done }} ({{ gnode.done_pct }}%)</span>
         <span>🔵 进行中 {{ gnode.cap_doing }} ({{ gnode.doing_pct }}%)</span>
         <span>⚪ 方案中 {{ gnode.cap_plan }} ({{ gnode.plan_pct }}%)</span>
@@ -143,9 +207,6 @@
     {% endfor %}
   </div>
 </div>
-
-<!-- 实时探活结果显示面板（点击探活时展开） -->
-<div id="ping-panel" class="card" style="display:none;margin-bottom:18px"></div>
 
 <!-- 交互筛选栏 -->
 <div class="toolbar">
@@ -165,154 +226,89 @@
   </div>
 </div>
 
-<!-- 思维导图层级表头说明 -->
-<div class="mm-legend-bar" style="grid-template-columns: 240px 270px 1fr;">
+<!-- 紧凑全景思维导图（左→右：策略S → 专家Agent与工作台 → 业务场景与能力胶囊；点击即开右侧详情抽屉） -->
+<div class="mm-legend-bar" style="grid-template-columns: 230px 245px 1fr;">
   <div>① 策略 (S · 专家融合方向)</div>
-  <div>② 专家昵称 → 产品构成 → 验收工作台</div>
-  <div>③ 业务场景 → 能力图谱（含进度%与截止日）→ 待整合子站 → /reports 实测成果</div>
+  <div>② 专家 Agent &amp; 验收工作台 (点击开抽屉)</div>
+  <div>③ 业务场景链路 → 产品能力图谱胶囊 (点击任意胶囊查看实测数据与报告)</div>
 </div>
 
-<!-- 主体：严格还原附件1的 G -> S -> 专家产品 -> 场景与能力图谱 树状结构 -->
 {% for gnode in goal_tree %}
 {% set g = gnode.goal %}
 <section class="mm-goal-section mm-goal-{{ g.code }}" data-goal="{{ g.code }}">
-  <div class="mm-goal-header">
-    <div>
+  <div class="mm-goal-header" style="padding:11px 18px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
       <div class="mm-goal-title">{{ g.title }}</div>
-      <div class="mm-goal-sub">{{ g.subtitle }}</div>
+      <span class="muted" style="font-size:12.5px">{{ g.subtitle }}</span>
     </div>
-    <div style="display:flex;gap:8px;align-items:center">
+    <div style="display:flex;gap:6px;align-items:center">
       <span class="badge badge-done">已完成 {{ gnode.cap_done }}</span>
       <span class="badge badge-doing">进行中 {{ gnode.cap_doing }}</span>
       <span class="badge badge-plan">方案中 {{ gnode.cap_plan }}</span>
-      <a href="/roadmap#gantt-goal-{{ g.code }}" class="btn-chip" style="font-size:12px;padding:3px 9px">📅 查看甘特排期 →</a>
+      <strong style="font-size:13px;margin-left:4px">{{ gnode.pct }}%</strong>
     </div>
   </div>
 
   {% for snode in gnode.strategies %}
   {% set st = snode.strat %}
-  <div class="mm-strat-row">
-    <!-- 左列：融合策略 S -->
-    <div class="mm-strat-cell">
+  <div class="mm-strat-row" style="grid-template-columns: 230px 1fr;">
+    <div class="mm-strat-cell" style="padding:12px 14px">
       <div class="mm-strat-code">策略 {{ st.code }} · 进度 {{ snode.pct }}%</div>
-      <div class="mm-strat-text">{{ st.title }}</div>
+      <div class="mm-strat-text" style="font-size:12.8px">{{ st.title }}</div>
     </div>
 
-    <!-- 右侧：该策略下的专家产品项目列表 -->
     <div class="mm-projects-col">
       {% for pv in snode.projects %}
       {% set p = pv.proj %}
-      <div class="mm-proj-row" id="node-{{ p.slug }}">
-        <!-- 中列：专家昵称 + 产品构成 + 验收工作台 + 关联子站 -->
-        <div class="mm-proj-node">
-          <div class="mm-expert-head">
-            <span class="mm-expert-tag">
+      <div class="compact-proj-row" id="node-{{ p.slug }}">
+        <!-- 中列：紧凑 Agent 产品节点 -->
+        <div class="compact-proj-cell" onclick="openProjectDrawer('{{ p.slug }}')">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+            <span style="font-size:14.5px;font-weight:750;color:var(--ink)">
               {{ p.expert_name }}
-              <span class="badge {{ 'badge-done' if p.status_summary == '已上线' else ('badge-doing' if p.status_summary == '进行中' else 'badge-plan') }}">
-                {{ p.status_summary }}
-              </span>
+              <span style="font-weight:500;font-size:12.5px;color:var(--ink2)">· {{ p.product_name }}</span>
             </span>
-            <a href="/projects#proj-{{ p.slug }}" style="font-size:12px;font-weight:600">场景卡片 →</a>
+            <span class="badge {{ 'badge-done' if p.status_summary == '已上线' else ('badge-doing' if p.status_summary == '进行中' else 'badge-plan') }}">
+              {{ pv.pct }}%
+            </span>
           </div>
-          <div class="mm-product-name">{{ p.product_name }}</div>
-
-          <div style="font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between">
-            <span>综合进度：<strong>{{ pv.pct }}%</strong></span>
-            {% if pv.proj_end %}<span>计划收口：{{ pv.proj_end }}</span>{% endif %}
-          </div>
-
-          {% if p.workbench_url %}
-          <div>
-            <a class="wb-link" href="{{ p.workbench_url }}" target="_blank" rel="noopener">
-              <span class="wb-dot"></span>
-              {{ p.workbench_url | replace('https://', '') | replace('http://', '') | replace('/', '') }} ↗
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
+            {% if p.workbench_url %}
+            <a class="wb-link" href="{{ p.workbench_url }}" target="_blank" rel="noopener" style="font-size:11.5px;padding:2px 7px">
+              <span class="wb-dot"></span> {{ p.workbench_url | replace('https://', '') | replace('http://', '') | replace('/', '') }} ↗
             </a>
+            {% endif %}
+            {% if pv.reports_list %}
+            <button class="btn-chip" onclick="openReportPreview('{{ p.expert_name }} · {{ pv.reports_list[0][0] }}', '{{ pv.reports_list[0][1] }}')" style="font-size:11px;padding:2px 7px">
+              📄 实测报告
+            </button>
+            {% endif %}
+            <button class="btn-chip" onclick="openProjectDrawer('{{ p.slug }}')" style="font-size:11px;padding:2px 7px;margin-left:auto">
+              详情 ▸
+            </button>
           </div>
-          {% endif %}
-
-          {% if pv.extra_sites %}
-          <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px">
-            <span class="muted" style="font-size:11px;font-weight:600">关联/待整合平台：</span>
-            {% for es in pv.extra_sites %}
-            <a class="wb-link" href="{{ es[1] }}" target="_blank" rel="noopener" style="background:#f8fafc;border-color:#e2e8f0;color:#334155;font-size:11.5px">
-              <span class="wb-dot {{ 'internal' if es[2] == 'internal' else '' }}"></span>
-              {{ es[0] }} ({{ es[1] | replace('https://', '') | replace('/', '') }}) ↗
-            </a>
-            {% endfor %}
-          </div>
-          {% endif %}
-
-          {% if pv.metrics_list %}
-          <div style="margin-top:6px;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:3px">
-            {% for m in pv.metrics_list[:2] %}
-            <div style="font-size:11.5px;display:flex;justify-content:space-between;gap:6px">
-              <span class="muted">{{ m[0] }}</span>
-              <strong style="color:var(--ink)">{{ m[1] }}</strong>
-            </div>
-            {% endfor %}
-          </div>
-          {% endif %}
         </div>
 
-        <!-- 右列：业务场景 → 能力图谱与进度 → /reports 实测成果摘要 -->
-        <div class="mm-branches">
+        <!-- 右列：紧凑业务场景 + 能力胶囊流 -->
+        <div class="compact-Right-cell">
           {% for scen_line, sgrp in pv.scen_groups.items() %}
-          <div class="mm-scen-group">
-            <div class="mm-scen-title">业务场景：{{ scen_line }}</div>
-            <div class="mm-cap-grid">
-              {% for cv in sgrp.cap_views %}
-              {% set c = cv.cap %}
-              <div class="mm-cap-leaf st-{{ c.status }}" data-cap-status="{{ c.status }}">
-                <div class="mm-cap-top">
-                  <span class="mm-cap-name">
-                    {% if c.is_milestone %}<span title="关键里程碑">💎</span>{% endif %}
-                    {{ c.name }}
-                  </span>
-                  <div style="display:flex;gap:4px;align-items:center">
-                    <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">
-                      {{ c.status }} {{ c.progress_pct }}%
-                    </span>
-                    {% if c.verify_state == '已验证' %}
-                    <span class="badge badge-verify" title="已有 /reports 实测报告或线上生产验证">✓ 已验证</span>
-                    {% endif %}
-                  </div>
-                </div>
-                <div class="mm-cap-desc">{{ c.description }}</div>
-                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:2px">
-                  <span>👤 {{ c.owner or p.owner }}</span>
-                  <span>📅 {{ (c.start_date ~ ' → ' ~ c.end_date) if c.end_date else '待排期' }}</span>
-                </div>
-                {% if c.integration_name %}
-                <div class="mm-cap-integ">
-                  <span>🔗 待整合：<strong>{{ c.integration_name }}</strong></span>
-                  {% if c.integration_url %}
-                  <a href="{{ c.integration_url }}" target="_blank" rel="noopener" style="font-family:var(--mono)">
-                    {{ c.integration_url | replace('https://', '') | replace('/', '') }} ↗
-                  </a>
-                  {% endif %}
-                </div>
-                {% endif %}
-              </div>
-              {% endfor %}
+          <div class="compact-scen-row">
+            <span class="compact-scen-tag" title="业务场景链路">{{ scen_line }}</span>
+            {% for cv in sgrp.cap_views %}
+            {% set c = cv.cap %}
+            <div class="compact-cap-pill pill-{{ c.status }}" data-cap-status="{{ c.status }}"
+                 onclick="openProjectDrawer('{{ p.slug }}', {{ c.id }})"
+                 title="{{ c.description }}（负责人：{{ c.owner or p.owner }}，截止：{{ c.end_date or '待排期' }}）">
+              {% if c.is_milestone %}<span>💎</span>{% endif %}
+              <span>{{ c.name }}</span>
+              <span class="pill-pct">{{ c.progress_pct }}%</span>
+              {% if c.verify_state == '已验证' %}
+              <span style="color:#047857;font-size:11px" title="生产已验证">✓</span>
+              {% endif %}
             </div>
+            {% endfor %}
           </div>
           {% endfor %}
-
-          <!-- /reports 实测总结条 -->
-          <div class="mm-report-strip">
-            <div style="flex:1">
-              <strong style="color:#0f172a">📊 实测进展：</strong>{{ p.verified_summary }}
-            </div>
-            {% if pv.reports_list %}
-            <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
-              {% for rep in pv.reports_list %}
-              <a class="btn-chip" href="{{ rep[1] }}" target="_blank" style="font-size:11.5px;padding:3px 9px;background:#fff">
-                📄 {{ rep[0] }} ↗
-              </a>
-              {% endfor %}
-            </div>
-            {% endif %}
-          </div>
         </div>
       </div>
       {% endfor %}
@@ -350,13 +346,13 @@ function filterGoal(code, btn) {
 function filterCapStatus(st, btn) {
   btn.parentElement.querySelectorAll('.btn-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.mm-cap-leaf').forEach(leaf => {
+  document.querySelectorAll('.compact-cap-pill').forEach(leaf => {
     if (st === 'ALL' || leaf.dataset.capStatus === st) {
       leaf.style.opacity = '1';
       leaf.style.transform = 'scale(1)';
     } else {
-      leaf.style.opacity = '0.25';
-      leaf.style.transform = 'scale(0.98)';
+      leaf.style.opacity = '0.22';
+      leaf.style.transform = 'scale(0.96)';
     }
   });
 }

@@ -1,19 +1,17 @@
 {% extends "base.html" %}
-{% block title %}14 大产品项目管理 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block title %}2. 场景装配流水线 · ABI 品牌 & 营销 Agent{% endblock %}
 {% block body %}
 
 <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:16px">
   <div>
-    <h1 style="margin:0;font-size:23px">14 大产品项目管理矩阵</h1>
+    <h1 style="margin:0;font-size:23px">14 大产品项目 &amp; 业务场景能力装配矩阵</h1>
     <p class="muted" style="margin:4px 0 0">
-      以思维导图中的 <strong>产品名称（专家昵称 · 产品构成）</strong> 为独立项目管理单元。汇总工作台直达入口、业务场景、能力图谱进度与 <code>/reports</code> 实测数据。
+      以 <strong>Agent 及其工作台</strong> 为产品形态，将每条业务场景拆解为横向<strong>工位卡槽（Step 1 → Step 2...）</strong>，直观呈现能力图谱如何组装解决业务问题。
     </p>
   </div>
   <div style="display:flex;gap:8px">
-    <a href="/" class="btn-chip">← 返回 OGSM 全景导图</a>
-    {% if is_pmo %}
-    <a href="/admin" class="btn-chip active">⚙️ 编辑项目与进度</a>
-    {% endif %}
+    <a href="/" class="btn-chip">← 返回紧凑全景导图</a>
+    <a href="/roadmap" class="btn-chip">📅 甘特图与看板 →</a>
   </div>
 </div>
 
@@ -62,15 +60,16 @@
             </span>
           </div>
           {% if p.owner %}
-          <div class="muted" style="font-size:12px;margin-top:4px">负责团队：{{ p.owner }}</div>
+          <div class="muted" style="font-size:12px;margin-top:4px">负责团队：{{ p.owner }} · 计划收口：{{ pv.proj_end or '待排期' }}</div>
           {% endif %}
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div style="display:flex;gap:6px;align-items:center">
           {% if p.workbench_url %}
           <a class="wb-link" href="{{ p.workbench_url }}" target="_blank" rel="noopener" style="font-size:12.5px;padding:5px 11px">
             <span class="wb-dot"></span> 打开工作台 ↗
           </a>
           {% endif %}
+          <button class="btn-chip" onclick="openProjectDrawer('{{ p.slug }}')" style="padding:5px 10px">抽屉编辑 ▸</button>
         </div>
       </div>
 
@@ -89,7 +88,7 @@
 
       <!-- 2. 能力完成度条 -->
       <div class="progress-bar-wrap">
-        <span>能力图谱进度：已完成 {{ pv.done_n }} / 进行中 {{ pv.doing_n }} / 方案中 {{ pv.plan_n }}</span>
+        <span>能力装配进度：已完成 {{ pv.done_n }} / 进行中 {{ pv.doing_n }} / 方案中 {{ pv.plan_n }}</span>
         <div class="progress-track">
           {% if pv.total_n > 0 %}
           <div class="progress-done" style="width:{{ (pv.done_n / pv.total_n * 100) | round(1) }}%"></div>
@@ -112,43 +111,36 @@
       </div>
       {% endif %}
 
-      <!-- 4. 业务场景自动化流水线与能力图谱明细 -->
+      <!-- 4. 核心升级：业务场景-能力图谱可视化装配工位图 -->
       <div>
-        <div class="section-label">业务场景自动化流水线 &amp; 能力图谱组成</div>
-        <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="section-label">🔧 业务场景自动化工位 &amp; 能力图谱装配图（绿=已跑通 · 蓝=施工中 · 灰=待建）</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
           {% for scen_line, sgrp in pv.scen_groups.items() %}
-          <div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 13px">
-            <!-- 可视化业务场景步骤节点流 -->
-            <div class="pipeline-flow">
-              <span style="font-size:11.5px;font-weight:700;color:var(--muted);margin-right:4px">场景链路：</span>
-              {% for step in sgrp.steps %}
-                <span class="pipe-step">{{ step }}</span>
-                {% if not loop.last %}<span class="pipe-arrow">→</span>{% endif %}
-              {% endfor %}
-            </div>
-            <!-- 支撑该场景的能力图谱列表 -->
-            <div style="display:flex;flex-direction:column;gap:6px">
-              {% for cv in sgrp.cap_views %}
-              {% set c = cv.cap %}
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:12.5px;border-top:1px dashed #e2e8f0;padding-top:6px">
-                <div>
-                  {% if c.is_milestone %}<span title="关键里程碑">💎</span> {% endif %}
-                  <strong>{{ c.name }}</strong>：{{ c.description }}
-                  <span class="muted" style="font-size:11px;margin-left:6px">
-                    ({{ c.end_date if c.end_date else '待排期' }})
+          <div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 12px">
+            <div style="font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:4px">⛓️ 场景链路：{{ scen_line }}</div>
+            <div class="assembly-track">
+              {% for st_slot in sgrp.stations %}
+              <div class="station-slot st-{{ st_slot.state }}">
+                <div class="station-head">
+                  <span><span class="station-step-num">{{ loop.index }}</span> {{ st_slot.step_name }}</span>
+                  <span style="font-size:11px;color:{{ '#15803d' if st_slot.state=='done' else ('#1d4ed8' if st_slot.state=='doing' else '#64748b') }}">
+                    {{ '🟢已通' if st_slot.state=='done' else ('🔵施工' if st_slot.state=='doing' else '⚪待建') }}
                   </span>
-                  {% if c.integration_name %}
-                  <span style="margin-left:6px;font-size:11.5px;color:var(--primary)">
-                    [整合：<a href="{{ c.integration_url }}" target="_blank">{{ c.integration_name }} ↗</a>]
-                  </span>
-                  {% endif %}
                 </div>
-                <div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
-                  <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">{{ c.status }} {{ c.progress_pct }}%</span>
-                  {% if c.verify_state == '已验证' %}
-                  <span class="badge badge-verify">✓ 已验证</span>
-                  {% endif %}
-                </div>
+                {% if st_slot.caps %}
+                  {% for cv in st_slot.caps %}
+                  {% set c = cv.cap %}
+                  <div class="station-cap-chip" onclick="openProjectDrawer('{{ p.slug }}', {{ c.id }})">
+                    <div style="display:flex;justify-content:space-between;font-weight:650">
+                      <span>{% if c.is_milestone %}💎{% endif %}{{ c.name }}</span>
+                      <span style="color:var(--primary)">{{ c.progress_pct }}%</span>
+                    </div>
+                    <div class="muted" style="font-size:10.5px;margin-top:2px;line-height:1.35">{{ c.description }}</div>
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="muted" style="font-size:11px;padding:4px 0">共用当前链路底座 ({{ st_slot.pct }}%)</div>
+                {% endif %}
               </div>
               {% endfor %}
             </div>
@@ -177,14 +169,14 @@
       </div>
       {% endif %}
 
-      <!-- 7. 原始报告直达 & 支撑补充抽屉 -->
+      <!-- 7. 页内同屏预览实测报告 & 支撑补充抽屉 -->
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)">
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           {% if pv.reports_list %}
             {% for rep in pv.reports_list %}
-            <a class="btn-chip" href="{{ rep[1] }}" target="_blank" style="font-size:12px">
-              📄 查看实测报告：{{ rep[0] }} ↗
-            </a>
+            <button class="btn-chip" onclick="openReportPreview('{{ p.expert_name }} · {{ rep[0] }}', '{{ rep[1] }}')" style="font-size:12px;border-color:#2563eb;color:#2563eb;background:#eff6ff">
+              📄 页内同屏预览：{{ rep[0] }}
+            </button>
             {% endfor %}
           {% else %}
             <span class="muted" style="font-size:12px">暂无独立报告文件（方案设计阶段）</span>

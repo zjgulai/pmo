@@ -85,3 +85,17 @@ class CapabilityItem(SQLModel, table=True):
     integration_name: str = ""  # 待整合能力名称
     integration_url: str = ""  # 整合来源 URL
     sort: int = 0
+
+
+class ProgressSnapshot(SQLModel, table=True):
+    """进度快照表：用于一键保存某时刻的 49 项能力进度并自动对比生成周报简报。"""
+
+    __tablename__ = "progress_snapshot"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    label: str = ""  # 如 2026-11-02 周快照
+    overall_pct: int = 0
+    done_count: int = 0
+    verified_count: int = 0
+    payload_json: str = ""  # JSON: {cap_id: {name, proj, status, verify_state, pct}}
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

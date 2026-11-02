@@ -1,18 +1,21 @@
-"""ABI 品牌 & 营销 Agent 多项目管理与汇报门户 (V3)。
+"""ABI 品牌 & 营销 Agent 多项目管理与汇报门户 (V4)。
 
-第一性原理与奥卡姆剃刀架构：
-1. 宏观到微观唯一主干：O(愿景) → G1~G3(目标) → S1~S6(专家融合策略) → 14个Agent产品项目 → 49项能力图谱。
-2. 49项能力图谱同源驱动五大视图：战略全景导图(/)、产品与场景流水线(/projects)、甘特图与四列看板(/roadmap)、里程碑汇报演示(/present)、PMO行内直改与维护(/admin)。
-3. 自动化能力：23个工作台并发实时探活(/api/ping-sites)、甘特/看板行内无刷新修改(/api/cap/{id}/inline)、飞书对齐CSV一键导出(/api/export.csv)。
+核心能力：
+1. 紧凑一屏全景导图 (/) + 右侧滑出详情抽屉（点击任意 Agent 或能力胶囊即刻在右侧展开完整详情，无需跳页）。
+2. 业务场景-能力图谱可视化装配图 (/projects)：每个场景步骤工位下方直接挂载对应的能力模块与通电进度。
+3. 实测报告页内同屏预览器：点击任意 /reports 实测报告直接在页内分屏/浮层渲染 HTML，告别切标签页。
+4. PMO 本周焦点与风险雷达栏：自动聚合「近25天到期里程碑 + 核心阻塞卡点 + 最新实测报告动态」。
+5. 一键进度快照与周报对比生成 (/api/snapshot/save & /api/weekly-brief)：自动对比上次快照，生成可一键复制到飞书群的 Markdown 简报。
 """
 import concurrent.futures
 import csv
 import io
+import json
 import os
 import ssl
 import time
 import urllib.request
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from fastapi import Body, Depends, FastAPI, Form, Request
@@ -41,7 +44,6 @@ REPO_ROOT = Path(os.getenv("OGSM_DOCS_DIR", str(BASE.parent.parent)))
 OGSM_DOCS_DIR = REPO_ROOT / "OGSM" if (REPO_ROOT / "OGSM").exists() else REPO_ROOT
 REPORTS_DIR = REPO_ROOT / "reports"
 
-# 甘特图时间轴范围：2026-08-01 至 2026-12-31（共 153 天）
 GANTT_START = date(2026, 8, 1)
 GANTT_END = date(2026, 12, 31)
 GANTT_TOTAL_DAYS = (GANTT_END - GANTT_START).days + 1
@@ -86,7 +88,6 @@ def _parse_date(d_str: str) -> date | None:
 
 
 def _calc_gantt_bar(start_str: str, end_str: str, today_d: date, status: str) -> dict:
-    """计算甘特图横条的百分比位置、宽度与逾期状态。"""
     sd = _parse_date(start_str)
     ed = _parse_date(end_str)
     if not sd or not ed or ed < sd:
@@ -112,12 +113,6 @@ def _calc_gantt_bar(start_str: str, end_str: str, today_d: date, status: str) ->
 
 
 def _kanban_col_for(c: models.CapabilityItem) -> str:
-    """四列看板归类：
-    1. plan: 方案中
-    2. doing: 进行中（研发实现中，进度 < 80%）
-    3. pending_verify: 联调收口 / 待最终验收（已完成但未实测验证，或进行中且进度 >= 80%）
-    4. verified: 已完成且已验证（生产实测通过）
-    """
     if c.status == "已完成":
         return "verified" if c.verify_state == "已验证" else "pending_verify"
     if c.status == "进行中":
@@ -127,8 +122,81 @@ def _kanban_col_for(c: models.CapabilityItem) -> str:
     return "plan"
 
 
+def _assemble_scenario_stations(steps: list[str], cap_views: list[dict]) -> list[dict]:
+    """将业务场景的步骤条（Step 1 → Step 2...）与该场景下的能力模块组装成可视化装配工位。"""
+    if not steps:
+        steps = ["核心能力工位"]
+    stations = [{"step_name": s, "caps": [], "state": "plan", "pct": 0} for s in steps]
+    n_st = len(stations)
+    n_caps = len(cap_views)
+
+    for idx, cv in enumerate(cap_views):
+        c_name = cv["cap"].name
+        c_desc = cv["cap"].description
+        placed = False
+        # 优先按关键词语义匹配工位
+        for st_obj in stations:
+            st_clean = st_obj["step_name"].split("：")[-1].strip()
+            tokens = [t for t in [st_clean[:2], st_clean[-2:]] if len(t) >= 2]
+            if any(tok in c_name or tok in c_desc for tok in tokens):
+                st_obj["caps"].append(cv)
+                placed = True
+                break
+        if not placed:
+            target_idx = min(n_st - 1, int(idx * n_st / max(1, n_caps)))
+            stations[target_idx]["caps"].append(cv)
+
+    # 若某个工位未直接挂上能力，但整体有能力，则按整体进度给工位赋状态
+    all_pct = int(round(sum(x["cap"].progress_pct or 0 for x in cap_views) / max(1, n_caps)))
+    for i, st_obj in enumerate(stations):
+        scaps = st_obj["caps"]
+        if scaps:
+            pct = int(round(sum(x["cap"].progress_pct or 0 for x in scaps) / len(scaps)))
+            st_obj["pct"] = pct
+            if all(x["cap"].status == "已完成" for x in scaps):
+                st_obj["state"] = "done"
+            elif any(x["cap"].status in ("已完成", "进行中") for x in scaps):
+                st_obj["state"] = "doing"
+            else:
+                st_obj["state"] = "plan"
+        else:
+            # 推导工位通电状态
+            threshold = int((i + 1) / n_st * 100)
+            st_obj["pct"] = all_pct
+            if all_pct >= threshold:
+                st_obj["state"] = "done"
+            elif all_pct >= max(10, threshold - 45):
+                st_obj["state"] = "doing"
+            else:
+                st_obj["state"] = "plan"
+    return stations
+
+
+def _scan_latest_reports() -> list[dict]:
+    """自动扫描 /reports 目录下所有 HTML 报告，按修改时间倒序排列。"""
+    items = []
+    if REPORTS_DIR.exists():
+        for p in REPORTS_DIR.rglob("*.html"):
+            rel = p.relative_to(REPORTS_DIR)
+            expert = rel.parts[0] if len(rel.parts) > 1 else "综合"
+            mtime_ts = p.stat().st_mtime
+            items.append(
+                {
+                    "expert": expert,
+                    "name": p.name.replace(".html", ""),
+                    "filename": p.name,
+                    "url": f"/reports-view/{rel}",
+                    "size_kb": round(p.stat().st_size / 1024, 1),
+                    "mtime": datetime.fromtimestamp(mtime_ts).strftime("%m-%d %H:%M"),
+                    "mtime_ts": mtime_ts,
+                }
+            )
+    items.sort(key=lambda x: x["mtime_ts"], reverse=True)
+    return items
+
+
 def build_tree_data(s: Session) -> dict:
-    """加载完整 OGSM 树、甘特图坐标、四列看板与统计概览。"""
+    """加载完整 OGSM 树、场景装配图、PMO 焦点雷达、抽屉 JSON 与甘特看板数据。"""
     today_d = date.today()
     today_clamped = max(GANTT_START, min(GANTT_END, today_d))
     today_pct = round((today_clamped - GANTT_START).days / GANTT_TOTAL_DAYS * 100, 2)
@@ -148,8 +216,10 @@ def build_tree_data(s: Session) -> dict:
         "verified": [],
     }
     milestones = []
+    upcoming_milestones = []
     overdue_count = 0
     scheduled_count = 0
+    soon_cutoff = today_d + timedelta(days=28)
 
     for c in caps:
         gbar = _calc_gantt_bar(c.start_date, c.end_date, today_d, c.status)
@@ -173,14 +243,20 @@ def build_tree_data(s: Session) -> dict:
         kanban_cols[kcol].append(c_view)
         if c.is_milestone:
             milestones.append(c_view)
+            ed = _parse_date(c.end_date)
+            if ed and today_d <= ed <= soon_cutoff and c.status != "已完成":
+                days_left = (ed - today_d).days
+                upcoming_milestones.append({**c_view, "days_left": days_left})
 
-    # 按截止日期排序里程碑
     milestones.sort(key=lambda x: x["cap"].end_date or "9999-12-31")
+    upcoming_milestones.sort(key=lambda x: x["days_left"])
 
     proj_views = []
     proj_by_strat: dict[str, list[dict]] = {}
     proj_by_goal: dict[str, list[dict]] = {}
     all_sites = []
+    drawer_dict = {}
+    top_blockers = []
 
     for p in projects:
         p_cap_views = caps_by_proj.get(p.slug, [])
@@ -192,7 +268,6 @@ def build_tree_data(s: Session) -> dict:
         total_n = len(p_caps)
         avg_pct = int(round(sum(c.progress_pct or 0 for c in p_caps) / total_n)) if total_n else 0
 
-        # 计算项目级汇总甘特条（取所有子能力最早 start_date 和最晚 end_date）
         valid_starts = [c.start_date for c in p_caps if _parse_date(c.start_date)]
         valid_ends = [c.end_date for c in p_caps if _parse_date(c.end_date)]
         proj_start = min(valid_starts) if valid_starts else ""
@@ -204,15 +279,17 @@ def build_tree_data(s: Session) -> dict:
             "已完成" if done_n == total_n and total_n > 0 else "进行中",
         )
 
-        # 按业务场景分组能力，并拆解场景步骤节点（供自动化流水线图渲染）
         scen_groups: dict[str, dict] = {}
         for cv in p_cap_views:
             c = cv["cap"]
             key = c.scenario_line or "核心业务场景"
             if key not in scen_groups:
-                raw_steps = [s.strip() for s in key.replace("->", "→").split("→") if s.strip()]
-                scen_groups[key] = {"steps": raw_steps, "cap_views": []}
+                raw_steps = [s_step.strip() for s_step in key.replace("->", "→").split("→") if s_step.strip()]
+                scen_groups[key] = {"steps": raw_steps, "cap_views": [], "stations": []}
             scen_groups[key]["cap_views"].append(cv)
+
+        for key, sgrp in scen_groups.items():
+            sgrp["stations"] = _assemble_scenario_stations(sgrp["steps"], sgrp["cap_views"])
 
         extra_sites = _parse_pipe_lines(p.extra_sites, 3)
         if p.workbench_url:
@@ -238,6 +315,21 @@ def build_tree_data(s: Session) -> dict:
                 }
             )
 
+        metrics_list = _parse_pipe_lines(p.metrics_highlights, 3)
+        gaps_list = [x.strip() for x in (p.pending_gaps or "").splitlines() if x.strip()]
+        reports_list = _parse_pipe_lines(p.report_links, 2)
+        support_list = [x.strip() for x in (p.support_notes or "").splitlines() if x.strip()]
+
+        if gaps_list:
+            top_blockers.append(
+                {
+                    "slug": p.slug,
+                    "expert": p.expert_name,
+                    "goal": p.goal_code,
+                    "gap": gaps_list[0],
+                }
+            )
+
         pv = {
             "proj": p,
             "cap_views": p_cap_views,
@@ -253,15 +345,52 @@ def build_tree_data(s: Session) -> dict:
             "proj_end": proj_end,
             "proj_gbar": proj_gbar,
             "scenarios_list": [x.strip() for x in (p.scenarios or "").splitlines() if x.strip()],
-            "metrics_list": _parse_pipe_lines(p.metrics_highlights, 3),
-            "gaps_list": [x.strip() for x in (p.pending_gaps or "").splitlines() if x.strip()],
-            "reports_list": _parse_pipe_lines(p.report_links, 2),
+            "metrics_list": metrics_list,
+            "gaps_list": gaps_list,
+            "reports_list": reports_list,
             "extra_sites": extra_sites,
-            "support_list": [x.strip() for x in (p.support_notes or "").splitlines() if x.strip()],
+            "support_list": support_list,
         }
         proj_views.append(pv)
         proj_by_strat.setdefault(p.strategy_code, []).append(pv)
         proj_by_goal.setdefault(p.goal_code, []).append(pv)
+
+        # 供前端右侧抽屉零延迟渲染的序列化数据
+        drawer_dict[p.slug] = {
+            "slug": p.slug,
+            "expert": p.expert_name,
+            "product_name": p.product_name,
+            "goal_code": p.goal_code,
+            "strategy_code": p.strategy_code,
+            "status_summary": p.status_summary,
+            "owner": p.owner,
+            "pct": avg_pct,
+            "workbench_url": p.workbench_url,
+            "extra_sites": extra_sites,
+            "verified_summary": p.verified_summary,
+            "metrics": metrics_list,
+            "gaps": gaps_list,
+            "reports": reports_list,
+            "support": support_list,
+            "caps": [
+                {
+                    "id": c.id,
+                    "name": c.name,
+                    "desc": c.description,
+                    "scenario": c.scenario_line,
+                    "status": c.status,
+                    "verify_state": c.verify_state,
+                    "pct": c.progress_pct,
+                    "start_date": c.start_date,
+                    "end_date": c.end_date,
+                    "owner": c.owner or p.owner,
+                    "is_milestone": c.is_milestone,
+                    "integ_name": c.integration_name,
+                    "integ_url": c.integration_url,
+                }
+                for c in p_caps
+            ],
+        }
 
     strat_by_goal: dict[str, list[dict]] = {}
     for st in strategies:
@@ -310,6 +439,8 @@ def build_tree_data(s: Session) -> dict:
     total_caps = len(caps)
     overall_pct = int(round(sum(c.progress_pct or 0 for c in caps) / total_caps)) if total_caps else 0
 
+    latest_reports = _scan_latest_reports()
+
     stats = {
         "project_total": len(projects),
         "project_live": sum(1 for p in projects if p.status_summary == "已上线"),
@@ -324,13 +455,13 @@ def build_tree_data(s: Session) -> dict:
         "scheduled_count": scheduled_count,
         "unscheduled_count": total_caps - scheduled_count,
         "milestone_count": len(milestones),
+        "upcoming_ms_count": len(upcoming_milestones),
         "overdue_count": overdue_count,
         "site_total": len(all_sites),
         "site_online": sum(1 for s_item in all_sites if s_item["net"] == "online"),
         "kanban_counts": {k: len(v) for k, v in kanban_cols.items()},
     }
 
-    # 甘特图顶部月份刻度（2026年8月~12月）
     gantt_months = [
         {"label": "2026年 8月", "sub": "基建与底座铺垫", "width_pct": round(31 / GANTT_TOTAL_DAYS * 100, 2)},
         {"label": "2026年 9月", "sub": "核心引擎开发", "width_pct": round(30 / GANTT_TOTAL_DAYS * 100, 2)},
@@ -338,6 +469,12 @@ def build_tree_data(s: Session) -> dict:
         {"label": "2026年 11月 (当月)", "sub": "二期深化与探针交付", "width_pct": round(30 / GANTT_TOTAL_DAYS * 100, 2)},
         {"label": "2026年 12月", "sub": "全链路收口与复测", "width_pct": round(31 / GANTT_TOTAL_DAYS * 100, 2)},
     ]
+
+    radar_focus = {
+        "upcoming_milestones": upcoming_milestones[:6],
+        "top_blockers": top_blockers[:6],
+        "latest_reports": latest_reports[:6],
+    }
 
     return {
         "objective": OBJECTIVE_TEXT,
@@ -351,6 +488,8 @@ def build_tree_data(s: Session) -> dict:
         "today_pct": today_pct,
         "stats": stats,
         "all_sites": all_sites,
+        "radar_focus": radar_focus,
+        "drawer_json": json.dumps(drawer_dict, ensure_ascii=False),
     }
 
 
@@ -373,13 +512,13 @@ def ctx(request: Request, session: Session, active_nav: str = "mindmap", **kw) -
 
 @app.get("/", response_class=HTMLResponse)
 def overview_mindmap(request: Request, s: Session = Depends(get_session)):
-    """页面 1：战略全景导图（宏观到微观战略分解图 + 自动化漏斗 + 9 级交互式思维导图）。"""
+    """页面 1：紧凑一屏战略全景导图 + PMO 本周焦点雷达 + 右侧滑出详情抽屉。"""
     return render(request, "mindmap.html", ctx(request, s, active_nav="mindmap"))
 
 
 @app.get("/projects", response_class=HTMLResponse)
 def projects_matrix(request: Request, goal: str = "", status: str = "", s: Session = Depends(get_session)):
-    """页面 2：14 大产品与业务场景自动化流水线矩阵。"""
+    """页面 2：14 大产品与「业务场景-能力图谱可视化装配流水线」矩阵。"""
     return render(
         request,
         "projects.html",
@@ -399,17 +538,15 @@ def roadmap_gantt_kanban(request: Request, view: str = "gantt", s: Session = Dep
 
 @app.get("/present", response_class=HTMLResponse)
 def presentation_mode(request: Request, s: Session = Depends(get_session)):
-    """页面 4：里程碑汇报演示页（10页汇报法则 + 里程碑时间轴 + 实测报告中心）。"""
+    """页面 4：里程碑汇报演示页 + 一键周报快照生成。"""
     return render(request, "present.html", ctx(request, s, active_nav="present"))
 
 
 @app.get("/sites", response_class=HTMLResponse)
 def workbenches_directory(request: Request, s: Session = Depends(get_session)):
-    """23 个线上工作台与子平台实时探活面板。"""
     return render(request, "sites.html", ctx(request, s, active_nav="sites"))
 
 
-# 兼容旧路由自动跳转
 @app.get("/board")
 @app.get("/lines")
 @app.get("/experts")
@@ -419,7 +556,7 @@ def legacy_redirect():
     return RedirectResponse("/roadmap", status_code=302)
 
 
-# ───────────────────────────── 自动化 API（行内直改 / 实时探活 / CSV 导出） ─────────────────────────────
+# ───────────────────────────── 自动化 API（行内直改 / 探活 / 周报快照对比 / CSV） ─────────────────────────────
 
 
 @app.post("/api/cap/{cap_id}/inline")
@@ -429,7 +566,6 @@ def inline_update_capability(
     payload: dict = Body(...),
     s: Session = Depends(get_session),
 ):
-    """在甘特图或看板上行内直接修改能力点的状态、验证态、进度百分比、起止日期、负责人与里程碑。"""
     if not is_pmo(request):
         return JSONResponse({"ok": False, "error": "需要先登录 PMO 维护账号"}, status_code=403)
 
@@ -457,7 +593,6 @@ def inline_update_capability(
     if "is_milestone" in payload:
         c.is_milestone = bool(payload["is_milestone"])
 
-    # 看板四列拖拽快捷映射
     if "kcol" in payload:
         kcol = payload["kcol"]
         if kcol == "plan":
@@ -471,9 +606,10 @@ def inline_update_capability(
             if c.progress_pct in (0, 100):
                 c.progress_pct = 60
         elif kcol == "pending_verify":
-            c.status = "已完成"
-            c.verify_state = "部分验证"
-            c.progress_pct = 95
+            c.status = "进行中"
+            c.verify_state = "已验证"
+            if (c.progress_pct or 0) < 85:
+                c.progress_pct = 85
         elif kcol == "verified":
             c.status = "已完成"
             c.verify_state = "已验证"
@@ -496,13 +632,130 @@ def inline_update_capability(
     }
 
 
+def _build_snapshot_payload(data: dict) -> dict:
+    out = {}
+    for pv in data["proj_views"]:
+        p = pv["proj"]
+        for c in pv["caps"]:
+            out[str(c.id)] = {
+                "name": c.name,
+                "expert": p.expert_name,
+                "goal": p.goal_code,
+                "status": c.status,
+                "verify_state": c.verify_state,
+                "pct": c.progress_pct or 0,
+                "end_date": c.end_date or "",
+            }
+    return out
+
+
+@app.post("/api/snapshot/save")
+def save_progress_snapshot(s: Session = Depends(get_session)):
+    """保存当前时刻的 49 项能力进度快照，用于后续周报对比。"""
+    data = build_tree_data(s)
+    st = data["stats"]
+    payload = _build_snapshot_payload(data)
+    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+    snap = models.ProgressSnapshot(
+        label=f"快照 {now_str}",
+        overall_pct=st["overall_pct"],
+        done_count=st["cap_done"],
+        verified_count=st["cap_verified"],
+        payload_json=json.dumps(payload, ensure_ascii=False),
+    )
+    s.add(snap)
+    s.commit()
+    s.refresh(snap)
+    return {"ok": True, "id": snap.id, "label": snap.label, "overall_pct": snap.overall_pct}
+
+
+@app.get("/api/weekly-brief")
+def generate_weekly_brief(s: Session = Depends(get_session)):
+    """自动对比最近一次历史快照，生成无 AI 味的《ABI 品牌 Agent 周度进展与里程碑简报》。"""
+    data = build_tree_data(s)
+    st = data["stats"]
+    cur_map = _build_snapshot_payload(data)
+
+    snaps = s.exec(
+        select(models.ProgressSnapshot).order_by(models.ProgressSnapshot.id.desc())
+    ).all()
+    prev_snap = snaps[0] if snaps else None
+
+    diffs = []
+    if prev_snap and prev_snap.payload_json:
+        try:
+            prev_map = json.loads(prev_snap.payload_json)
+            for cid, cur in cur_map.items():
+                old = prev_map.get(cid)
+                if not old:
+                    diffs.append(f"- 新增能力点：**{cur['expert']} · {cur['name']}**（当前 {cur['pct']}%）")
+                elif (
+                    cur["pct"] != old.get("pct")
+                    or cur["status"] != old.get("status")
+                    or cur["verify_state"] != old.get("verify_state")
+                ):
+                    diffs.append(
+                        f"- **{cur['expert']} · {cur['name']}**：进度 `{old.get('pct')}% → {cur['pct']}%`，"
+                        f"状态 `{old.get('status')} → {cur['status']}`（{cur['verify_state']}）"
+                    )
+        except Exception:
+            pass
+
+    lines = [
+        f"# ABI 品牌 & 营销 Agent 周度进展与里程碑简报（{date.today().isoformat()}）",
+        "",
+        "## 一、 总体进度读数",
+        f"- **纳管产品项目**：{st['project_total']} 个专家 Agent（已上线 {st['project_live']} / 进行中 {st['project_doing']} / 方案中 {st['project_plan']}）",
+        f"- **能力图谱总进度**：**{st['overall_pct']}%**（共 {st['cap_total']} 项：已完成 {st['cap_done']} 项 / 进行中 {st['cap_doing']} 项 / 方案中 {st['cap_plan']} 项）",
+        f"- **生产实测验证（ste-zh 口径）**：**{st['cap_verified']} / {st['cap_total']} 项已验证**",
+        f"- **验收工作台连通性**：{st['site_online']} / {st['site_total']} 个站点在线可达",
+        "",
+    ]
+
+    if prev_snap:
+        delta_pct = st["overall_pct"] - prev_snap.overall_pct
+        sign = "+" if delta_pct >= 0 else ""
+        lines.append(f"## 二、 相比上次快照（{prev_snap.label}）的进度变化（总进度 {sign}{delta_pct}%）")
+        if diffs:
+            lines.extend(diffs)
+        else:
+            lines.append("- 本窗口内暂无能力点状态或百分比变动（可在甘特图/看板中直接修改进度后再对比）。")
+        lines.append("")
+    else:
+        lines.append("## 二、 快照对比")
+        lines.append("- 当前尚无历史基准快照。点击弹窗左下角「保存当前为基准快照」即可记录基线。")
+        lines.append("")
+
+    lines.append("## 三、 近 4 周即将到期的关键里程碑（💎 Milestone）")
+    if data["radar_focus"]["upcoming_milestones"]:
+        for m in data["radar_focus"]["upcoming_milestones"]:
+            c = m["cap"]
+            lines.append(
+                f"- **{c.end_date}**（剩 {m['days_left']} 天）｜**{m['proj_expert']} · {c.name}**：当前 {c.progress_pct}%（{c.owner}）"
+            )
+    else:
+        lines.append("- 近 4 周内无待交付里程碑。")
+    lines.append("")
+
+    lines.append("## 四、 跨项目核心待补齐卡点（需协同支持）")
+    for b in data["radar_focus"]["top_blockers"]:
+        lines.append(f"- **[{b['goal']} · {b['expert']}]** {b['gap']}")
+
+    return {
+        "ok": True,
+        "has_prev": prev_snap is not None,
+        "prev_label": prev_snap.label if prev_snap else "无历史快照",
+        "markdown": "\n".join(lines),
+    }
+
+
 def _probe_single_url(url: str) -> dict:
     ctx_ssl = ssl.create_default_context()
     ctx_ssl.check_hostname = False
     ctx_ssl.verify_mode = ssl.CERT_NONE
     t0 = time.monotonic()
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "ABI-PMO-HealthMonitor/3.0"})
+        req = urllib.request.Request(url, headers={"User-Agent": "ABI-PMO-HealthMonitor/4.0"})
         with urllib.request.urlopen(req, timeout=4.5, context=ctx_ssl) as resp:
             ms = int((time.monotonic() - t0) * 1000)
             return {"url": url, "ok": 200 <= resp.status < 400, "code": resp.status, "ms": ms}
@@ -514,7 +767,6 @@ def _probe_single_url(url: str) -> dict:
 
 @app.get("/api/ping-sites")
 def api_ping_sites(s: Session = Depends(get_session)):
-    """并发实时探测全部 23 个工作台与子平台的 HTTP 状态码与响应延迟。"""
     data = build_tree_data(s)
     urls = sorted({item["url"] for item in data["all_sites"] if item["url"]})
     results = {}
@@ -534,10 +786,9 @@ def api_ping_sites(s: Session = Depends(get_session)):
 
 @app.get("/api/export.csv")
 def export_ogsm_csv(s: Session = Depends(get_session)):
-    """一键导出与飞书 OGSM 总览表结构对齐的 CSV 台账。"""
     data = build_tree_data(s)
     buf = io.StringIO()
-    buf.write("﻿")  # UTF-8 BOM for Excel / Feishu
+    buf.write("﻿")
     writer = csv.writer(buf)
     writer.writerow(
         [
@@ -601,21 +852,7 @@ def export_ogsm_csv(s: Session = Depends(get_session)):
 
 @app.get("/docs", response_class=HTMLResponse)
 def docs_index(request: Request, s: Session = Depends(get_session)):
-    report_files = []
-    if REPORTS_DIR.exists():
-        for p in sorted(REPORTS_DIR.rglob("*.html")):
-            rel = p.relative_to(REPORTS_DIR)
-            expert = rel.parts[0] if len(rel.parts) > 1 else "综合"
-            report_files.append(
-                {
-                    "expert": expert,
-                    "name": p.name,
-                    "rel": str(rel),
-                    "size_kb": round(p.stat().st_size / 1024, 1),
-                    "mtime": datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%d %H:%M"),
-                }
-            )
-
+    report_files = _scan_latest_reports()
     doc_files = []
     if OGSM_DOCS_DIR.exists():
         for p in sorted(OGSM_DOCS_DIR.rglob("*.md")):
@@ -671,7 +908,7 @@ def login(request: Request, password: str = Form(...), s: Session = Depends(get_
             ctx(request, s, active_nav="admin", err="口令不正确"),
             status_code=401,
         )
-    resp = RedirectResponse("/roadmap", status_code=303)
+    resp = RedirectResponse("/", status_code=303)
     resp.set_cookie("ogsm_pmo", signer.dumps("pmo"), httponly=True, samesite="lax", max_age=86400 * 7)
     return resp
 
@@ -799,7 +1036,7 @@ def reset_seed_data(request: Request):
     if not is_pmo(request):
         return RedirectResponse("/login", status_code=303)
     seed(force_reset=True)
-    return RedirectResponse("/roadmap", status_code=303)
+    return RedirectResponse("/", status_code=303)
 
 
 @app.get("/health")
