@@ -450,10 +450,24 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 6px 4px;
+  gap: 10px;
+  padding: 7px 4px;
   border-bottom: 1px dashed var(--line);
   cursor: pointer;
+}
+.radar-item > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.radar-item strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .radar-item:last-child { border-bottom: none; }
 .radar-item:hover { background: var(--surface-subtle); }
