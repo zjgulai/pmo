@@ -5,36 +5,14 @@
 
 本迁移建立 `baseline` 表：每个基线键一行，带口径、窗口、数值、锁定状态与锁定人。
 校验器 C5 从此不再只看 Goal.baseline_locked 这个 bool，而是看这张表里是否真有一行非空的数值。
-"""
-from datetime import datetime, timezone
 
-from sqlmodel import Field, Session, SQLModel, select
+注意：Baseline 模型只在 models.py 定义一处。此前本文件重复定义导致
+「Table 'baseline' is already defined for this MetaData instance」，生产首次部署即中断。
+"""
+from sqlmodel import Session, select
 
 from .db import engine, init_db
-
-
-class Baseline(SQLModel, table=True):
-    """基线。一个 OGSM 周期内每个键一行。
-
-    设计要点：`value` 为空 = 未锁定。不允许用「0」或「N/A」冒充——
-    那会让 C5 永远显示通过，而这正是最危险的一种通过。
-    """
-
-    __tablename__ = "baseline"
-
-    id: int | None = Field(default=None, primary_key=True)
-    key: str = Field(unique=True)  # B1..B6 / D
-    name: str
-    metric_id: str
-    formula_note: str = ""  # 口径说明：怎么算的
-    window: str = ""  # 观察窗口
-    unit: str = ""
-    value: str | None = None  # 空 = 未锁定
-    locked_at: datetime | None = None
-    locked_by: str = ""
-    source_system: str = ""  # 数据从哪来
-    note: str = ""
-    sort: int = 0
+from .models import Baseline
 
 
 SPECS = [
