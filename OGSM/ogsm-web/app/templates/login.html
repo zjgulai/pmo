@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}PMO 登录 · ABI OGSM{% endblock %}
+{% block body %}
+
+<h1>PMO 登录</h1>
+<p class="muted">OGSM 的写入口只有 PMO 一方。前台所有视图对全员只读开放。</p>
+
+<div class="card" style="max-width:420px">
+  {% if err %}<div class="band band-err" style="margin:0 0 14px">{{ err }}</div>{% endif %}
+  <form method="post" action="/login" style="display:flex;flex-direction:column;gap:12px">
+    <label style="font-size:13.5px">
+      <div class="muted" style="margin-bottom:4px">PMO 口令</div>
+      <input type="password" name="password" required autofocus style="width:100%">
+    </label>
+    <button style="width:100%">进入后台</button>
+  </form>
+</div>
+
+<p class="legend">口令由环境变量 <code>OGSM_PMO_PASSWORD</code> 设定，默认 <code>pmo</code>。上线前必须改。</p>
+
+{% endblock %}

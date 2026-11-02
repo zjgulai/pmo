@@ -1,0 +1,1 @@
+<title>内容洞察Workflow</title><callout emoji="📌"><p>社媒内容洞察和规划的整体Flow是：从趋势和用户需求中找内容方向，结合Campaign及业务需求落地内容，再通过数据复盘持续优化下一轮规划。</p></callout><whiteboard token="ZOtPwaIb0he8pLbhNHAcbyyunDe"></whiteboard><p></p>

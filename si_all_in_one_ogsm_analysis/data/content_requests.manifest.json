@@ -1,0 +1,199 @@
+{
+  "manifest_version": "v1",
+  "format": "ndjson",
+  "base_token": "I17db5Qr4aNHf8syN2WcKMFpnfC",
+  "table_id": "tbleSf4fW5idzHM7",
+  "rev": 2115,
+  "timezone": "Asia/Shanghai",
+  "query_context": {
+    "field_scope": "all_fields",
+    "record_scope": "all_records"
+  },
+  "requested_limit": 500,
+  "records_count": 173,
+  "page_count": 1,
+  "has_more": false,
+  "record_file": "/Users/lute/Project/SI-Agent/tmp_ogsm_analysis/data/content_requests.ndjson",
+  "record_file_size_bytes": 111248,
+  "manifest_file": "/Users/lute/Project/SI-Agent/tmp_ogsm_analysis/data/content_requests.manifest.json",
+  "columns": {
+    "record_id": {
+      "physical_type": "string",
+      "stats": {
+        "max_length": 16
+      },
+      "example": "recvtzoz9kj7TP"
+    },
+    "产品是否上市": {
+      "field_id": "fld7fsftIH",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 30,
+        "max_length": 1,
+        "avg_length": 0.8265895953757225
+      },
+      "example": [
+        "无"
+      ]
+    },
+    "产品等级": {
+      "field_id": "fldz13k0ca",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 31,
+        "max_length": 1,
+        "avg_length": 0.8208092485549133
+      },
+      "example": [
+        "无"
+      ]
+    },
+    "内容概述": {
+      "field_id": "fldUFSg6rw",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 30,
+        "max_length": 139
+      },
+      "example": "giveaway"
+    },
+    "内容类型": {
+      "field_id": "fldQCAm1Is",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 52,
+        "max_length": 1,
+        "avg_length": 0.6994219653179191
+      },
+      "example": [
+        "其他"
+      ]
+    },
+    "发布平台": {
+      "field_id": "fldBNmqpnf",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 29,
+        "max_length": 7,
+        "avg_length": 2.6705202312138727
+      },
+      "example": [
+        "FB"
+      ]
+    },
+    "品线/渠道": {
+      "field_id": "fldrqaJeiR",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 18,
+        "max_length": 1,
+        "avg_length": 0.8959537572254336
+      },
+      "example": [
+        "线下渠道"
+      ]
+    },
+    "备注&反馈": {
+      "field_id": "fld9a5Yll6",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 127,
+        "max_length": 1080
+      },
+      "example": "待补充"
+    },
+    "帖子文案": {
+      "field_id": "fldvTRt2tR",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 123,
+        "max_length": 1196
+      },
+      "example": "待定"
+    },
+    "承接人": {
+      "field_id": "fldnl8OPWj",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 164,
+        "max_length": 1,
+        "avg_length": 0.05202312138728324
+      },
+      "example": [
+        "Winnie"
+      ]
+    },
+    "提需人": {
+      "field_id": "fldHdQjhr2",
+      "field_type": "user",
+      "physical_type": "array<struct<id string, name string>>",
+      "stats": {
+        "empty_count": 61,
+        "max_length": 1,
+        "avg_length": 0.6473988439306358
+      },
+      "example": [
+        {
+          "id": "ou_79d092a5c97e0744f645f9691ba1d72f",
+          "name": "陈蔚"
+        }
+      ]
+    },
+    "期望发布日期": {
+      "field_id": "fldc0Ut2xL",
+      "field_type": "datetime",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 30,
+        "min": "2026-09-02T00:00:00.000+08:00",
+        "max": "2027-01-15T00:00:00.000+08:00"
+      },
+      "example": "2026-09-08T00:00:00.000+08:00"
+    },
+    "素材类型": {
+      "field_id": "fldRSk4ARD",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 61,
+        "max_length": 1,
+        "avg_length": 0.6473988439306358
+      },
+      "example": [
+        "图文"
+      ]
+    },
+    "素材路径": {
+      "field_id": "fldckc0cxD",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 120,
+        "max_length": 180
+      },
+      "example": "待制作"
+    },
+    "需求状态（品牌填写）": {
+      "field_id": "fldG7fIJxQ",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 81,
+        "max_length": 2,
+        "avg_length": 0.6184971098265896
+      },
+      "example": [
+        "已安排"
+      ]
+    }
+  }
+}

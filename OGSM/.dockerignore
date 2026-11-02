@@ -1,0 +1,11 @@
+# 构建上下文是 OGSM/，这里做白名单：只放行 ogsm-web/ 下的运行所需文件。
+# 文档（*.md）、系统垃圾一律不进镜像。顺序很重要：先全排除，再逐个放行。
+*
+!ogsm-web/
+!ogsm-web/requirements.txt
+!ogsm-web/app/
+!ogsm-web/app/**
+
+ogsm-web/app/__pycache__/
+ogsm-web/app/**/__pycache__/
+**/*.pyc

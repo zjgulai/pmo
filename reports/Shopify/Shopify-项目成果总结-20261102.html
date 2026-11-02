@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopify 项目成果总结 · 2026-11-01</title>
+<style>
+:root{--ink:#1a2233;--sub:#5a6577;--line:#e3e8f0;--bg:#f6f8fb;--card:#fff;--ok:#0e9f6e;--warn:#d97706;--accent:#2563eb;--mono:ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.75;padding:32px 20px}
+.wrap{max-width:960px;margin:0 auto}
+.hero{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;border-radius:16px;padding:36px 40px;margin-bottom:28px;box-shadow:0 8px 30px rgba(37,99,235,.18)}
+.hero h1{font-size:28px;letter-spacing:.5px}
+.hero .meta{opacity:.85;font-size:13px;margin-top:10px;font-family:var(--mono)}
+.hero .one-liner{margin-top:18px;font-size:16px;background:rgba(255,255,255,.12);border-left:4px solid #93c5fd;padding:14px 18px;border-radius:0 10px 10px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 32px;margin-bottom:22px;box-shadow:0 1px 3px rgba(20,30,60,.04)}
+h2{font-size:20px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+h2 .num{color:var(--accent);font-family:var(--mono);margin-right:8px}
+h3{font-size:16px;margin:20px 0 10px;color:#243b6b}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#eef3fb;font-weight:600;font-size:13px;white-space:nowrap}
+tr:hover td{background:#f8faff}
+.badge{display:inline-block;padding:1px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.b-ok{background:#d9f7e8;color:var(--ok)}
+.b-warn{background:#fdeeda;color:var(--warn)}
+.b-tier{background:#e5edff;color:var(--accent);font-family:var(--mono)}
+ul,ol{padding-left:22px;font-size:14.5px}
+li{margin-bottom:8px}
+code{font-family:var(--mono);background:#eef2f9;padding:1px 6px;border-radius:5px;font-size:13px;color:#243b6b}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:16px 0}
+.kpi{background:linear-gradient(160deg,#f0f5ff,#fff);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+.kpi .v{font-size:26px;font-weight:700;color:var(--accent);font-family:var(--mono)}
+.kpi .l{font-size:12px;color:var(--sub);margin-top:4px}
+.risk li{border-left:3px solid var(--warn);padding-left:10px;list-style:none;margin-left:6px}
+.footer{text-align:center;color:var(--sub);font-size:12px;margin-top:26px;font-family:var(--mono)}
+.tag{display:inline-block;background:#eef2f9;color:#243b6b;border-radius:6px;padding:2px 10px;font-size:12px;margin:2px 4px 2px 0;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <h1>Shopify 项目成果总结</h1>
+  <div class="meta">报告日期 2026-11-01 · 项目代号 Shopify(ABI 智能化独立站 / Sage_hub 子项目)</div>
+  <div class="one-liner">把「Shopify 从 0 到 1 自动化运营」的导航知识体系,演进为可运行的多智能体控制台(MAS)——首个落地岗位 Listing 上架,交付边界「Agent 只能造 DRAFT,人点发布」。</div>
+</div>
+
+<div class="card">
+<h2><span class="num">01</span>总体进展总览</h2>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">178</div><div class="l">知识库正式文档</div></div>
+  <div class="kpi"><div class="v">795</div><div class="l">RAG chunk(eval 门禁 1.0)</div></div>
+  <div class="kpi"><div class="v">5</div><div class="l">已 runnable Agent</div></div>
+  <div class="kpi"><div class="v">84</div><div class="l">合规预检规则</div></div>
+  <div class="kpi"><div class="v">3/3</div><div class="l">Listing MCP 契约测试</div></div>
+</div>
+<table>
+<thead><tr><th>维度</th><th>状态</th><th>关键数字</th></tr></thead>
+<tbody>
+<tr><td>知识库(kb)</td><td><span class="badge b-ok">已投产</span></td><td>14 领域目录 / 178 篇 / 795 chunk</td></tr>
+<tr><td>知识站点</td><td><span class="badge b-ok">已上线</span></td><td><code>platform.shopify.lute-tlz-dddd.top</code>,RAG eval 硬门禁 100%</td></tr>
+<tr><td>MAS 控制面</td><td><span class="badge b-ok">已容器化</span></td><td>非 root 容器,SSH 隧道访问</td></tr>
+<tr><td>Listing 首岗</td><td><span class="badge b-ok">契约落地</span></td><td>窄 MCP 3 工具,DRAFT 硬编码</td></tr>
+<tr><td>合规预检</td><td><span class="badge b-ok">已建制</span></td><td>39 hard + 45 soft,法条核对 2026-10-30</td></tr>
+<tr><td>生产部署</td><td><span class="badge b-ok">自动化</span></td><td>rsync+release 软链回滚,deploy-status 在线</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card">
+<h2><span class="num">02</span>核心成果明细</h2>
+
+<h3>2.1 知识库体系(kb/)</h3>
+<ul>
+<li>覆盖独立站运营全链路:00 战略、01 选品、02 建站、03 上架、04 内容、05 营销、06 CRO、07 归因、08 履约、09 客户、10 自动化编排、90 AI 能力地图、91 合规、92 组织 SOP。</li>
+<li>沉淀 <strong>178 篇正式 Markdown</strong>,全部带元信息头;RAG 索引 <strong>795 chunk</strong>,eval 通过率纳入部署硬门禁(<code>--min-pass-rate 1.0</code>)。</li>
+<li>技能资产 8 个:
+<span class="tag">shopify-ucp-onboarding</span><span class="tag">shopify-bulk-listing</span><span class="tag">shopify-cro-function</span><span class="tag">shopify-fulfillment-ops</span><span class="tag">shopify-hydrogen-scaffold</span><span class="tag">shopify-store-scaffold</span><span class="tag">kb-rag-query</span><span class="tag">shopify-ai-kb</span>
+</li>
+</ul>
+
+<h3>2.2 MAS 多智能体控制台(src/mas/)</h3>
+<p style="font-size:14px;color:var(--sub);margin-bottom:10px">架构决策(2026-10-29 十轮访谈锁定):自用单店单操作者、按岗位切 Agent、审批队列为主、Agent 只能造买家不可见的 DRAFT、扩编门槛=连续 2 周返工率&lt;20% 且日均审批&lt;15 分钟。</p>
+<table>
+<thead><tr><th>Agent</th><th>职责</th><th>风险级</th><th>关键边界</th></tr></thead>
+<tbody>
+<tr><td><code>listing</code></td><td>资料包 → Shopify DRAFT 商品</td><td><span class="badge b-tier">T2</span></td><td>无 publish/update/delete 工具;status 硬编码 DRAFT</td></tr>
+<tr><td><code>inspector</code></td><td>已建商品结构审计(8 类规则 0-100 分)</td><td><span class="badge b-tier">T0</span></td><td>只读</td></tr>
+<tr><td><code>seo</code></td><td>meta 字段、handle、关键词可发现性审计</td><td><span class="badge b-tier">T0</span></td><td>只读</td></tr>
+<tr><td><code>dedup</code></td><td>重复商品识别,按证据强度分级</td><td><span class="badge b-tier">T0</span></td><td>只读</td></tr>
+<tr><td><code>site_ready</code></td><td>建站就绪度三级缺口审计</td><td><span class="badge b-tier">T0</span></td><td>只读</td></tr>
+</tbody>
+</table>
+<ul>
+<li><strong>自建窄 MCP:</strong>核验 5 个现成 Shopify MCP 全部否决(官方只读 / 工具集服务端可变 / 权限颗粒度不足)。<code>src/mas/listing_mcp/</code> 仅 3 工具,DraftProductInput 无 status 字段;契约测试 3/3 PASS。</li>
+<li><strong>合规预检:</strong><code>rules.json</code> 84 条,覆盖 FDA/FTC/CPSC/EPA 母婴类目;<code>precheck.py</code> 实测可复现。</li>
+<li><strong>代码规模:</strong>MAS 核心约 2400 行,core 分层 + 4 Agent 模块 + review 审批台。</li>
+</ul>
+
+<h3>2.3 站点与部署</h3>
+<ul>
+<li><strong>知识站点:</strong>/api/health ok、retriever=true、deploy-status 与远程 SHA 一致;rsync --delete + release 目录 + current 软链回滚。</li>
+<li><strong>MAS 生产(2026-11-01 落地):</strong>腾讯云 Lighthouse 上海 16C/62GB;<code>/opt/shopify-mas/</code>,非 root(10001)、read_only、cap_drop ALL、仅回环 8099;与 sage-preview 网络完全隔离;SSH 隧道访问。</li>
+<li><strong>部署资产:</strong><code>scripts/deploy_shopify_kb.sh</code>(带 RAG 门禁)、cert 签发、preview-tunnel、nginx 双站配置。</li>
+</ul>
+
+<h3>2.4 合规与风控</h3>
+<ul>
+<li>母婴 Listing 宣称批量修复(2026-11-01):5 个商品已改;cold 规则误报已修。</li>
+<li>合规预检知识库区分「监管原文 / 规则依据 / 代码行为」三级可信度。</li>
+<li>aibobod 子域因 ICP 未备案被边缘拦截,改走 SSH 隧道预览,未对外暴露。</li>
+</ul>
+</div>
+
+<div class="card">
+<h2><span class="num">03</span>质量与验证证据</h2>
+<table>
+<thead><tr><th>验证项</th><th>方法</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>Listing MCP 契约</td><td><code>test_contract.py</code></td><td><span class="badge b-ok">3/3 PASS</span>(工具面、DRAFT 硬编码、无裸 GraphQL)</td></tr>
+<tr><td>RAG 检索质量</td><td>eval 硬门禁</td><td><span class="badge b-ok">pass-rate = 1.0</span></td></tr>
+<tr><td>生产站点健康</td><td>/api/health + /api/deploy-status</td><td><span class="badge b-ok">ok=true</span> retriever=true,SHA 一致</td></tr>
+<tr><td>MAS 容器隔离</td><td>网络/权限审计</td><td><span class="badge b-ok">通过</span>独立 network,非 root,read_only,cap_drop ALL</td></tr>
+<tr><td>合规规则</td><td>法条原文核对</td><td><span class="badge b-ok">84 条</span>基准 2026-10-30</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card">
+<h2><span class="num">04</span>尚未完成 / 风险敞口</h2>
+<ul class="risk">
+<li><strong>ICP 备案未过</strong> —— MAS 与 aibobod 子域无法走 80/443 公网,仅 SSH 隧道;备案通过前不可对外。</li>
+<li><strong>返工率未开始计量</strong> —— Listing 首岗「连续 2 周返工率&lt;20%」验收窗口未启动,扩编第二岗位条件未满足。</li>
+<li><strong>站点 Agent 实时数据缺口</strong> —— 当前为构建时静态快照,实时运行数/返工率需 /mas/* 同域反代落地。</li>
+<li><strong>袜子类目三处合规措辞未决</strong> —— 批量修复遗留项。</li>
+<li><strong>重复文件待清理</strong> —— 仓库多份 <code>(1)</code> 后缀副本,需一次归档规范化。</li>
+</ul>
+</div>
+
+<div class="card">
+<h2><span class="num">05</span>下一阶段优先级(建议)</h2>
+<ol>
+<li>启动 Listing 首岗的<strong>返工率计量</strong>,跑满 2 周验收窗口。</li>
+<li>落地 <strong>/mas/* 同域反代</strong>,让站点 Agent 区块实时化。</li>
+<li>推进 <strong>ICP 备案</strong>,解锁公网访问。</li>
+<li>清理 <code>(1)</code> 后缀重复文件,执行一次归档规范化。</li>
+</ol>
+</div>
+
+<div class="footer">Shopify 项目成果总结 · 2026-11-01 · 每日自动重生成 · 证据来源:git 记录 / src/mas / kb / Nowledge 记忆</div>
+
+</div>
+</body>
+</html>

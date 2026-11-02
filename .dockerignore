@@ -1,0 +1,24 @@
+# 构建上下文 = 仓库根（见 OGSM/ogsm-web/Dockerfile）
+# 白名单式：先全排除，再逐个放行。
+
+*
+!OGSM/
+!OGSM/ogsm-web/
+!OGSM/ogsm-web/requirements.txt
+!OGSM/ogsm-web/app/
+!OGSM/ogsm-web/app/**
+
+# 排除 Python 产物
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+
+# 排除文档与大文件（治理索引由 compose 只读挂载，不进镜像）
+OGSM/*.md
+OGSM/*.html
+OGSM/*.pdf
+
+# 排除部署产物
+OGSM/ogsm-web/deploy/.env
+OGSM/ogsm-web/deploy/.last_tag
+OGSM/ogsm-web/deploy/.prev_tag

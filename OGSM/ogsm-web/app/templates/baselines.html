@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}基线台账 · ABI OGSM{% endblock %}
+{% block body %}
+
+<h1>基线台账</h1>
+<p class="muted">
+  T0（2026-11-30）唯一必须关闭的清单。已锁定 <strong>{{ locked_n }} / {{ total }}</strong>。
+</p>
+
+<div class="card" style="font-size:13.5px">
+  <p>
+    <strong>为什么单独建一张表，而不只勾一个「基线已锁定」的开关。</strong>
+    开关是自报的，可以被随手勾上；数值是可查的，必须有人填、有人签名。
+    所以校验器 C5 现在看的是这张表里<strong>是否真有非空数值</strong>，
+    C5b 进一步要求：有数值但没有锁定人的，一样报错——无人认账的基线不能用于考核。
+  </p>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:56px">键</th>
+      <th style="width:200px">名称</th>
+      <th>口径</th>
+      <th style="width:150px">窗口 / 来源</th>
+      <th style="width:120px">数值</th>
+      <th style="width:110px">锁定人</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for b in rows %}
+    <tr>
+      <td><code>{{ b.key }}</code></td>
+      <td>
+        <strong>{{ b.name }}</strong>
+        <div class="muted" style="font-size:11.5px"><code>{{ b.metric_id }}</code>{% if b.unit %} · {{ b.unit }}{% endif %}</div>
+      </td>
+      <td class="muted" style="font-size:12.5px">{{ b.formula_note }}</td>
+      <td class="muted" style="font-size:12px">
+        {{ b.window }}
+        {% if b.source_system %}<div style="margin-top:2px">{{ b.source_system }}</div>{% endif %}
+      </td>
+      <td>
+        {% if b.value %}
+          <strong>{{ b.value }}</strong>
+          {% if b.locked_at %}<div class="muted" style="font-size:11px">{{ b.locked_at.strftime('%Y-%m-%d') }}</div>{% endif %}
+        {% else %}
+          <span class="pill pill-watch">待填</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if b.locked_by %}{{ b.locked_by }}
+        {% elif b.value %}<span class="pill" style="background:#fdf2f1;color:#b3261e">缺签名</span>
+        {% else %}<span class="muted">—</span>{% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<p class="legend">
+  数值为空 = 未锁定。<strong>不允许用 0 或 N/A 冒充</strong>——那会让 C5 永远显示通过，而这是最危险的一种通过：看起来有数，实际没人认账。
+</p>
+
+<h2>锁定后的连锁效果</h2>
+<div class="card" style="font-size:13.5px">
+  <p><strong>B2 锁定</strong> → G1 可以判定「品牌自然需求新客 CAC ≤ B2 × 0.85」。若 <code>acquisition_source</code> 填充率 &lt;70%，G1 必须降级为过程验收（只报品牌词搜索量与 SOV）。</p>
+  <p><strong>B3 锁定</strong> → G2 可以判定「MER ≥ B3 × 1.08」。</p>
+  <p><strong>B4 + D 锁定</strong> → G3 可以在 T+180 判定复购与 payback。注意 LTV（B5）在 T+180 不可测，需移到 T+365。</p>
+  <p><strong>B6 锁定</strong> → R4 人效可以季度结算，并触发 L5-06 的扩线闸门。</p>
+</div>
+
+{% if is_pmo %}
+<h2>录入基线</h2>
+<form class="card inline" method="post" action="/admin/baseline">
+  <select name="key" style="width:88px">
+    {% for b in rows %}<option value="{{ b.key }}">{{ b.key }}</option>{% endfor %}
+  </select>
+  <input name="value" placeholder="数值" required style="width:120px">
+  <input name="locked_by" placeholder="锁定人" required style="width:120px">
+  <input name="note" placeholder="备注（口径变更/异常说明）" style="width:260px">
+  <button>锁定</button>
+</form>
+{% endif %}
+
+{% endblock %}

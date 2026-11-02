@@ -1,0 +1,340 @@
+[
+  {
+    "key": "systems-hub",
+    "url": "https://lute-tlz-dddd.top/systems.html",
+    "label": "Lute systems hub",
+    "skipIfExists": true,
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/systems-hub.png",
+    "status": "existing"
+  },
+  {
+    "key": "datapilot",
+    "url": "https://ana.lute-tlz-dddd.top/",
+    "label": "Momcozy DataPilot",
+    "skipIfExists": true,
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/datapilot.png",
+    "status": "existing"
+  },
+  {
+    "key": "abi-shopify-kb",
+    "url": "https://platform.shopify.lute-tlz-dddd.top/",
+    "label": "Shopify AI Knowledge Base",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/abi-shopify-kb.png",
+    "status": "captured",
+    "bytes": 94212,
+    "meta": {
+      "headings": [
+        "ABI 智能化独立站 经营作战台",
+        "执行状态快照",
+        "按目标选择作战路径",
+        "新店 0-1 冷启动",
+        "已有 Shopify 店铺诊断",
+        "Theme 快速上线",
+        "Hydrogen / Headless 改造",
+        "站外全域增长",
+        "Creator Store Front / 联盟红人",
+        "T7 测试店自动化准备"
+      ],
+      "text": "ABI 智能化独立站 作战台 路径 技术 节点 SOP 增长 Agent 配置 准备度 证据 问答 DeepSeek 问答 OPERATING COMMAND CENTER · RAG + 知识图谱 ABI 智能化独立站 经营作战台 把 Shopify/DTC 知识、工程选型、增长 SOP、Agent 工作流和风险闸口组织成可执行经营路径。 选择经营路径 查看技术选型 检查执行准备度 配置授权中心 14 流程节点 688 知识块 260 图谱实体 785 图谱关系 执行状态快照 本地可用 本地知识库 14 节点已入站点 本地可用 RAG / KG / Site 可本地重建与检索 待用户输入 DeepSeek 问答 页面手动录入 API Key 前置已就绪 T7 测试店前置 本地 preflight 已落地 授权前置 T7 测试店写入 待测试店授权与人审 不保存 API Key 测试店先行 写操作需人审 时效规则待核验 USE-CASE JOURNEYS 按目标选择作战路径 先选经营目标,再进入推荐节点、SOP、技术依赖和风险闸口。T7 等待授权的能力只展示准备清单。 查看授权状态 → ",
+      "title": "ABI 智能化独立站 · Shopify AI 经营知识库",
+      "url": "https://platform.shopify.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "scm-governance",
+    "url": "https://scm.lute-tlz-dddd.top/",
+    "label": "SCM Governance",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/scm-governance.png",
+    "status": "captured",
+    "bytes": 143004,
+    "meta": {
+      "headings": [
+        "治理链路总览",
+        "供应链数据开发治理工作台",
+        "AI 搜索对话",
+        "治理任务中心与资产盘点",
+        "14 个工作台模块",
+        "治理成熟度扫描"
+      ],
+      "text": "SC AIP-SCM Data Workbench ‹ 00 治理链路总览 9 layers S1 战略供应链全景工作台 5 sections R1 业务现状与风险雷达 3 risks R2 角色作战工作台 6 roles F1 供应链履约看板 12 tabs 01 对象本体工作台 14 objects 02 标签工程工作台 8 tags 03 维度工程工作台 10 dims 04 指标工程工作台 178 metrics 05 指标字典工作台 139 L3 06 指标体系编排台 L0-L3 07 血缘与质量工作台 278 edges 08 AI 知识库工作台 328 cards 09 ChatBI 语义治理台 8 contexts 10 决策闭环工作台 3 rec cards SUPPLY CHAIN SEMANTIC GOVERNANCE 治理链路总览 认证指标 本体图谱 审批优先 ONTOLOGY-FIRST GOVERNANCE 供应链数据开发治理工作台 以对象本体为骨架，把标签、维度、指标、指标体系、血缘质量、ChatBI 和决策闭环串成一条可认证、可追溯、可复盘的治理链路。 ",
+      "title": "供应链数据开发治理工作台",
+      "url": "https://scm.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "paper2skills",
+    "url": "https://skills.lute-tlz-dddd.top/",
+    "label": "Paper2Skills",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/paper2skills.png",
+    "status": "captured",
+    "bytes": 124852,
+    "meta": {
+      "headings": [
+        "母婴跨境品牌用这里的 AI 技能，每年多赚 3,000 万",
+        "从业务问题出发",
+        "数据科学家视角",
+        "高连接度 Skills",
+        "按算法类型",
+        "vs 竞品对比",
+        "Skills Graph",
+        "AI 能力建设路线图",
+        "「大促首日打 7 折清空库存，第 3 天涨价流量白白浪费」",
+        "按领域浏览"
+      ],
+      "text": "P paper2skills PLAYBOOK AI 路线图 → 飞书登录 决策工具 总览 业务诊断中心 AI 知识库对话 执行手册 场景手册 方案库 智能体 智能体广场 智能体报告 知识图谱 按领域浏览 按主题浏览 业务工作流 技能关系图谱 全部 Skills 战略报告 AI 能力路线图 成熟度报告 2026 免费版 · 每月10次 升级 Pro 解锁无限调用 CSV接入 · REST API · 无限Agent → ⚙ 设置 · API Key 唯一把顶会 ML 论文翻译为跨境运营决策的平台 母婴跨境品牌用这里的 AI 技能，每年多赚 3,000 万 1054 个从 NeurIPS / KDD / ICML 萃取的可落地决策技能——每个技能有真实 ROI 数字、可运行代码、和跨境电商业务场景。这是任何咨询公司和 SaaS 工具都无法复制的能力。 查看 AI 能力路线图 进入智能体广场 业务诊断 AI 知识库对话 技能关系图谱 场景手册 分析报告台 业务专家 / 运营 数据科学家 CEO / 决策层 技术 / 算法研究者 免费探索 5 个核心领域 · 解锁全部 25 域 + Agen",
+      "title": "总览 · paper2skills",
+      "url": "https://skills.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "data-intelligence-hub",
+    "url": "https://scrapy.lute-tlz-dddd.top/",
+    "label": "Data Intelligence Hub",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/data-intelligence-hub.png",
+    "status": "captured",
+    "bytes": 94322,
+    "meta": {
+      "headings": [
+        "登录到可追溯的情报工作台",
+        "今日情报链路",
+        "登录情报工作台"
+      ],
+      "text": "Data Intelligence Hub Evidence-first workspace Workspace Login TRACEABLE INTELLIGENCE 登录到可追溯的情报工作台 采集、快照、信号、证据和报告都围绕 Workspace 组织，团队从同一条链路判断事实，不让 AI 改写原始证据。 原始事实 保留原文 变化信号 规则触发 证据链路 可回溯 LIVE WORKSPACE 今日情报链路 采集完成 竞品首页监控 页面快照已留存 信号触发 页面变化 · 高 新增产品线区块 证据绑定 证据包已就绪 快照 + 原文 + URL WORKSPACE HEALTH 96 MVP AUTH 邮箱 + 密码 WORKSPACE 默认进入培训库 SESSION Cookie 保持登录态 SECURE ACCESS 登录情报工作台 输入已注册账号进入已填充的情报工作台。 登录 注册 邮箱 密码 账号验证 使用已有邮箱和密码登录；没有账号时切换到注册。 登录 注册和登录默认进入 Data Achieve 培训情报工作台。",
+      "title": "Data Intelligence Hub",
+      "url": "https://scrapy.lute-tlz-dddd.top/login?next=%2Fdashboard"
+    }
+  },
+  {
+    "key": "voc-platform",
+    "url": "https://voc.lute-tlz-dddd.top/",
+    "label": "Voice of Customer",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/voc-platform.png",
+    "status": "captured",
+    "bytes": 22950,
+    "meta": {
+      "headings": [],
+      "text": "Settings Login Sign in Enter your login and password below: Username: Password: Sign in",
+      "title": "路特 VOC 自助分析平台",
+      "url": "https://voc.lute-tlz-dddd.top/login/?next=%2Fsuperset%2Fwelcome%2F"
+    }
+  },
+  {
+    "key": "voc-report",
+    "url": "https://report.lute-tlz-dddd.top/",
+    "label": "VOC Insight Report",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/voc-report.png",
+    "status": "captured",
+    "bytes": 74712,
+    "meta": {
+      "headings": [
+        "Momcozy 喂养电器 E2E 洞察报告库"
+      ],
+      "text": "Momcozy E2E 洞察 首页 策略与洞察 产品与定义 落地与执行 方法论 E2E完整报告 Momcozy 喂养电器 E2E 洞察报告库 从战略洞察到产品上市 — 完整端到端操盘方案 6源交叉验证 · Amazon VOC 19,098条 · Meltwater全网 75,291条 · 竞品VOC 54,189条 · 2026 11步 端到端流程 34 洞察章节 80+ ECharts图表 6源 交叉验证数据基座 主报告 E2E 完整报告 · V5 Momcozy第二增长曲线和E2E洞察报告 宏观战略洞察 → 品类分析 → 用户深潜 → 机会提炼 → 产品定义 → 视觉转化 → 网站设计 → 拍摄制作 → 素材交付。 34个章节，前置洞察10模块 + E2E执行24模块，完整覆盖双引擎（消毒器主引擎 + 暖奶器协同引擎）全链路。 9,229行 540 KB Fortune Red 色系 11步端到端流程 阶段报告 策略与洞察 竞品格局 + 用户需求深潜 Stage 1 竞品格局与用户口碑分析 + Stage 2 用户需求深潜与痛点机会。 品牌热度排名、情感分析、需求层次、场景还原，",
+      "title": "Momcozy 喂养电器 · E2E洞察报告库",
+      "url": "https://report.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "shopify-audit",
+    "url": "https://shopify.lute-tlz-dddd.top/",
+    "label": "Shopify Audit Report",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/shopify-audit.png",
+    "status": "captured",
+    "bytes": 21356,
+    "meta": {
+      "headings": [
+        "诊断监控360"
+      ],
+      "text": "路特 AI 诊断监控360 品牌独立站全维度诊断 · 采集-诊断-洞察-优化-执行 M Momcozy momcozy.com → + 添加新品牌",
+      "title": "诊断监控360 · 路特 AI",
+      "url": "https://shopify.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "brandos",
+    "url": "https://asset.lute-tlz-dddd.top/",
+    "label": "BrandOS Asset Intelligence",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/brandos.png",
+    "status": "captured",
+    "bytes": 150775,
+    "meta": {
+      "headings": [
+        "10个品牌的 AI 大脑",
+        "母婴DTC战场：已完成全量建模",
+        "四层穿透模型",
+        "Momcozy 品牌大脑",
+        "数据资产如何驱动真实业务决策",
+        "发现竞品都没做的Bundle机会",
+        "8-Agent 推理链",
+        "你要打哪场仗？选你的作战场景",
+        "别用感觉选品",
+        "10品牌横向对比，找到你的机会窗口"
+      ],
+      "text": "B BrandOS 行业全景 深度案例 数据资产 竞品洞察 申请接入 母婴DTC品牌AI决策系统 · 已运行 10个品牌的 AI 大脑 315个SKU的决策智能 当每一个品牌决策——从品类选择到定价调整——都有同一个数据大脑支撑， 竞争的维度就变了。 9 覆盖品牌 288 索引 SKU 62 数据维度 40.3万+ VOC 信号 7 AI Agents 申请品牌接入 查看完整演示 已完成深度建模的母婴DTC头部品牌 Momcozy Elvie Spectra Medela Haakaa Baby Brezza Frida Lansinoh Mommed Tommee Tippee 战场全景 母婴DTC战场：已完成全量建模 10个头部品牌，从定位到用户声音，从市场份额到品牌人格，全量结构化 Lansinoh 温柔信赖 Frida 直白幽默 Haakaa 自然有机 Tommee 英伦专业 Medela 科学专业 Momcozy 温暖实用 Spectra 权威医疗 Elvie 极简高端 Mommed 平价实用 Baby 科技便捷 品牌定位图 X轴=价格带($) · Y轴=NPS近似值 · 圆",
+      "title": "BrandOS — 10个母婴品牌的AI大脑，315个SKU的决策智能",
+      "url": "https://asset.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "voa-market-insight",
+    "url": "https://mkt.lute-tlz-dddd.top/",
+    "label": "Market / VOA Insight Platform",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/voa-market-insight.png",
+    "status": "captured",
+    "bytes": 111140,
+    "meta": {
+      "headings": [
+        "中午好，Momcozy 市场洞察工作台",
+        "工作台入口",
+        "全球婴童/吸奶器市场规模趋势（2025-2030E）",
+        "品牌份额数据接入状态",
+        "本期报告",
+        "政策法规追踪",
+        "待办通知",
+        "活跃先锋",
+        "快捷导航",
+        "反馈建议"
+      ],
+      "text": "首页 五看 看市场 看竞争 看用户 看行业 看自己 AI AI助手 AI画廊 3 EN 中午好，Momcozy 市场洞察工作台 半月数据周期 2026-07-H1 · 2026-07-01 至 2026-07-15 · 生成 2026/7/1 10:31:28 公开来源成功 16 连接器待接入 28 人工补录 6 下次计划 2026/7/16 09:00:00 全球吸奶器市场 $3.81B +8.52% CAGR Precedence Research 2026E · 品类TAM口径 北美市场份额 45.05% 2025年 Fortune BI 2025 · 最大公开区域市场 穿戴式市场 $233M +15.08% CAGR Fortune BI 2026E · 细分TAM口径 公开月度趋势 100 2026-05峰值 Wikimedia Pageviews · 非GMV/销量代理指标 Public facts 3 TAM、北美区域份额、穿戴式细分TAM ds-001 / ds-002 / ds-045 Public proxy 1 Wikimedia公开兴趣指数，非GMV或销量 ds",
+      "title": "Momcozy - Market Insight Platform",
+      "url": "https://mkt.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "ai-video",
+    "url": "https://video.lute-tlz-dddd.top/",
+    "label": "AI Native Video",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/ai-video.png",
+    "status": "captured",
+    "bytes": 24089,
+    "meta": {
+      "headings": [
+        "Momcozy",
+        "商品直拍",
+        "创作摘要"
+      ],
+      "text": "路特创新视频创作平台 Momcozy 为妈妈的舒适不断进化 Evolving for Mom and Cozy 数字化-数据科学部 创作 创作指引 开始创作 设计蓝图 路特创新视频创作平台 首页 我的作品 资产库 工具箱 设置 中/EN 商品直拍 品牌宣传片 网红二创带链接 品牌VLOG 快速模式 直接输入商品信息，无需预设场景。AI 生成产品展示视频、脚本和缩略图。 商品直拍 选择视频类型 快捷模板 产品解说 清晰讲解产品功能 卖点演示 核心卖点可视化呈现 参数介绍 技术参数权威解读 对比展示 使用前vs使用后 不同类型决定创作方向和评估标准 必填 🎯 定主角 你要拍什么产品？* 产品是视频的主角，名称决定了 AI 对产品的理解起点。 卖点是视频的骨架 必填 💡 找冲突 这个产品好在哪？* 卖点是视频的骨架，每个镜头都在证明它。 场景决定拍摄环境 推荐填写 🎨 定调性 产品在什么场合用？ 场景决定拍摄环境和氛围——居家温馨还是职场高效？ 语气决定旁白感觉 推荐填写 🎬 选舞台 用什么语气介绍？ 语气决定旁白感觉——亲切闺蜜还是专业顾问？ 12格导演分镜，平衡速度和质量 推荐填",
+      "title": "Short Video Factory — AI Multi-platform Distribution",
+      "url": "https://video.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "starlink-brand",
+    "url": "https://brand.lute-tlz-dddd.top/",
+    "label": "Starlink / Brand Strategy Engine",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/starlink-brand.png",
+    "status": "captured",
+    "bytes": 89566,
+    "meta": {
+      "headings": [
+        "让业务问题直接 进入可执行链路",
+        "核心工作流已经就绪",
+        "从一个问题，到一份可以交付的报告。",
+        "业务入口不再是菜单，而是问题本身。",
+        "四个入口，覆盖完整操作路径。",
+        "星链广场",
+        "业务连廊",
+        "执行工作台",
+        "知识图谱",
+        "能力域保持清晰，系统复杂度留在后台。"
+      ],
+      "text": "路特星链 首页 星链广场 业务连廊 链上对话 执行工作台 知识图谱 运行工作流 EN 登录 AI Agent Skill 操作系统 让业务问题直接 进入可执行链路 从业务问题出发，自动匹配 Skill 链路，执行、审计、生成报告。 开始执行 浏览星链广场 81 生产级 Skills 5 Hub 编排器 48 路由规则 Skill Router 问题到链路 意图理解 数据接入 链路编排 报告输出 路特星链工作流 实时数据已连接 上传业务数据 订单 CSV、竞品评论、供应商资料或长文档。 选择执行链路 系统按领域和依赖关系编排 Skill。 下载审计报告 每个结论都带来源、步骤和下一步动作。 4 核心工作流已经就绪 覆盖选品、增长、运营和供应链，面向真实业务闭环。 输入 业务目标和数据文件 输出 报告、证据和行动清单 链路 48 条路由规则 治理 可追溯、可验证、可复用 从一个问题，到一份可以交付的报告。 路特星链把业务判断拆成明确输入、Skill 执行、证据输出和后续动作。 业务入口不再是菜单，而是问题本身。 选择你正在面对的挑战，系统把它路由到可执行的 Skill 链路。 竞品差评转新",
+      "title": "路特星链 — 让每一个业务问题上链解决",
+      "url": "https://brand.lute-tlz-dddd.top/zh"
+    }
+  },
+  {
+    "key": "product-selection",
+    "url": "https://product.lute-tlz-dddd.top/",
+    "label": "AI Product Selection",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/product-selection.png",
+    "status": "captured",
+    "bytes": 85148,
+    "meta": {
+      "headings": [
+        "趋势变化",
+        "机会提醒",
+        "快捷任务",
+        "关键榜单"
+      ],
+      "text": "路特 AI 工作台 选品工作台 TikTok趋势 Amazon市场 报告中心 个人中心 免费体验 中文 U 工作台 首页 发现机会 选品机会榜 核心 TikTok大盘 商品趋势 达人发现 小店排行 热门视频 直播排行 Amazon关键词 Amazon榜单 评估分析 决策执行 升级会员 lute_user_001 高级版 2027-12-31 套餐到期 TikTok趋势 / 首页 演示数据 TikTok 反爬限制，当前为演示数据。 找商品 找达人 找小店 找视频 找直播 趋势变化 便携温奶器 SHI +15% 婴儿背带 视频 +200 辅食料理机 销量 +8% 查看全部 机会提醒 3个高机会概念待评估 2个关注概念数据更新 查看全部 快捷任务 关键词分析 品类洞察 机会发现 生成报告 竞品监控 关键榜单 查看完整榜单 商品热销 商品飙升 商品新品 达人带货 达人涨粉 热门视频 1 智能婴儿监视器 安全用品 689 查看详情 关联达人 分析机会 2 智能安抚奶嘴 喂养用品 1,153 查看详情 关联达人 分析机会 3 折叠托腹带 孕产妇 605 查看详情 关联达人 分析机会 4 便携学步车",
+      "title": "首页 — 路特全球智能选品中心",
+      "url": "https://product.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "business-insight",
+    "url": "https://business.lute-tlz-dddd.top/",
+    "label": "Business Insight Hub",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/business-insight.png",
+    "status": "captured",
+    "bytes": 51897,
+    "meta": {
+      "headings": [
+        "重新定义母婴AI",
+        "当关怀遇见创新",
+        "当所有人朝同一个方向奔跑",
+        "打破常规的原则",
+        "减法 > 加法",
+        "生理 > 信息",
+        "父亲的蓝海",
+        "母亲心理健康优先",
+        "三代人，一座桥",
+        "FromInsighttoProduct"
+      ],
+      "text": "Nurture Link 市场洞察 创新方案 行业案例 洞察框架 探索方案 从洞察到产品 重新定义母婴AI 当关怀遇见创新 对 探索五大方案 阅读市场分析 $ 0 B 全球AI育儿市场（2025） 0 % 2035年复合年增长率 0 万亿 中国母婴市场规模 0 个 反直觉解决方案 市场迷思 当所有人朝同一个方向奔跑 全球母婴AI市场估值566亿美元——然而60%的产品都是同一个公式：大模型+毛绒外壳+语音对话。结果呢？AI玩具退货率高达30-40%，融资8000万美元的机器人沦为\"电子砖头\"，万亿级市场呼唤真正的创新。 三大拥挤赛道：智能监护、AI教育、AI陪伴 产品差异化与市场热度成反比 \"取代人类照护\"的假设——已被证明大错特错 深入了解市场分析 AI玩具退货率 30-40% 由同质化导致 五大反直觉洞察 打破常规的原则 每个洞察都挑战行业共识——并打开一扇无人涉足的门。 减法 > 加法 去掉语音、屏幕和云端——用更少创造更强的连接，而非更多 生理 > 信息 母亲的心跳比高清视频更 soothing。在生物层面实现同步。 父亲的蓝海 67.8%的父亲每天使用育儿App——但只有6.",
+      "title": "NurtureLink - Rethinking Maternal-Infant AI",
+      "url": "https://business.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "knowledge-garden",
+    "url": "https://kg.lute-tlz-dddd.top/",
+    "label": "AI Knowledge Garden",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/knowledge-garden.png",
+    "status": "captured",
+    "bytes": 57808,
+    "meta": {
+      "headings": [
+        "灵词",
+        "提示词",
+        "技能",
+        "钩子",
+        "MCP",
+        "智能体",
+        "开源",
+        "为什么选择灵词",
+        "深度分类",
+        "即用即取"
+      ],
+      "text": "灵 灵词 PROMPTFORGE 首页 提示词 201 技能 314 钩子 80 MCP 80 智能体 81 开源 95 提示词与技能的锻造工坊 灵词 六维分类体系的AI知识库 — 提示词、技能、钩子、MCP、智能体、开源 851 总条目 6 分类 14 角色 提示词 Prompts 经过验证的提示词模板，覆盖创作、产品、开发等14个职业角色 201 覆盖14个职业角色 技能 Skills 职业场景技能库，从Claude Code到跨境电商的全域覆盖 314 从Claude Code到跨境电商 钩子 Hooks 事件驱动的自动化工作流，让AI自己管理自己 80 事件驱动自动化 MCP Model Context Protocol 模型上下文协议工具，连接AI与外部世界 80 模型上下文协议 智能体 AI Agents AI Agent框架与编排，从单智能体到多智能体协作 81 AI智能体框架 开源 Open Source 精选开源项目与工具，站在巨人的肩膀上 95 精选开源项目 为什么选择灵词 为中文用户精心打造的AI知识库 深度分类 六维体系覆盖提示词、技能、钩子、MCP、智能体、开",
+      "title": "灵词 PromptForge",
+      "url": "https://kg.lute-tlz-dddd.top/"
+    }
+  },
+  {
+    "key": "plugin-hub",
+    "url": "https://plugin.lute-tlz-dddd.top/",
+    "label": "VOC Plugin Hub",
+    "file": "/Users/pray/job_present/opendesign/mockups/job-present-report/assets/screenshots/plugin-hub.png",
+    "status": "captured",
+    "bytes": 163351,
+    "meta": {
+      "headings": [
+        "VOC 采集监控台",
+        "平台插件监控",
+        "Amazon Reviews",
+        "Reddit Threads",
+        "Instagram Media",
+        "PRD 平台预设计",
+        "Facebook Page Comments",
+        "TikTok Comments",
+        "Shopify Storefront Reviews",
+        "Reddit 帖子解析"
+      ],
+      "text": "跳到主内容 PLUGIN HUB VOC 采集监控台 API online 证据总量 350 5 个 run AMAZON 10 评论证据 REDDIT 340 Thread / comment INSTAGRAM 0 media comments 低置信度 10 阈值 70% 质量 FLAGS 152 需复核证据 待补采任务 0 server capture queue 平均覆盖 77% coverage confidence PLATFORM OPERATIONS 平台插件监控 每个平台保留独立采集路径、配置状态和授权边界，统一写入 Canonical VOC。 Amazon Reviews ACTIVE Reddit Threads ACTIVE Instagram Media DEFERRED Facebook Page Comments PLANNED TikTok Comments DEFERRED Shopify Storefront Reviews DEFERRED ACTIVE Amazon Reviews 评论页翻页、覆盖率和 extension package 状",
+      "title": "VOC Hub",
+      "url": "https://plugin.lute-tlz-dddd.top/"
+    }
+  }
+]

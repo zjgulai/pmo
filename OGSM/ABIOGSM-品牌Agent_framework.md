@@ -1,0 +1,176 @@
+# ABI-OGSM
+## O
+### G
+- S
+  - M
+## 愿景
+### 目标
+- 策略
+  - 专家昵称
+    - 产品构成
+      - 验收工作台
+        - 业务场景
+          - 能力图谱
+            - 进度
+              - 待整合能力
+                - 整合来源
+## 【O】以品牌 Agent 全链路自动化，让声量有增长、口碑有防线、人效有提升。
+### 【G1】 加速品牌多渠道声量增长
+- 社媒专家+ 爆款复刻专家 融合，为社媒趋势把控、爆款选题、拍摄脚本、AI素材生成提供辅助决策类和生产力工具
+  - Emily
+    - 社媒Agent&工作台
+      - https://social.luteos.com/
+        - 社媒趋势洞察 → 内容策略 → 脚本生成
+          - 爆款/趋势洞察：发现社媒爆款与趋势，输出可复刻的内容结构
+            - 已完成
+          - 互动追踪&评论解析：追踪社媒互动并解析粉丝真实反馈
+            - 已完成
+          - 内容策略生成：按趋势与品牌定位生成社媒内容策略
+            - 进行中
+          - 脚本生成：按爆款结构批量生成品牌投放脚本
+            - 进行中
+  - Clone
+    - 爆款复刻Agent&工作台
+      - https://video.luteos.com/
+- 媒体公关专家 + GEO专家 + IP/名人专家 融合，为品牌公共关系从核心媒体编辑跟踪、声量洞察、专家挖掘助力
+  - Vicky
+    - PR Agent&工作台
+      - https://pr.luteos.com/
+        - PR 线：竞品监测 → 风险预警 → 工作台协同
+          - 线索管理： PR 媒体&编辑线索管理
+            - 已完成
+          - 线索推荐：行业话题推荐、编辑匹配
+            - 已完成
+        - 舆情线：看板对话化 → 自动分类 → 工单闭环
+          - 舆情预警：品牌舆情监控与预警分发
+            - 已完成
+          - 数据查询与分析：舆情、核心媒体&编辑查询与分析
+            - 已完成
+  - GEO
+    - 专家内容Agent&工作台
+      - https://geo.luteos.com
+        - 问句库 → 采集探针 → 解析与指标 → 诊断洞察 → 内容生成 → 复测报告
+          - 配置与问句库：建立品牌问句库并版本化管理
+            - 方案中
+          - 采集探针：真实采集 AI 引擎回答并留存快照
+            - 方案中
+          - 解析与指标：解析品牌提及与排位，算出五项可见度指标
+            - 方案中
+          - 诊断洞察：定位可见度缺口并排出优先攻占主题
+            - 方案中
+          - 内容生成：基于事实库生成可被 AI 引用的权威内容
+            - 方案中
+          - 复测与报告：复测效果并产出可交付月报
+            - 方案中
+  - Radar
+    - IP/名人Agent&工作台
+      - https://magpie.luteos.com/
+        - 粉丝分析 → 合作计划 → 动态监测 → 机会推荐
+          - IP 合作计划制定：分析 IP 粉丝结构与声量，输出合作计划
+            - 方案中
+          - 全渠道动态监测：跨平台追踪 IP 动态并聚类关键事件
+            - 方案中
+          - 合作机会识别：识别合作机会信号并给出推荐理由
+            - 方案中
+### 【G2】敏捷响应品牌声量所带来的影响和机会
+- VOC专家 + 市场洞察专家 融合，为品牌消费者舆情监控、品牌声量机会识别、竞品洞察提供辅助决策
+  - Echo
+    - VOC Agent&工作台
+      - https://radar.luteos.com/
+        - 舆情线：品牌/品类/SPU舆情预警
+          - 多渠道数据查询：售前、售后、独立站、Reddit 等用户反馈
+            - 已完成
+              - 数据采集插件
+                - https://plugin.luteos.com/
+          - 风险指数&机会洞察：量化用户风险指数并挖掘产品机会
+            - 进行中
+        - 话题线：高质量内容机会挖掘
+          - 拖拉式多维分析：拖拽式多维分析用户声音
+            - 进行中
+        - 产品机会线：品类机会挖掘
+          - 自动化品类洞察报告
+            - 进行中
+              - 品类洞察平台
+                - https://business.luteos.com/
+              - 品类洞察报告
+                - https://report.luteos.com/
+  - Market
+    - 市场洞察Agent&工作台
+      - https://mkt.luteos.com/
+- 品牌声量专家 + 多平台数据采集专家 融合，为品牌知识库构建、声量建模、声量分析提供辅助决策
+  - Source
+    - 数据采集Agent&工作台
+      - https://scrapy.luteos.com/
+        - 统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构->采集工具->洞察工具
+          - 统一采集平台与 monitor 层：统一采集调度、降级链路与 12 表建模
+            - 进行中
+          - TikTok 采集MCP/skill：采集 TikTok 榜单、视频、评论
+            - 进行中
+          - Reddit 采集MCP/skill：采集 Reddit 帖子与评论树
+            - 进行中
+          - YouTube 采集MCP/skill：采集 YouTube 视频、频道、字幕
+            - 进行中
+          - Instagram 采集MCP/skill：采集 Instagram 媒体与评论
+            - 进行中
+          - Facebook 采集MCP/skill：采集 Facebook 页面与互动快照
+            - 进行中
+          - Google Trends 采集MCP/skill：采集 Google 趋势指数与关联查询
+            - 进行中
+          - 上游数据底座，支撑 GEO、Vicky、Echo、Signal、Emily、Radar 六方
+            - 进行中
+  - Signal
+    - 品牌声量Agent&工作台
+      - https://signal.luteos.com/
+        - 多源采集 → 异动检测 → 归因分析 → 告警
+          - 品牌曝光&热度监控：监控品牌曝光与搜索热度日趋势
+            - 方案中
+          - 声量异动识别：识别声量异常波动并归因
+            - 方案中
+          - 竞品动作&发布监测：追踪竞品动作与新品发布节奏
+            - 方案中
+### 【G3】 推进品牌数据资产AI数字化运营
+- 内容审核专家 + 多智能体平台 融合，为品牌内容资产审核、知识库沉淀以及多智能体协作提供品牌资产与协作平台
+  - 守衡
+    - 内容治理Agent&工作台
+      - https://ca.luteos.com/
+        - 内容上传 → 模型审核 → 审计判定 → 整改推送
+          - 内容审计规则引擎：按品牌规则自动审计内容合规风险
+            - 已完成
+          - 经营动作与结论复核：复核经营结论是否有证据支撑
+            - 已完成
+          - 复核结论与整改清单：输出整改清单并闭环推送
+            - 已完成
+  - Daisy
+    - 多智能体Agent&工作台
+      - https://mas.luteos.com/
+        - 知识库->MAS->CLI
+          - 各 Agent 统一接入：九个 Agent 通过适配层统一接入
+            - 方案中
+          - 统一入口，把九个 Agent 从九个入口收成一个
+            - 方案中
+              - 品牌知识库平台
+                - https://asset.luteos.com/
+                - platform-operations-wiki
+          - 对话式 CLI 界面：提供对话式 CLI 标准交互
+            - 进行中
+              - 业务skills平台
+                - https://brand.luteos.com/
+                - https://skills.luteos.com/
+- Agent全栈专家 + 项目管理专家 + 独立站智能化专家融合，沉淀研发、运营、协作三类AI生产力工具
+  - Main
+    - 全栈开发Agent&工作台
+      - https://main.luteos.com/
+        - 模型选型与评测
+          - https://llm.luteos.com/
+  - Shopify
+    - ABI Shopify Agent&工作台
+      - https://shopify.luteos.com/
+        - ABI独立站
+          - https://platform.shopify.luteos.com/
+        - 独立站360审计
+          - https://shopify.luteos.com/
+        - AI选品
+          - https://product.luteos.com/
+  - PMO
+    - OGSM管理Agent&工作台
+      - https://pmo.luteos.com/

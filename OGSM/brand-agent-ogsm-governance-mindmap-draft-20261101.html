@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>品牌 Agent OGSM 治理体系思维导图</title>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#0b1016; --panel:#151c26; --panel2:#1b2431;
+  --line:#263140; --line2:#33414f;
+  --tx:#e6edf5; --tx2:#b9c5d4; --mut:#8b98a9;
+  --acc:#6ea8fe; --acc2:#a8c7fa; --ok:#7ee2a8; --warn:#f0c674; --bad:#ff9b95;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --top-h:176px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.68;padding-top:var(--top-h)}
+h1,h2,h3,h4,h5{margin:0;line-height:1.4}
+code{font-family:var(--mono);font-size:.9em;background:var(--bg2);border:1px solid #1f2a37;border-radius:4px;padding:0 4px;color:#c9d7ea;word-break:normal;overflow-wrap:break-word}
+strong{color:#f3f7fc}
+a{color:var(--acc2)}
+
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:#0a0e14;border-bottom:1px solid var(--line);box-shadow:0 2px 12px rgba(0,0,0,.35)}
+.tbar-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 20px}
+.tbar-title h1{font-size:16px;font-weight:650;letter-spacing:.01em}
+.tbar-title .sub{display:block;font-size:11.5px;color:var(--mut);margin-top:1px}
+.six{list-style:none;margin:0;padding:0 20px 12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px;max-height:30vh;overflow:auto}
+.six li{display:flex;gap:8px;font-size:12.5px;color:var(--tx2);border-left:2px solid var(--acc);padding:1px 0 1px 9px}
+.six .n{color:var(--acc);font-family:var(--mono);font-size:11px;padding-top:2px}
+.six p{margin:0}
+.topbar.collapsed .six{display:none}
+
+.toolbar{position:sticky;top:var(--top-h);z-index:90;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:9px 20px;background:#0d1117;border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px}
+.tab{background:transparent;border:0;color:var(--tx2);font:inherit;font-size:13px;padding:4px 12px;border-radius:6px;cursor:pointer}
+.tab:hover{color:var(--tx);background:#1d2733}
+.tab.active{background:#1d3050;color:#dbe9ff}
+.search{display:flex;align-items:center;gap:8px}
+#q{width:300px;background:var(--bg2);border:1px solid var(--line2);color:var(--tx);padding:6px 10px;border-radius:6px;font:inherit;font-size:13px;outline:none}
+#q:focus{border-color:var(--acc)}
+#qcount{font-size:12px;color:var(--mut);min-width:72px}
+.treebtns{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.btn{background:var(--panel);color:var(--tx2);border:1px solid var(--line2);border-radius:6px;padding:5px 10px;font:inherit;font-size:12.5px;cursor:pointer}
+.btn:hover{background:var(--panel2);color:var(--tx)}
+.btn.on{background:#1d3050;border-color:var(--acc);color:#dbe9ff}
+body[data-view="table"] .search,body[data-view="status"] .search,
+body[data-view="table"] .treebtns,body[data-view="status"] .treebtns{display:none}
+
+main{max-width:1500px;margin:0 auto;padding:16px 20px 90px}
+section[hidden]{display:none}
+
+details{margin:4px 0;scroll-margin-top:calc(var(--top-h) + 70px)}
+summary{cursor:pointer;padding:4px 6px;border-radius:5px;font-size:14px;color:var(--tx2)}
+summary:hover{background:#141c26;color:var(--tx)}
+summary::marker{color:var(--acc)}
+details>.body{margin:2px 0 8px 15px;padding-left:14px;border-left:1px solid var(--line)}
+.sec>summary{font-size:16px;font-weight:650;color:var(--acc2);padding:9px 6px;margin-top:6px}
+.sub>summary{font-weight:600;color:var(--tx)}
+.g>summary{font-size:15px;font-weight:650;color:#cfe3ff;padding:7px 6px}
+.s>summary{color:var(--tx2);font-size:13.5px}
+.path>summary{color:#dbe9ff}
+.prod>summary{padding:5px 9px;margin:5px 0;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.prod>summary:hover{border-color:var(--line2)}
+.pname{color:var(--acc);font-weight:650}
+.pmeta{color:var(--mut);font-size:12.5px;margin-left:8px}
+.gtag,.stag,.bid,.cid{display:inline-block;font-family:var(--mono);font-size:11px;border-radius:4px;padding:0 5px;margin-right:6px;border:1px solid var(--line2);color:var(--mut);background:var(--bg2)}
+.gtag{color:#dbe9ff;border-color:#34507a;background:#17233a}
+.stag{color:#bcd7ff;border-color:#2f4a70}
+.gmeta{font-size:12.5px;color:var(--mut);margin:2px 0 8px}
+.stext{font-size:13px;color:var(--tx2);background:#111923;border-left:2px solid #34507a;padding:6px 10px;margin:4px 0 8px}
+
+p{margin:8px 0}
+h4.mini{font-size:14px;color:#dbe9ff;margin:14px 0 4px;border-bottom:1px dashed var(--line);padding-bottom:4px}
+blockquote{margin:8px 0;padding:8px 12px;border-left:3px solid var(--acc);background:#111923;color:var(--tx2)}
+ol,ul{margin:8px 0;padding-left:22px}
+li{margin:3px 0}
+pre.code{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:#c6d3e3}
+.note{font-size:12.5px;color:var(--mut)}
+.figs{list-style:none;padding-left:0}
+.figs li{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 10px;margin:5px 0;font-size:13px}
+.six-list li{margin:6px 0;color:var(--tx2)}
+
+.tw{overflow-x:auto;margin:8px 0 14px;border:1px solid var(--line);border-radius:8px;background:#101720}
+table{border-collapse:collapse;width:100%;font-size:12.8px;line-height:1.58}
+th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#131b25;color:var(--tx2);font-weight:600;white-space:nowrap}
+tbody tr:hover{background:#131d28}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{color:var(--tx2)}
+.cmp td:first-child{white-space:nowrap;color:var(--acc2)}
+.cmp-title{font-size:12.5px;color:var(--mut);font-weight:600;margin:12px 0 2px}
+.bktable{table-layout:fixed}
+.bktable th:nth-child(1),.bktable td:nth-child(1){width:4.6em}
+.bktable th:nth-child(2),.bktable td:nth-child(2){width:26%}
+.bktable th:nth-child(3),.bktable td:nth-child(3){width:44%}
+.bktable th:nth-child(4),.bktable td:nth-child(4){width:24%}
+dl.fields{display:grid;grid-template-columns:8.5em minmax(0,1fr);gap:4px 10px;margin:8px 0 10px;font-size:13.2px}
+dl.fields dt{color:var(--mut);font-size:12.5px}
+dl.fields dd{margin:0;color:var(--tx2)}
+
+.viewhead h2{font-size:20px;margin:4px 0 4px}
+.viewhead p{color:var(--mut);font-size:13px;margin:0 0 12px}
+.idx{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 18px}
+.idx a{text-decoration:none;color:var(--tx2);border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:2px 10px;font-size:12px}
+.idx a:hover{color:#dbe9ff;border-color:var(--acc)}
+.tcard{margin:0 0 26px;padding-top:6px;scroll-margin-top:calc(var(--top-h) + 70px)}
+.tcard h3{font-size:15px;margin:0 0 4px;color:var(--tx)}
+.tcard .num{font-family:var(--mono);font-size:12px;color:var(--mut);margin-right:6px}
+.badge{display:inline-block;font-size:11px;line-height:1.6;padding:0 6px;border-radius:10px;border:1px solid var(--line2);color:var(--mut);background:var(--bg2);vertical-align:1px}
+.badge.fixed{color:var(--ok);border-color:#2a5a3c;background:#102019}
+.badge.open{color:var(--warn);border-color:#5a4620;background:#211a0d}
+.badge.gbadge{color:#bcd7ff;border-color:#2f4a70;background:#141f30;margin-left:8px}
+
+.filters{display:flex;gap:8px;margin:6px 0 18px}
+.filters b{font-weight:600;color:var(--acc2);margin-left:4px}
+.status-h{font-size:15px;color:var(--acc2);margin:22px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(390px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.card h4{font-size:14px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.card .kind{font-size:10.5px;color:var(--mut);border:1px solid var(--line2);border-radius:4px;padding:0 5px}
+.card dl{display:grid;grid-template-columns:6.5em minmax(0,1fr);gap:4px 8px;margin:0;font-size:12.6px}
+.card dt{color:var(--mut);font-size:12px}
+.card dd{margin:0;color:var(--tx2)}
+.card[data-status="fixed"]{border-left:3px solid #2a5a3c}
+.card[data-status="open"]{border-left:3px solid #5a4620}
+
+mark{background:#f5d76e;color:#14181f;border-radius:2px;padding:0 1px}
+
+@media (max-width:1000px){
+  .six{grid-template-columns:1fr 1fr;max-height:26vh}
+  #q{width:220px}
+  .cards{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .six{grid-template-columns:1fr}
+  .tbar-title h1{font-size:14px}
+  .toolbar{padding:8px 12px}
+  main{padding:12px 12px 70px}
+  #q{width:100%}
+  .search{flex:1 1 100%}
+  dl.fields{grid-template-columns:1fr}
+}
+
+@media print{
+  :root{--top-h:0px}
+  body{background:#fff !important;color:#111 !important;padding-top:0;font-size:10.5pt}
+  body *{color:#111 !important}
+  .topbar{position:static;background:#fff !important;border-bottom:1px solid #bbb;box-shadow:none}
+  .topbar .six{display:grid !important;max-height:none;overflow:visible;grid-template-columns:1fr 1fr}
+  .topbar .six li{border-left-color:#666}
+  .tbar-row .btn,.toolbar{display:none !important}
+  main{max-width:none;padding:8px 0 0}
+  details>.body{display:block !important}
+  details:not([open])>.body{display:block !important}
+  .card,.tw,pre.code,blockquote,.prod>summary,.figs li,.stext{background:#fff !important;border-color:#ccc !important}
+  th{background:#eee !important;border-color:#999 !important}
+  td{border-color:#ccc !important}
+  code{background:#f2f2f2 !important;border-color:#bbb !important}
+  .badge,.gtag,.stag,.bid,.cid{background:#fff !important;border-color:#666 !important}
+  a{text-decoration:none}
+  .idx{display:none}
+  mark{background:#ffe066 !important;color:#000 !important}
+  table{font-size:9pt}
+  .cards{grid-template-columns:1fr 1fr;gap:8px}
+  .card{break-inside:avoid}
+}
+</style>
+</head>
+<body data-view="tree">
+<header class="topbar" id="topbar">
+  <div class="tbar-row">
+    <div class="tbar-title">
+      <h1>品牌 Agent OGSM 治理体系思维导图</h1>
+      <span class="sub">源：brand-agent-ogsm-governance-mindmap-draft-20261101.md · 2026-11-01 · 8 条 blocker 全部已修（8/8）</span>
+    </div>
+    <button class="btn" id="tbar-toggle" aria-expanded="true" aria-controls="six">收起</button>
+  </div>
+  <ol class="six" id="six"><li><span class="n">1</span><p><strong>声量是乘数，不是结果。</strong> O 不写基线、目标值、滞后窗口、净情感口径，季度评审必然退化成发稿量汇报。</p></li><li><span class="n">2</span><p><strong>交易侧是空的。</strong> 不给 CH5 / CH6-AMZ / CH7 / CH8 补 owner，14 条产线合起来只是在优化入口。</p></li><li><span class="n">3</span><p><strong>底座的两个空洞比 45 处重复更贵。</strong> B-08 ID 契约与 B-12 质量抽检都是「重复 0 次、实现 0 次」，缺了它们全部归因失效。</p></li><li><span class="n">4</span><p><strong>M 栏只写指标不写进度。</strong> 一次性校准会如果没有砍掉任何策略，这次会就是失效的。</p></li><li><span class="n">5</span><p><strong>Gate 的唯一强制力是「回执是状态迁移的必要条件」。</strong> 回执不进 schema，gate 就只是建议。</p></li><li><span class="n">6</span><p><strong>六份文档想得比组织的数据基础快两个季度。</strong> 先做 B-08 三键与 B-12 抽检，再按覆盖率逐类放开 gate。</p></li></ol>
+</header>
+<div class="toolbar" id="toolbar">
+  <div class="tabs" role="tablist" aria-label="视图切换">
+    <button class="tab active" role="tab" aria-selected="true" data-view="tree">树视图</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="table">表格视图</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="status">状态视图</button>
+  </div>
+  <div class="search">
+    <input id="q" type="search" placeholder="搜索节点（Emily / 守衡 / BP-02）" autocomplete="off" spellcheck="false" aria-label="搜索树节点">
+    <span id="qcount"></span>
+  </div>
+  <div class="treebtns" id="treebtns">
+    <button class="btn" data-act="expand">全展开</button>
+    <button class="btn" data-act="collapse">全折叠</button>
+    <button class="btn" data-g="G1">只看 G1</button>
+    <button class="btn" data-g="G2">只看 G2</button>
+    <button class="btn" data-g="G3">只看 G3</button>
+  </div>
+</div>
+<main>
+  <section id="view-tree" aria-label="树视图"><details class="sec" open><summary>0. 十秒版</summary><div class="body">
+<p><strong>O 愿景</strong>（原附件逐字）：</p>
+<blockquote>【O】以品牌 Agent 全链路自动化，让声量有增长、口碑有防线、人效有提升。</blockquote>
+<p>O v1（治理定义）：到 2027-12-31 结账；基线 = 2026-08-01 至 2026-10-31 十二周中位数，T0 锁定。R1 自然需求新客 CAC 较 2026 基线降 ≥15%（B2）；R2 MER 较基线升 ≥8%（B3）；R3 90 天同品类复购 ≥ B4 + 3pp 且 CAC payback 缩短 ≥15 天（D）；R4 单位 GMV 内容+运营人力成本 ≤ B6 × 0.80。四项一律取「净」：净声量 / 净新客 / 净增量 / 净人效。声量是乘数，不是结果。</p>
+<div class="tw"><table class="cmp"><thead><tr><th>G</th><th>一句话</th><th>G-A</th><th>结算主指标</th></tr></thead><tbody><tr><td>G1 需求</td><td>让人找到你并相信你</td><td>Emily</td><td>自然需求新客 CAC@2、品牌词搜索</td></tr><tr><td>G2 转化</td><td>把注意力变成订单</td><td>Paid Media</td><td>MER@1、首单贡献毛利</td></tr><tr><td>G3 留存</td><td>让买过的人再买</td><td>Retention</td><td>复购 90@1、CAC payback@1</td></tr><tr><td>不占 G</td><td>Source 数据底座 · Daisy 事实底座 · 守衡 合规 gate · Echo 事实层 · PMO 治理机制</td><td>—</td><td>交付契约，不交付经营结果</td></tr></tbody></table></div>
+<p><strong>你坐哪</strong>：先看 §5.1 的「段 A」列（执行问责），再看 §1.5 的「G-A」列（结果问责），最后看 §3 各产品的「对象级 A」（数据问责）。三张表不通用；一人可兼，但必须书面移交。</p>
+<p><strong>今天只决定三件事</strong>：① 三个 G-A 是否签移交条款（§6.4 T0）；② 14 条产线处置是否照 §1.6 执行；③ B-08 三键 30 天内是否落库——不落即按 §6.4 选择规则降级为最小改动。</p>
+<p><strong>口径声明</strong>：§6.1 的八条 blocker 已于 2026-11-01 晚修完，核验基准是第二轮复核版（源文档改于 19:12–19:14，复核稿 19:21）。最终状态是 8 条全修：BK-01—BK-08 均已闭合（BK-04/06/07 的残余由第三轮收敛：P0 尾句已改 9–17、版本串统一 <code>@3</code> 与 <code>{overlay_id}@</code>、G §6.3 标志 4 已同步新门槛、Gate 补 0 分母规则与 L3 模式分叉）。四个「审计建议值」里，P0 达 M2（BK-03）与授权七元组（BK-05）已落文；M2 门槛「≥20 次/周」（源文档仍写「≥N 次」）与 LTV 改 T+365（源文档仍在 180 天窗口内判定）未落文，引用时须同时给源文档现值。13 条 Major、7 条 Minor 未动。</p>
+<p><strong>用词</strong>：本图 owner = 唯一写入口负责方；A = RACI 问责位；steward = 过渡代持；其余不用。</p>
+<p><strong>编号体系</strong>（全文唯一口径）</p>
+<div class="tw"><table class="cmp"><thead><tr><th>前缀</th><th>含义</th><th>值域</th><th>备注</th></tr></thead><tbody><tr><td>L1–L11</td><td>骨架层级</td><td>11</td><td><code>L4*</code> 是图例 <code>-M</code> 的占位级</td></tr><tr><td>S1–S6</td><td>原附件 6 条策略</td><td>6</td><td>只指骨架 L3</td></tr><tr><td>CH1–CH11</td><td>治理段位（链路）</td><td>11</td><td>源文档写作 S1–S11，与骨架 S1–S6 撞名，本图统一改 CH</td></tr><tr><td>M0–M4</td><td>能力成熟度</td><td>5</td><td>门槛 M0–M3，M4 只申报</td></tr><tr><td>T1–T5</td><td>指标层级</td><td>5</td><td>源文档写作 L1–L5 层，与骨架 L1 撞名，本图统一改 T</td></tr><tr><td>C / A / X</td><td>Gate 触发点</td><td>4 / 5 / 5</td><td>Claim / 授权 / 实验</td></tr><tr><td>BP-xx</td><td>交接断点</td><td>12</td><td>见 §5.2</td></tr><tr><td>B-01–B-14</td><td>共享底座</td><td>14</td><td>见 §4</td></tr><tr><td>BK-01–BK-08</td><td>审计 blocker</td><td>8</td><td>见 §6.1；源审计写作 B-01..B-08，与底座撞名，改 BK</td></tr></tbody></table></div>
+</div></details>
+<details class="sec"><summary>1. 11 级脊梁总览（L1–L9 主线 + L10/L11 条件层）</summary><div class="body">
+<details class="sub"><summary>1.1 骨架图（逐字）</summary><div class="body">
+<pre class="code">L1  愿景 / O      【O】以品牌 Agent 全链路自动化，让声量有增长、口碑有防线、人效有提升。
+L2  目标 / G      【G1】 加速品牌多渠道声量增长
+                  【G2】敏捷响应品牌声量所带来的影响和机会
+                  【G3】 推进品牌数据资产AI数字化运营
+L3  策略 / -S     6 条「XX专家 + XX专家 融合，为…提供…」
+L4* -M            图例第 4 token；正文 0 次实例化；B 段无中文名 → 本图保留该级并留空，不删级、不补造
+L4  专家昵称      Emily / Clone / Vicky / GEO / Radar / Echo / Market / Source / Signal / 守衡 / Daisy / Main / Shopify / PMO
+L5  产品构成      14 个「XX Agent&amp;工作台」
+L6  验收工作台    14 个 URL
+L7  业务场景      16 节点，四种形态混装：箭头流程链 9、线标签 3（全在 Echo）、主题名 4（Main 1 + Shopify 3）
+L8  能力图谱      39 条有效能力条；另 4 条错位为 URL（Main 1 + Shopify 3）
+L9  进度          已完成 10 / 进行中 15 / 方案中 14
+L10 待整合能力    条件层，9 项：层级正确 5（Echo 3 + Daisy 2）、错位 4（Main 1 + Shopify 3）
+L11 整合来源      条件层，11 项：正确层 7（6 个 URL + 1 个仓库名）、错位 4</pre>
+<p>图例原文分两段，共 15 个 token：A 段 <code>O / G / -S / -M</code>（<code>## / ### / - / 2空格-</code>），B 段 <code>愿景 / 目标 / 策略 / 专家昵称 / 产品构成 / 验收工作台 / 业务场景 / 能力图谱 / 进度 / 待整合能力 / 整合来源</code>。A 段与 B 段是同一套深度的两套命名：<code>愿景</code> = O、<code>目标</code> = G、<code>策略</code> = S；<code>-M</code> 在 B 段无对应项。本图 O 只叫 O 或愿景，G 才叫目标。</p>
+</div></details>
+<details class="sub"><summary>1.2 <code>-M</code> 的显式标注</summary><div class="body">
+<p><code>-M</code> 在图例里存在、在正文里 0 次实例化，B 段也没有给它中文名。附件里唯一具备「可判定状态」性质的内容是 L9 的「已完成 / 进行中 / 方案中」，它占据第 9 级「进度」，不是第 4 级 <code>-M</code>。本图保留 <code>L4*</code> 这一级并留空：不删级、不补造、不把三态上移冒充 M。把三态当成熟度，就是「用工程状态冒充业务状态」的起点（指标误用清单第 11 条）。</p>
+</div></details>
+<details class="sub"><summary>1.3 原附件每一级填了什么 vs 治理定义</summary><div class="body">
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件填了什么</th><th>治理定义给出什么</th></tr></thead><tbody><tr><td>L1 O</td><td>三个「有」字句</td><td>O v1 的 R1–R4；基线 B1–B6 与 D；四条反作弊：净声量 / 净新客 / 净增量 / 净人效</td></tr><tr><td>L2 G</td><td>3 个 G，按工具类型分组</td><td>G1 需求 / G2 转化 / G3 留存；支撑层与准入 gate 不占 G</td></tr><tr><td>L3 S</td><td>6 条产品组合叙事</td><td>14 条产线处置 + 4 条 P0；登记 18 项</td></tr><tr><td>L4 专家昵称</td><td>14 个昵称，拟人名与产品名混装</td><td>统一实体语义 + 处置归属（合并 / 拆分 / 移出 / 观察 / 收窄）</td></tr><tr><td>L5 产品构成</td><td>14 个产品名</td><td>每个产品一句定位 + 不做什么</td></tr><tr><td>L6 验收工作台</td><td>14 个 URL，没有验收含义</td><td>URL 原样保留，另挂 CH 段 A / 主键 / Gate</td></tr><tr><td>L7 业务场景</td><td>功能流水线、「线」标签、主题名、待整合能力名；4 条层级错位</td><td>谁、什么触发、什么经营问题、业务动作链、交付物、验收、失败方式</td></tr><tr><td>L8 能力图谱</td><td>能力条 + 4 条 URL；Source 末条是依赖声明</td><td>8 层能力原子（感知/理解/推理决策/生成/执行/评估/协同/记忆）+ 共享/专用 + 契约 ID</td></tr><tr><td>L9 进度</td><td>39 个状态节点：10 / 15 / 14</td><td>拆两栏；三态换算上限只到 M1</td></tr><tr><td>L10 待整合能力</td><td>9 项，其中 4 项错位</td><td>14 项底座 B-01..B-14 挂载表（§4）</td></tr><tr><td>L11 整合来源</td><td>11 项，含仓库名 <code>platform-operations-wiki</code></td><td>各产品自建能力并入哪项底座</td></tr></tbody></table></div>
+<p><strong>O 的三处硬伤</strong>：没有基线 / 目标值 / 时间窗；声量是中间变量，声量涨 30% 而品牌词搜索不动、新客 CAC 上升仍可宣布达成；声量可为负资产，不写「净」即可被刷量作弊。</p>
+<p><strong>原 G 的三处结构性错误</strong>：分组维度是工具类型不是业务结果（Echo 在 G2 做 VOC、Vicky 在 G1 做舆情可互换而无人被问责不同结果）；G3 用手段冒充目标（守衡是合规 gate、Daisy 是事实库、Main 是工程职能、PMO 是治理机制、Shopify 是渠道）；交易侧完全缺席（CH5 付费投放与 CH8 复购无产线）。</p>
+</div></details>
+<details class="sub"><summary>1.4 骨架统计</summary><div class="body">
+<p>O / G / S = 1 / 3 / 6（S 实际 6 条，不是任务简报写的 5 条）；14 昵称对 14 产品；L8 / L9 各 39 项；空节点 3 个整段（Clone、Market、PMO）+ 2 个部分（Main、Shopify）。URL 出现 24 次、去重 23：L6 14 个；L11 正确层 6 个（另 1 项 <code>platform-operations-wiki</code> 是仓库名不是 URL）；L8 错位 4 个（去重 3，<code>https://shopify.luteos.com/</code> 与 L6 完全重复）。</p>
+<p><strong>硬更正</strong>：任务简报称「Source、Echo、Daisy 下面都有真正的两层」与原文不符。Source 的 8 条能力全部止于 L9，没有任何 L10/L11；真正带 L10/L11 的是 Echo（3 对）、Daisy（2 对 4 源），以及层级错位的 Main（1 对）、Shopify（3 对）。按「Source 有底座层」建模会漏掉 Main / Shopify 的错位形态。</p>
+</div></details>
+<details class="sub"><summary>1.5 新 G 结构：目标 / 主指标 / 窗口 / G-A</summary><div class="body">
+<div class="tw"><table class="cmp"><thead><tr><th>G</th><th>目标（首窗）</th><th>经营主指标</th><th>时间窗</th><th>G-A</th><th>包含产线</th><th>不包含</th></tr></thead><tbody><tr><td>G1 需求</td><td>品牌自然需求新客 +15%；该来源 CAC ≤ B2×0.85；品牌词搜索 +20%；SOV +3pp</td><td>T1 <code>m-l1-cac@2</code>（按 acquisition_source 分层）；领先：品牌词搜索量、SOV</td><td>2026-12-01 → 2027-03-01（13 周）</td><td>Emily</td><td>内容产线（Emily+Clone）、Vicky-PR、GEO、Radar、Signal</td><td>付费投放、站点与站内转化、Echo 事实层</td></tr><tr><td>G2 转化</td><td>MER +8%；首单贡献毛利 ≥ B3；独立站与 Amazon CVR 各 +10%；AOV ≥ 基线；CAC ≤ B2×1.10</td><td>T1 <code>m-l1-mer@1</code> + <code>m-l1-cm@1</code>（首单分层）；领先：CVR、AOV、CAC</td><td>2026-12-01 → 2027-03-01（13 周）</td><td>Paid Media</td><td>Paid Media、Shopify 三条、Amazon 站内</td><td>素材生产、售后与复购、履约与库存</td></tr><tr><td>G3 留存</td><td>90 天同品类复购 +3pp；payback −15 天；退货率 ≤ B4；LTV +10% 仍随 T+180 判定（审计建议 T+365，未落文）</td><td>T1 <code>m-l1-rp90@1</code> + <code>m-l1-payback@1</code>；领先：首响中位、退货原因四层完成率、订阅留存</td><td>2026-12-01 → 2027-06-01（180 天，T+90 首读）</td><td>Retention</td><td>CS、Retention</td><td>私域站点技术、客服话术合规裁决</td></tr><tr><td>不占 G</td><td>数据底座 / 事实底座 / 合规 gate / VOC 事实层 / 治理机制</td><td>交付契约与覆盖率</td><td>—</td><td>Source / Daisy / 守衡 / Echo / PMO</td><td>全部业务线</td><td>不进 G、不进 M 的业务结果</td></tr><tr><td>准入 gate</td><td>S1 选品 + S2 合规：不放行则 G2 不开工</td><td>新品 90d 动销率、claim 可证率</td><td>随批次</td><td>Market（steward）/ 守衡（内容侧）</td><td>—</td><td>不作为第 4 个 G</td></tr></tbody></table></div>
+<p>主指标 id 中的 <code>l1</code> 是源文档字面，指指标层，不是骨架 L1。三条准入规则：一个 G 必须有 ≥1 个外部结果、1 个 G-A、1 个 T1 主指标；底座、职能、平台不得占 G 位，共享能力必须服务 ≥3 条业务线；G 数上限 3，新增 G 必须替换现有 G，不设临时 G。</p>
+</div></details>
+<details class="sub"><summary>1.6 14 条产线处置与 4 条 P0</summary><div class="body">
+<p>本节是今天唯一需要逐行过的表；其余章节都是它的证据，与本节冲突的以本节为准。</p>
+<div class="tw"><table class="cmp"><thead><tr><th>产线</th><th>处置</th><th>处置后归属</th><th>反证条件（出现即撤回）</th></tr></thead><tbody><tr><td>Emily</td><td>保留，与 Clone 合并为内容产线</td><td>G1；策略域；G1-A + CH3-A</td><td>合并后 8 周 L5-01 未降 ≥15%，或素材半衰期未升 ≥10%</td></tr><tr><td>Clone</td><td>合并，砍掉投放场景</td><td>G1；产能域；<code>variant_id</code> / <code>asset_id</code> 对象级 A</td><td>1 个季度 variant 产出降 &gt;20% 且归因结论数不增</td></tr><tr><td>Vicky</td><td>拆成 PR 与舆情</td><td>PR → G1，CH4-A；舆情 → 支撑层事件服务，R</td><td>同一事件仍出现两个 <code>event_id</code>，或 buyer guide 收录数降 &gt;20%</td></tr><tr><td>GEO</td><td>保留，砍内容生成，补 Amazon Rufus 与 TikTok Shop 站内 AI</td><td>G1；AI 可见度子域；零段 A</td><td>砍内容生成后 AI 提及率／准确率无变化，或 2 个季度建不起 20 问/ASIN 复测</td></tr><tr><td>Radar</td><td>保留，收窄到 IP/名人</td><td>G1；<code>creator_id</code> 对象级 A；达人供应链降为 R</td><td>寄样回收率连续两季 &lt;60%，或授权到期未回收 &gt;5</td></tr><tr><td>Echo</td><td>保留，升为 VOC 主榜 owner</td><td>支撑层事实层；段级 0 A</td><td>2 个月内无稳定 taxonomy 只读接口，或抽检一致率 &lt;85%</td></tr><tr><td>Market</td><td>砍独立产线，90 天观察期</td><td>CH1-A 由 PMO steward（T0 前必须指定到人；RACI §2 现仍写 Market A，M-02 未修）</td><td>90 天内出现 ≥1 个下游书面承接且新品 90d 动销率 +5pp</td></tr><tr><td>Source</td><td>保留，升为数据底座</td><td>支撑层；CH10-A；B-08 落库方</td><td>3 个月内归因覆盖率未升 ≥20pp，或断流 P95 未达 24h</td></tr><tr><td>Signal</td><td>保留，拆出实验设计给 PMO</td><td>G1；CH9-A</td><td>拆出后实验覆盖率未升，或「相关性结论进预算」次数 &gt;0</td></tr><tr><td>守衡</td><td>保留，升为唯一合规裁决源</td><td>支撑层；CH2-A（内容侧）</td><td>1 个季度 claim 返工工时未降 ≥30%，或误杀率 &gt;15%</td></tr><tr><td>Daisy</td><td>保留，移出业务 G</td><td>支撑层；对象级 A；段级 0 A</td><td>移出后 claim/evidence 冲突数上升，或下游出现第二事实源</td></tr><tr><td>Main</td><td>移出 OGSM，降为工程执行层</td><td>CH10 的 R；不进 G、不进 M</td><td>1 个季度工程交付延迟 &gt;20%，或 B-12 抽检无法落地</td></tr><tr><td>Shopify</td><td>拆成三条并扩为 DTC 交易入口</td><td>G2；DTC 转化、商品与定价、站点技术；CH6-DTC-A</td><td>拆后 1 个季度 CVR 未升 ≥10%，或三线 <code>landing_ref</code> 一致率 &lt;95%</td></tr><tr><td>PMO</td><td>保留为治理机制，不当作产线</td><td>治理机制；CH11-A + 实验 gate + 指标字典 owner</td><td>1 个季度承诺签署率 &lt;90%，或 90 天裁决未砍掉任何策略</td></tr></tbody></table></div>
+<div class="tw"><table class="cmp"><thead><tr><th>P0 新增</th><th>段位</th><th>主指标</th><th>A</th><th>立项反证条件</th></tr></thead><tbody><tr><td>Paid Media</td><td>CH5 付费投放</td><td>MER 与增量 ROAS</td><td>G2-A + CH5-A</td><td>3 个月内预算变更单采纳率 &lt;50%</td></tr><tr><td>CS &amp; After-sales</td><td>CH7 履约售后</td><td>首响中位与退货原因四层完成率</td><td>CH7-A</td><td>6 个月内首响中位未达 8h，或退货原因四层完成率 &lt;80%</td></tr><tr><td>Retention / Subscription</td><td>CH8 复购与 LTV</td><td>90 天复购率与 CAC payback</td><td>G3-A + CH8-A</td><td>2 个季度内 90 天复购率未升 ≥2pp</td></tr><tr><td>Amazon 站内</td><td>CH6-AMZ</td><td>Amazon CVR 与 Buy Box 赢得率</td><td>CH6-AMZ-A</td><td>2 个月内建不起 Account Health 巡检与 Buy Box 快照</td></tr></tbody></table></div>
+<p>登记结果：18 项 = 12 条业务线 + 4 条支撑 + 1 条治理 + 1 条移出（Main）。三个数是嵌套关系：14 个产品（原附件）→ 登记 18 项 → 落 11 段（CH1–CH11），不是同一集合。</p>
+</div></details>
+<details class="sub"><summary>1.7 M 层：两栏、成熟度、指标五层与实验协议</summary><div class="body">
+<p><code>-M</code> 的标注见 §1.2。治理定义把 L9 拆成两栏：</p>
+<div class="tw"><table class="cmp"><thead><tr><th>栏</th><th>字段</th><th>关键规则</th></tr></thead><tbody><tr><td>栏 A 能力图谱</td><td><code>capability_id</code>、层（感知/理解/推理决策/生成/执行/评估/协同/记忆）、原子名、owner、契约 ID、消费方、成熟度、最近验证</td><td>owner 唯一，不写「多方共建」；消费方为空即 M1</td></tr><tr><td>栏 B 交付进度</td><td><code>work_item_id</code>、所属产线、交付物、状态、验收证据、blocker、依赖</td><td>状态语义保留，但不进 M 栏</td></tr></tbody></table></div>
+<p>桥接规则：一个 capability 对应多个 work_item，一个 work_item 也可交付多个 capability，用多对多映射，不做一对一。成熟度只能由消费方升级：至少 1 条非 owner 产线在生产环境调用并通过契约测试，才允许 M1 → M2。</p>
+<p>三态换算只到 M1：已完成（单产线内）= M1 上限；进行中 = M0–M1；方案中 = M0；跨线无对应行的记 M0 并显式登记为空洞。三态一律不进 M 栏。</p>
+<p><strong>M 阶梯</strong>：M0 未建/空洞 → M1 功能可用（标准输入得符合 schema 的输出，失败有错误码）→ M2 流程跑通（连续 4 周真实调用 ≥20 次/周、交接字段 100% 回填、无人工兜底；20 为审计建议值，源文档仍写 ≥N）→ M3 质量达标（人工 golden set + 抽检一致率）→ M4 结果改善（T1 财务口径认可）。</p>
+<p><strong>阶梯口径冲突（待裁定）</strong>：补全稿是 L0–L5 六级（含 L4 过程改善、L5 结果改善）；指标字典 §14.4 是 M0–M4 且明写「M3 质量达标以上才允许申报 T1 结果」。本图把「过程改善」并入 M4，与 §14.4 冲突，须先裁定再写门槛。本图门槛按 M0–M3，M4 只申报。</p>
+<h4 class="mini">指标五层（T1–T5，共 38 项）</h4>
+<div class="tw"><table class="cmp"><thead><tr><th>层</th><th>项数</th><th>决策用途</th><th>内容</th></tr></thead><tbody><tr><td>T1 财务口径</td><td>9</td><td><code>budget</code></td><td>GMV、贡献毛利、退货率、CAC、MER、LTV、payback、90 天复购、180 天复购；定义权在财务，PMO 只有登记权</td></tr><tr><td>T2 声量与中间指标</td><td>9</td><td><code>explain_only</code></td><td>SOV、品牌词搜索量、品牌词 CVR、自然搜索占比、非品牌/品牌流量比、review velocity、星级、NTB 占比、内容复用率</td></tr><tr><td>T3 投放与素材</td><td>8</td><td><code>explain_only</code></td><td>ROAS、CPM、CTR、CVR、频次、素材半衰期、2s/6s 播放率、素材单条成本；前五项禁止进 M 栏</td></tr><tr><td>T4 质量与过程</td><td>6</td><td><code>gate_only</code></td><td>claim 预检通过率、授权覆盖率、一次通过率、gate 判定时长、漏检率、误杀率；不得设「越高越好」</td></tr><tr><td>T5 人效</td><td>6</td><td><code>settlement</code></td><td>素材上线中位工时、单位 GMV 人力成本、人均管理对象数、一次通过率复用、等待时间占比、全局账 L5-06</td></tr></tbody></table></div>
+<p>12 条指标误用：M01 平台 ROAS 当经营结论；M02 营收口径算 LTV；M03 全店复购掩盖品类；M04 mention 次数当 SOV；M05 AVE 当 PR 价值；M06 讲师宣称当投放基准；M07 全店 CVR 归因单条素材；M08 含运含税 GMV 与净 GMV 混算；M09 30 天与 90 天退货率混比；M10 样本不足的 A/B「提升 10」进预算；M11 交付进度当经营结果；M12 平台归因窗口 GMV 算 CAC payback。每条配一条可判定检测规则，复核对象是材料不是人。</p>
+<p><strong>实验协议四条件</strong>：① <code>hypothesis_id</code>（<code>hyp-{yyMMdd}-{seq3}</code>，PMO 发号，无编号不进测试）；② <code>metric_dict@{version}</code> + baseline + 窗口 + MDE（口径版本缺失不得开测）；③ <code>sample_size</code>（按比例 z 公式，分臂列出）；④ <code>correction_method</code>（15 条以上同批必填，Holm-Bonferroni 控 FWER）。三条硬规则：预注册 14 字段 + 阈值哈希，开测后改阈值即批次作废；结果只分 scale / kill / inconclusive，inconclusive 不得进任何决策；「必须对照」的决策没有对照就不做决策，时间不够的解法是缩小实验范围，不是降级证据等级。</p>
+<p><strong>校正后样本量（BK-08 已落文：指标 §10.2、Gate §4.4）</strong>（k=5，单臂 α=0.01，系数 11.68，约为 α=0.05 表值的 1.49 倍）：素材 CTR ≈34,600 曝光/臂；站点 CVR +10% ≈120,200 会话/臂；90 天复购 +3pp ≈4,070 人/臂。体量不足只允许三条降级路径（指标 §10.2 另给月销 30 万美金的逐条演算）：降臂数到 2、放大 MDE（月会话 3 万时 CVR 相对 MDE 不低于 17%）、改判观察（结论标「不可进预算」）。禁止改 α、改 power、事后加臂、把 inconclusive 写成 hold。</p>
+</div></details>
+</div></details>
+<details class="sec"><summary>2. 图形版 Mermaid（4 张图，本页不渲染）</summary><div class="body">
+<p>四张图，单张 ≤30 节点。取舍：产品字段级子树与 §3 的逐级对照表 100% 同源，图里只保留「产品 → 原 L6 / L7 / L8 / L9」四行原文，治理定义走 §3。mindmap 是树，六处循环依赖画不出来，见 §5.5；主键链是链不是树，见 §5.3。</p>
+<ul class="figs"><li>2.1 骨架总览（22 节点）</li><li>2.2 G1 需求（28 节点）</li><li>2.3 G2 转化（原：敏捷响应）（25 节点）</li><li>2.4 G3 留存（原：数据资产）（30 节点）</li></ul><p class="note">本 HTML 不执行 Mermaid 渲染（源文档 §8 风险 1 亦记录「Mermaid 未实际渲染」）。产品字段级内容以 §3 的逐级对照表为准，图形版不作为唯一交付。</p>
+</div></details>
+<details class="sec" id="sec-products" open><summary>3. 分层文字树与产品节点 · 14 个产品</summary><div class="body">
+<details class="sub"><summary>3.0 每条产线先答「不解决会怎样」</summary><div class="body">
+<p>14 条线共 74 条核心问题，每条含「谁被折磨 / 触发时点 / 不用的现状 / 不解决的代价」，另有 68 个场景、202 行能力、31 条边界。不回答这个问题的产线不该进 OGSM。每线只留 1 条最贵的示例：Emily 的趋势窗 2–4 周而选题到开拍 3 周，被迫买流量使 CAC 上浮 20–30%。</p>
+</div></details>
+<details class="sub"><summary>3.1 11 级分层文字树</summary><div class="body">
+<pre class="code">L1 O ─ L2 G ─ L3 S ─ L4* -M（空）─ L4 专家昵称 ─ L5 产品构成 ─ L6 验收工作台
+                                              └ L7 业务场景 ─ L8 能力图谱 ─ L9 进度
+                                                              └ L10 待整合能力 ─ L11 整合来源
+
+G1 需求
+├─ Emily  → L4 Emily｜L5 社媒Agent&amp;工作台｜L6 https://social.luteos.com/｜L7 1 条｜L8 4 项｜L9 2+2｜L10 无｜L11 无
+├─ Clone  → L4 Clone｜L5 爆款复刻Agent&amp;工作台｜L6 https://video.luteos.com/｜L7 空｜L8 空｜L9 空｜L10 无｜L11 无
+├─ Vicky  → L4 Vicky｜L5 PR Agent&amp;工作台｜L6 https://pr.luteos.com/｜L7 2 条｜L8 4 项｜L9 4｜L10 无｜L11 无
+├─ GEO    → L4 GEO｜L5 专家内容Agent&amp;工作台｜L6 https://geo.luteos.com｜L7 6 步｜L8 6 项｜L9 6｜L10 无｜L11 无
+└─ Radar  → L4 Radar｜L5 IP/名人Agent&amp;工作台｜L6 https://magpie.luteos.com/｜L7 4 步｜L8 3 项｜L9 3｜L10 无｜L11 无
+
+G2 转化（原：敏捷响应）
+├─ Echo   → L4 Echo｜L5 VOC Agent&amp;工作台｜L6 https://radar.luteos.com/｜L7 3 线｜L8 4 项｜L9 1+3｜L10 3｜L11 3
+├─ Market → L4 Market｜L5 市场洞察Agent&amp;工作台｜L6 https://mkt.luteos.com/｜L7 空｜L8 空｜L9 空｜L10 无｜L11 无
+├─ Source → L4 Source｜L5 数据采集Agent&amp;工作台｜L6 https://scrapy.luteos.com/｜L7 5 段｜L8 8 项｜L9 8｜L10 无｜L11 无
+└─ Signal → L4 Signal｜L5 品牌声量Agent&amp;工作台｜L6 https://signal.luteos.com/｜L7 4 步｜L8 3 项｜L9 3｜L10 无｜L11 无
+
+G3 留存（原：数据资产）
+├─ 守衡   → L4 守衡｜L5 内容治理Agent&amp;工作台｜L6 https://ca.luteos.com/｜L7 4 步｜L8 3 项｜L9 3｜L10 无｜L11 无
+├─ Daisy  → L4 Daisy｜L5 多智能体Agent&amp;工作台｜L6 https://mas.luteos.com/｜L7 1 段｜L8 4 项｜L9 2+2｜L10 2｜L11 4
+├─ Main   → L4 Main｜L5 全栈开发Agent&amp;工作台｜L6 https://main.luteos.com/｜L7 错位 1｜L8 错位 1｜L9 缺｜L10 无｜L11 无
+├─ Shopify→ L4 Shopify｜L5 ABI Shopify Agent&amp;工作台｜L6 https://shopify.luteos.com/｜L7 错位 3｜L8 错位 3｜L9 缺｜L10 无｜L11 无
+└─ PMO    → L4 PMO｜L5 OGSM管理Agent&amp;工作台｜L6 https://pmo.luteos.com/｜L7 空｜L8 空｜L9 空｜L10 无｜L11 无</pre>
+<p>L1 / L2 是全局值，见 §0 与本节 G 标题，不在 14 个产品下重复。L10 / L11 原文为空时标「无」，并区分「结构上不需要」与「应填未填」。</p>
+</div></details>
+<details class="g" open data-g="G1"><summary><span class="gtag">G1</span> 需求 · 让人找到你并相信你</summary><div class="body">
+<p class="gmeta">原 G 表述：【G1】 加速品牌多渠道声量增长 ｜ G-A：Emily ｜ 结算主指标：自然需求新客 CAC@2、品牌词搜索</p>
+
+<details class="s" open data-s="S1"><summary><span class="stag">S1</span> 社媒专家+ 爆款复刻专家 融合</summary><div class="body">
+<p class="stext">社媒专家+ 爆款复刻专家 融合，为社媒趋势把控、爆款选题、拍摄脚本、AI素材生成提供辅助决策类和生产力工具</p>
+<details class="prod" data-g="G1"><summary><span class="pname">Emily</span><span class="pmeta">社媒Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>M1 上限（原附件：已完成 2 / 进行中 2，2026-11-01 快照）</dd>
+<dt>治理后归属</dt><dd>G1 需求；G1-A + CH3-A；对象级 A = <code>script_id</code></dd>
+<dt>处置与反证</dt><dd>保留，与 Clone 合并为内容产线；合并后 8 周 L5-01 未降 ≥15% 即撤回</dd>
+<dt>上游依赖</dt><dd>Source B-01 趋势 · 守衡 B-06 claim 规则 · Daisy B-09 事实库 · Signal B-03 声量口径</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>Clone（读 <code>script_id@version</code>）· 守衡 C1 审批 · G1 主指标（品牌词搜索、内容复用率）</dd>
+<dt>唯一写入口</dt><dd><code>script_id</code>；Gate C1 + X1；断点 BP-02 / BP-03 / BP-26 / BP-27</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S1（逐字见本节组标题）</td><td>与 Clone 合并为内容产线，内部保留策略域与产能域两套验收；策略侧对产能排期有否决权</td></tr><tr><td>L4 专家昵称</td><td>Emily</td><td>保留；G1-A + CH3-A 兼任；对象级 A = <code>script_id</code></td></tr><tr><td>L5 产品构成</td><td>社媒Agent&amp;工作台</td><td>内容链路上游决策位：说什么、对谁讲、凭什么算有效；不做成片、不做投放出价</td></tr><tr><td>L6 验收工作台</td><td>https://social.luteos.com/</td><td>工作台保留；CH 段 A = CH3；Gate C1 + X1；写 <code>script_id</code>，读 <code>claim_id@version</code> 与 <code>variant_id</code></td></tr><tr><td>L7 业务场景</td><td>社媒趋势洞察 → 内容策略 → 脚本生成</td><td>场景 1「抢趋势窗口」（周）：拉近 30 天 Top100 与上升音源 → 剔除儿童出镜、他牌 logo、平台禁用 claim → 按钩子 × 痛点 × offer 聚类并标出增速转负的尸体趋势。验收：7 天 ≥5 条脚本，≥3 条过 claim 预检，≥1 条 14 天内 CTR 达品类基线 1.5–2%。场景 2「objection 回流」（双周）：拉评论与 DM → 归 objection 类型 → 筛 3 个高频未覆盖项。验收：每轮 ≥3 个 objection 有脚本覆盖，同类占比下一轮降 ≥20%</td></tr><tr><td>L8 能力图谱</td><td>爆款/趋势洞察：发现社媒爆款与趋势，输出可复刻的内容结构（已完成）；互动追踪&amp;评论解析：追踪社媒互动并解析粉丝真实反馈（已完成）；内容策略生成：按趋势与品牌定位生成社媒内容策略（进行中）；脚本生成：按爆款结构批量生成品牌投放脚本（进行中）</td><td>关键原子 ≤6：归一化多平台趋势信号（B-01/B-03）、归类钩子与卖点叙事结构（专用）、匹配 claim 约束（B-06）、判断趋势可跟性（专用）、生成脚本与分镜（专用）、沉淀钩子库与 claim 证据库（B-09）。断点：BP-02、BP-03、BP-26/27</td></tr><tr><td>L9 进度</td><td>已完成 2、进行中 2</td><td>换算上限 M1；M2 要求连续 4 周真实调用 ≥20 次/周、交接字段 100% 回填、无人工兜底；M2 只能由非 owner 消费方升级</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-01 采集、B-03 声量归一、B-06 claim 校验、B-09 品牌事实库，不重复建设；自建的内容互动监听、趋势归一、objection 归类并入 B-01/B-03/B-05，claim 库降为只读缓存</td></tr></tbody></table></div>
+</div></details>
+<details class="prod" data-g="G1"><summary><span class="pname">Clone</span><span class="pmeta">爆款复刻Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>空节点（L7–L11 全无）；不得用「网址已上线」冒充任何成熟度，记 M0 空洞</dd>
+<dt>治理后归属</dt><dd>G1 内容产线产能域；不持段 A；对象级 A = <code>variant_id</code> + <code>asset_id(content_*)</code></dd>
+<dt>处置与反证</dt><dd>合并进内容产线，砍掉投放场景（移交 Paid Media）；1 个季度 variant 产出降 &gt;20% 且归因结论数不增即撤回</dd>
+<dt>上游依赖</dt><dd>Emily <code>script_id@version</code> · Radar B-14 授权状态 · Source B-01 素材解析</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>Paid Media（读 <code>variant_id</code> 与授权状态）· 守衡 C2 入库校验 · G1 主指标（内容复用率）</dd>
+<dt>唯一写入口</dt><dd><code>variant_id</code> / <code>asset_id</code>；Gate A2 + C2；断点 BP-03 / BP-11 / BP-16 / BP-27</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S1（逐字见 3.2 组标题）</td><td>与 Emily 合并；保留产能、谱系、授权、疲劳四项</td></tr><tr><td>L4 专家昵称</td><td>Clone</td><td>保留在合并后的内容产线；产能域负责人独立于 G1-A，不得兼任</td></tr><tr><td>L5 产品构成</td><td>爆款复刻Agent&amp;工作台</td><td>内容链路下游产能位：把已验证结构做成能过审、能跑量、可归因的素材；不做投放出价与预算</td></tr><tr><td>L6 验收工作台</td><td>https://video.luteos.com/</td><td>工作台保留；RACI 无段 A；Gate A2 + C2；写 <code>variant_id</code> / <code>asset_id</code>，读 <code>script_id@version</code></td></tr><tr><td>L7 业务场景</td><td>无（空节点）</td><td>场景「结构复刻」（事件驱动）：拉原片逐帧拆解 → 标可迁移机制与不可迁移皮 → 对照可用资产清单 → 设计单变量变体矩阵 15 条。验收：5 个工作日 ≥15 条变体，100% 有谱系标签，单变量比例 ≥80%，≥1 条 CTR 达被复刻原片基线的 80%。场景 2「疲劳预警」：按素材维度监控 CTR/CPM/频次/加购 → 三分正常/衰减/已死 → 提前 3 天进替换队列。验收：衰减后 48 小时内完成替换决策，浪费 ≤5%</td></tr><tr><td>L8 能力图谱</td><td>无（空节点）</td><td>关键原子 ≤6：拆解视频结构与可迁移机制（专用）、判定素材来源与授权边界（B-14）、设计单变量变体矩阵（专用）、批量生产素材变体（专用）、平台规格化与标注（专用）、素材谱系登记（专用）。断点：BP-03、BP-11、BP-16、BP-27</td></tr><tr><td>L9 进度</td><td>无（空节点）</td><td>换算 M0，且必须显式登记为空洞</td></tr><tr><td>L10 / L11</td><td>无</td><td>应挂 B-14 达人与授权档案；视频解析/ASR 并入 B-01；素材授权台账并入 Radar 的 <code>asset_rights</code>；平台规格清单并入 B-13</td></tr></tbody></table></div>
+</div></details>
+</div></details>
+<details class="s" open data-s="S2"><summary><span class="stag">S2</span> 媒体公关专家 + GEO专家 + IP/名人专家 融合</summary><div class="body">
+<p class="stext">媒体公关专家 + GEO专家 + IP/名人专家 融合，为品牌公共关系从核心媒体编辑跟踪、声量洞察、专家挖掘助力</p>
+<details class="prod" data-g="G1"><summary><span class="pname">Vicky</span><span class="pmeta">PR Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>M1 上限（原附件：已完成 4）</dd>
+<dt>治理后归属</dt><dd>PR 进 G1 持 CH4-A；舆情线进支撑层事件服务，只做 R；对象级 A = <code>asset_id(earned_coverage)</code></dd>
+<dt>处置与反证</dt><dd>拆成 PR 与舆情；同一事件仍出现两个 <code>event_id</code>，或 buyer guide 收录数降 &gt;20% 即撤回</dd>
+<dt>上游依赖</dt><dd>Source B-01 监听 · Signal B-07 事件主单 · Daisy B-09 事实库 · Radar B-04 达人实体</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>G1 主指标（品牌词搜索、SOV）· Echo / CS / Paid Media 消费事件单 · GEO 引用源</dd>
+<dt>唯一写入口</dt><dd><code>asset_id(earned_coverage)</code>，追加 <code>event_observation</code>；Gate C3 + A1；断点 BP-04 / BP-06 / BP-11</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S2（逐字见 3.2 组标题）</td><td>拆成 PR 与舆情；PR 的外部对象是媒体编辑，舆情的外部对象是事件；共线会导致 coverage 与 severity 两套口径</td></tr><tr><td>L4 专家昵称</td><td>Vicky</td><td>保留；CH4-A；舆情线只做 R，<code>event_id</code> 写入口归 Signal</td></tr><tr><td>L5 产品构成</td><td>PR Agent&amp;工作台</td><td>earned media 关系与声誉防守段：把媒体/编辑关系变成可复用、可验证、可归因的第三方信任资产；不做内容生产、不做声量数量</td></tr><tr><td>L6 验收工作台</td><td>https://pr.luteos.com/</td><td>保留；Gate C3（分发目标含 pr）+ A1（若进 paid）；写 <code>asset_id(earned_coverage)</code>，追加 <code>event_observation</code></td></tr><tr><td>L7 业务场景</td><td>PR 线：竞品监测 → 风险预警 → 工作台协同；舆情线：看板对话化 → 自动分类 → 工单闭环</td><td>场景 1「季度 editorial 攻占」：定 3 个议题 → 反查 90 天写过该议题的媒体与作者拉 60 位 → 按 media fit / beat / 可达性 / 互动分 A/B/C 砍到 40 位。验收：90 天 40 位 fit≥B 全部触达，回复率 ≥8%，≥5 篇 organic，其中 ≥2 篇 buyer guide，0 起 route 误判。场景 2「舆情分级到回扫」：多源去重 → 分类 → 按媒体级别 × 传播速度 × 事实严重性定 P0–P3 → 30 分钟派单 → 处置 → 48 小时回扫。验收：P0 30 分钟触达，48 小时回扫 100%，同类事件季度重复 ≤1</td></tr><tr><td>L8 能力图谱</td><td>线索管理： PR 媒体&amp;编辑线索管理（已完成）；线索推荐：行业话题推荐、编辑匹配（已完成）；舆情预警：品牌舆情监控与预警分发（已完成）；数据查询与分析：舆情、核心媒体&amp;编辑查询与分析（已完成）</td><td>关键原子 ≤6：媒体与编辑源监测（B-01/B-03）、判定媒体 fit 与 beat（专用）、判定合作 route（专用）、事件分类与影响面分级（B-07）、coverage 质量与授权矩阵（专用）、编辑关系记忆（专用）。断点：BP-04、BP-06、BP-11</td></tr><tr><td>L9 进度</td><td>已完成 4</td><td>换算上限 M1；舆情线并入事件服务后，M2 由 Echo / CS / Paid Media 三个消费方升级</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-07 事件去重与主单；舆情分级并入 Signal 的 <code>event_type</code> / <code>severity</code>；自建舆情采集与分级下线并入 B-01 + B-07；coverage 资产卡并入 <code>asset_id(earned_coverage)</code></td></tr></tbody></table></div>
+</div></details>
+<details class="prod" data-g="G1"><summary><span class="pname">GEO</span><span class="pmeta">专家内容Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>M0（原附件：方案中 6）</dd>
+<dt>治理后归属</dt><dd>G1 AI 可见度子域；零段 A、零对象级 A（全表唯一）</dd>
+<dt>处置与反证</dt><dd>保留，砍内容生成，补 Amazon Rufus 与 TikTok Shop 站内 AI；砍后 AI 提及率／准确率无变化，或 2 个季度建不起 20 问/ASIN 复测即撤回</dd>
+<dt>上游依赖</dt><dd>Daisy B-09 事实库 · 守衡 B-06 claim 校验 · Source B-04 实体消歧 · PMO B-11 口径</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>G1 领先指标（AI 提及率，当前无主键宿主）· 守衡 C2/C3 分发</dd>
+<dt>唯一写入口</dt><dd>读 <code>claim_id</code>、<code>evidence_id</code>；缺 <code>ai_answer_snapshot_id</code>；Gate C2 / C3；断点 BP-02</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S2（逐字见 3.2 组标题）</td><td>保留测量闭环，砍内容生成（T+2 关闭）；补 Amazon Rufus 与 TikTok Shop 站内 AI</td></tr><tr><td>L4 专家昵称</td><td>GEO</td><td>保留；两类 A 都没有；90 天裁决会被判为可并入</td></tr><tr><td>L5 产品构成</td><td>专家内容Agent&amp;工作台</td><td>AI 搜索可见度的测量与攻占：护城河是问句库 → 采集探针 → 指标 → 诊断 → 内容 → 复测的闭环，不是内容生成本身</td></tr><tr><td>L6 验收工作台</td><td>https://geo.luteos.com</td><td>保留原样，无尾斜杠；Gate C2/C3；读 <code>claim_id@version</code>、<code>evidence_id</code>，缺 <code>ai_answer_snapshot_id</code></td></tr><tr><td>L7 业务场景</td><td>问句库 → 采集探针 → 解析与指标 → 诊断洞察 → 内容生成 → 复测报告</td><td>场景 1「建立品牌问句库与多引擎基线」：按品类决策、场景、对比、品牌、疑虑 5 类生成 300–500 条 → 每条标市场/类目/购买阶段/意图价值/产品线 → 5 个引擎与地区跑基线，记录提及/排位/引用源/准确性。验收：≥300 条带版本，5 引擎 × 目标地区，四项记录齐全。场景 2「缺口诊断」：解析五项指标 → 按意图价值 × 缺口 × 可攻占性排 Top10 → 每个缺口归因到内容不存在/不被引用/事实冲突/引用源被占。验收：每月 Top10 带归因、owner、动作、复测判据</td></tr><tr><td>L8 能力图谱</td><td>配置与问句库：建立品牌问句库并版本化管理（方案中）；采集探针：真实采集 AI 引擎回答并留存快照（方案中）；解析与指标：解析品牌提及与排位，算出五项可见度指标（方案中）；诊断洞察：定位可见度缺口并排出优先攻占主题（方案中）；内容生成：基于事实库生成可被 AI 引用的权威内容（方案中）；复测与报告：复测效果并产出可交付月报（方案中）</td><td>关键原子 ≤6：AI 引擎回答采集与快照（专用，Source 覆盖不到的唯一例外）、引用源与占位归因（专用）、实体消歧（B-04）、claim 与事实校验（B-06）、缺口诊断与优先级（专用）、结构化内容生成（T+2 关闭）。断点：BP-02；无主键宿主</td></tr><tr><td>L9 进度</td><td>方案中 6</td><td>换算 M0；<code>m-x-ai-mention</code> 与 <code>m-x-ai-accuracy</code> 无公式、无主键宿主，不得进 M 栏</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-06 claim 与事实校验、B-09 品牌事实库；不自建采集器，只采 AI 引擎回答；事实源并入 Daisy，引用源数据并入 B-01，内容生成能力并入 Emily 的权威内容生产规格</td></tr></tbody></table></div>
+</div></details>
+<details class="prod" data-g="G1"><summary><span class="pname">Radar</span><span class="pmeta">IP/名人Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>M0（原附件：方案中 3）</dd>
+<dt>治理后归属</dt><dd>G1；IP/名人线；对象级 A = <code>creator_id</code> + <code>asset_rights</code> 唯一写入口（七元组已落文：字典 §0.8、Gate §3、P0 §5、RACI §1.2）；不持段 A</dd>
+<dt>处置与反证</dt><dd>保留并收窄到 IP/名人；寄样回收率连续两季 &lt;60%，或授权到期未回收 &gt;5 即撤回</dd>
+<dt>上游依赖</dt><dd>Source B-01 达人内容监测 · Daisy B-04 实体消歧 · 自有 B-14 档案</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>Clone（授权判定）· Paid Media（放大授权）· Emily（达人 brief）</dd>
+<dt>唯一写入口</dt><dd><code>creator_id</code> 与 <code>asset_rights</code>；Gate A1 / A2 / A5；断点 BP-10 / BP-11</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S2（逐字见 3.2 组标题）</td><td>保留并收窄到 IP/名人；达人供应链（寄样/回收/结算/授权回收）降为支撑层 creator 域 R；affiliate 90 天临时归 Radar</td></tr><tr><td>L4 专家昵称</td><td>Radar</td><td>保留；对象级 A 见节点头</td></tr><tr><td>L5 产品构成</td><td>IP/名人Agent&amp;工作台</td><td>达人/IP 合作的权属与商业路线 owner：定找谁、给什么约束、素材能用到哪、这次合作值多少</td></tr><tr><td>L6 验收工作台</td><td>https://magpie.luteos.com/</td><td>保留；Gate A1 / A2 / A5（台账写域）；写 <code>creator_id</code> 与 <code>asset_rights</code></td></tr><tr><td>L7 业务场景</td><td>粉丝分析 → 合作计划 → 动态监测 → 机会推荐</td><td>场景 1「新品首发达人金字塔」：5 个工作日 ≥40 个候选、覆盖 4 层级，wave-1 ≥12 人，每个候选有公开合作入口与 route 判定。验收：审定通过率 ≥60%，editorial-only 与 no-sponsorship 对象为 0。场景 2「爆量 48 小时授权放大」：识别首条付费素材 → 核授权四类覆盖 → 首批测试预算 ≤$1000。验收：48 小时内上线，每条放大素材 100% 有书面凭证与到期日</td></tr><tr><td>L8 能力图谱</td><td>IP 合作计划制定：分析 IP 粉丝结构与声量，输出合作计划（方案中）；全渠道动态监测：跨平台追踪 IP 动态并聚类关键事件（方案中）；合作机会识别：识别合作机会信号并给出推荐理由（方案中）</td><td>关键原子 ≤6：监测达人内容与互动异动（B-01）、判定商业路线与门禁（专用）、识别素材可放大性与授权状态（B-14）、配置分层与预算配比（专用）、生成约束型 brief（专用）、维护合作资产档案（B-14）。断点：BP-10、BP-11</td></tr><tr><td>L9 进度</td><td>方案中 3</td><td>换算 M0；M2 需 Paid Media 与 Clone 两个消费方实际调用授权接口</td></tr><tr><td>L10 / L11</td><td>无</td><td>应挂 B-14 达人与授权档案，作为唯一「待整合能力」宿主；不再新建第 15 个工作台；Clone 授权台账、Emily 达人 brief、affiliate 名单并入 <code>creator_id</code> 与 <code>asset_rights</code></td></tr></tbody></table></div>
+</div></details>
+</div></details>
+</div></details>
+<details class="g" open data-g="G2"><summary><span class="gtag">G2</span> 转化 · 把注意力变成订单</summary><div class="body">
+<p class="gmeta">原 G 表述：【G2】敏捷响应品牌声量所带来的影响和机会 ｜ G-A：Paid Media ｜ 结算主指标：MER@1、首单贡献毛利</p>
+<blockquote>原 G2 四条产线治理后没有一条留在 G2：Echo 下沉事实层、Market 观察期、Source 下沉数据底座、Signal 上移 G1。新 G2 是三条新增产线（Paid Media / Shopify / Amazon 站内），全部从零立项、M0。<strong>所以 G2 在本季度没有任何存量可结算。</strong> 原 G2 四条仍按原文结构列出，保证骨架不丢。</blockquote>
+<details class="s" open data-s="S3"><summary><span class="stag">S3</span> VOC专家 + 市场洞察专家 融合</summary><div class="body">
+<p class="stext">VOC专家 + 市场洞察专家 融合，为品牌消费者舆情监控、品牌声量机会识别、竞品洞察提供辅助决策</p>
+<details class="prod" data-g="G2"><summary><span class="pname">Echo</span><span class="pmeta">VOC Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>M1 上限（原附件：已完成 1 / 进行中 3）</dd>
+<dt>治理后归属</dt><dd>支撑层事实层；段级 0 A；不持经营结果；taxonomy 版本化为问责依据</dd>
+<dt>处置与反证</dt><dd>保留并升为 VOC 主榜 owner；2 个月内无稳定 taxonomy 只读接口，或抽检一致率 &lt;85% 即判可并入</dd>
+<dt>上游依赖</dt><dd>Source B-01 多源接入 · Source B-04 实体消歧 · 守衡 B-06 claim 规则</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>Emily（objection 榜）· 守衡（卖点比对）· CS（差评根因）· Market（机会卡）</dd>
+<dt>唯一写入口</dt><dd>追加 <code>event_observation</code>，读 <code>claim_id</code> / <code>asset_id</code>；不持 Gate，为 C1 供证据；断点 BP-04 / BP-02</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S3（逐字见 3.3 组标题）</td><td>保留并升为 VOC 主榜 owner；Market 砍独立产线后机会卡并入 Echo 输入</td></tr><tr><td>L4 专家昵称</td><td>Echo</td><td>保留；段级 0 A；taxonomy 未进 8 主键，问责靠 taxonomy 版本与抽检一致率</td></tr><tr><td>L5 产品构成</td><td>VOC Agent&amp;工作台</td><td>回答说了什么、指向哪个 SKU 与哪句卖点、该怎么改；服务产品与运营</td></tr><tr><td>L6 验收工作台</td><td>https://radar.luteos.com/</td><td>保留；不持 Gate；主键只追加 <code>event_observation</code>，读 <code>claim_id</code></td></tr><tr><td>L7 业务场景</td><td>舆情线：品牌/品类/SPU舆情预警；话题线：高质量内容机会挖掘；产品机会线：品类机会挖掘</td><td>场景 1「新品差评根因」：T+3 定位变体与 listing 承诺失准 → 派整改项 → T+14 复核。验收：尺码/适配类一星二星占比降 ≥30%，每条整改项有 owner、deadline、回填证据，挂空率 0，未达阈值必须写未解决原因。场景 2「objection 变 PDP 承接」：前 10 条 objection 中 ≥8 条能指认到 PDP 具体位置，100% 过守衡预检；上线 14 天提及率降 ≥30% 或该页 CVR 升 ≥10%，至少达成一项并附样本量</td></tr><tr><td>L8 能力图谱</td><td>舆情线：多渠道数据查询：售前、售后、独立站、Reddit 等用户反馈（已完成）；风险指数&amp;机会洞察：量化用户风险指数并挖掘产品机会（进行中）｜话题线：拖拉式多维分析：拖拽式多维分析用户声音（进行中）｜产品机会线：自动化品类洞察报告（进行中）</td><td>关键原子 ≤6：多源声音接入（B-01）、评论树与说话人还原（专用）、评论到 SPU/变体绑定消歧（B-04）、卖点承诺比对（B-06）、VOC 四字段打标（B-05）、风险指数与平台门槛对齐（专用）。断点：BP-04、BP-02</td></tr><tr><td>L9 进度</td><td>已完成 1、进行中 3</td><td>换算上限 M1；taxonomy 只读接口与抽检一致率 ≥85% 是保留条件</td></tr><tr><td>L10 待整合能力</td><td>数据采集插件；品类洞察平台；品类洞察报告</td><td>三者在治理定义下都不是「待整合能力」，而是应被 B-01 采集与 B-05 taxonomy 吸收的下游；Echo 只保留「未满足需求主题 + 原话证据」</td></tr><tr><td>L11 整合来源</td><td>https://plugin.luteos.com/；https://business.luteos.com/；https://report.luteos.com/</td><td>采集插件并入 Source；品类洞察平台与报告移交 Market 或降为 Echo 报告模板，不再单独建平台</td></tr></tbody></table></div>
+</div></details>
+<details class="prod" data-g="G2"><summary><span class="pname">Market</span><span class="pmeta">市场洞察Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>空节点（L7–L11 全无），记 M0</dd>
+<dt>治理后归属</dt><dd>准入 gate CH1；90 天观察期；CH1-A 由 PMO steward 代持，T0 前必须指定到人</dd>
+<dt>处置与反证</dt><dd>砍独立产线；90 天内出现 ≥1 个下游书面承接且新品 90d 动销率 +5pp 才保留，否则关闭</dd>
+<dt>上游依赖</dt><dd>Source B-02 经营数据接入（当前缺 Amazon BSR/价格/上新）· B-13 类目合规</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>守衡 CH2 合规准入 · Paid Media 与 Shopify 的新品输入包 · Echo 机会卡</dd>
+<dt>唯一写入口</dt><dd><code>opportunity_id</code>（B-08 第 14 候选键）、<code>category_id</code>（第 15 候选键）；Gate CH1→CH2 准入；S1→S2 属 6 条域外键交接之一（BK-04 已修：9 键按第 9–17 登记）：键登记前只记记录项，S2 可开工</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S3（逐字见 3.3 组标题）</td><td>与 Echo 融合；若保留独立，必须同时满足三条：品类洞察报告整体迁出、独立事实库与 Source 补齐 Amazon BSR/价格、产出被至少一个决策消费</td></tr><tr><td>L4 专家昵称</td><td>Market</td><td>观察期；RACI 现状 S1 行 A = Market，审计 M-02 判为冲突，应改 <code>C</code>、PMO 列改 <code>A</code></td></tr><tr><td>L5 产品构成</td><td>市场洞察Agent&amp;工作台</td><td>品类机会、价格带、竞品动作与市场进入判断；回答这个类目值不值得进</td></tr><tr><td>L6 验收工作台</td><td>https://mkt.luteos.com/</td><td>保留；无 Gate</td></tr><tr><td>L7 业务场景</td><td>无（空节点）</td><td>场景 1「细分品类是否值得进入」：机会卡必须带数据来源、样本量、时间窗与「不进入的代价」。验收：季度 ≥1 个明确结论（进入/不进入/换切角）在 2 周内进入立项或否决记录；只写「建议继续观察」视为未交付。场景 2「竞品动作响应」：每周竞品集合覆盖率 100%，每个高影响动作 48 小时内给出跟/不跟/差异化与代价测算</td></tr><tr><td>L8 能力图谱</td><td>无（空节点）</td><td>关键原子 ≤6：品类与竞品事实接入（B-02，当前缺 Amazon BSR/价格/上新）、品类边界与竞品集合（专用）、价格带与价格-销量建模（专用）、竞品动作性质判定（专用）、类目合规门槛核对（B-13）、机会卡与新品输入包（专用）。断点：CH1→CH2 属 6 条域外键交接之一（BK-04 已修，登记前只记记录项）</td></tr><tr><td>L9 进度</td><td>无（空节点）</td><td>换算 M0，登记为空洞；观察期 90 天内无下游书面承接即关闭</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-02 经营数据接入的品类事实子域，不自建第二套品类报告；Echo 的产品机会线与品类洞察报告并入；Source 补 Amazon BSR 后由 Market 消费</td></tr></tbody></table></div>
+</div></details>
+</div></details>
+<details class="s" open data-s="S4"><summary><span class="stag">S4</span> 品牌声量专家 + 多平台数据采集专家 融合</summary><div class="body">
+<p class="stext">品牌声量专家 + 多平台数据采集专家 融合，为品牌知识库构建、声量建模、声量分析提供辅助决策</p>
+<details class="prod" data-g="G2"><summary><span class="pname">Source</span><span class="pmeta">数据采集Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>M1 上限（原附件：进行中 8）</dd>
+<dt>治理后归属</dt><dd>支撑层数据底座；CH10-A；B-08 落库方；唯一 writer 是数据契约与 8 键 schema</dd>
+<dt>处置与反证</dt><dd>保留并升为数据底座，两个季度内下线 6 条线的自建采集；3 个月内归因覆盖率未升 ≥20pp，或断流 P95 未达 24h 即撤回</dd>
+<dt>上游依赖</dt><dd>各渠道平台授权与合规结论 · 法务签字</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>全体业务线（原文自述支撑 GEO、Vicky、Echo、Signal、Emily、Radar 六方）</dd>
+<dt>唯一写入口</dt><dd>8 键 schema 落库；无 Gate；S10 交接（现 CH10）：断流 2 小时内缺口声明、24 小时内恢复或给替代方案；断点 BP-07</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S4（逐字见 3.3 组标题）</td><td>保留并升为数据底座；B-08 由 PMO 定标准、Source 落库</td></tr><tr><td>L4 专家昵称</td><td>Source</td><td>保留；CH10-A；不是任何业务对象的 writer</td></tr><tr><td>L5 产品构成</td><td>数据采集Agent&amp;工作台</td><td>只负责拿得到、拿得全、拿得合规，不做任何分析结论；形态应是内部数据平台，工作台只保留源管理、质量验收、事件处置</td></tr><tr><td>L6 验收工作台</td><td>https://scrapy.luteos.com/</td><td>保留；无 Gate；CH10 交接规则见节点头</td></tr><tr><td>L7 业务场景</td><td>统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构-&gt;采集工具-&gt;洞察工具</td><td>场景 1「新市场采集合规预检」：计划数据源 100% 有允许/受限/禁止结论与责任人，200 条抽样 0 越界，PII 100% 脱敏或丢弃，法务 5 个工作日签字。场景 2「采集质量月度验收」：五项指标有数且与上月可比，黄金集准确率 ≥90%、召回 ≥80%，T1 源 P95 延迟 ≤2 小时，三个下游书面确认</td></tr><tr><td>L8 能力图谱</td><td>统一采集平台与 monitor 层：统一采集调度、降级链路与 12 表建模（进行中）；TikTok 采集MCP/skill：采集 TikTok 榜单、视频、评论（进行中）；Reddit 采集MCP/skill：采集 Reddit 帖子与评论树（进行中）；YouTube 采集MCP/skill：采集 YouTube 视频、频道、字幕（进行中）；Instagram 采集MCP/skill：采集 Instagram 媒体与评论（进行中）；Facebook 采集MCP/skill：采集 Facebook 页面与互动快照（进行中）；Google Trends 采集MCP/skill：采集 Google 趋势指数与关联查询（进行中）；上游数据底座，支撑 GEO、Vicky、Echo、Signal、Emily、Radar 六方（进行中）</td><td>关键原子 ≤6：源发现与准入（专用）、多通道采集与调度（底座本体）、实体对齐与消歧（B-04）、跨源去重与同源合并（B-07 前置）、PII 识别与脱敏（专用）、统一表结构与数据契约（B-08）。第 8 条原文是依赖声明，不是能力项，治理定义不把它计为能力。断点：BP-07</td></tr><tr><td>L9 进度</td><td>进行中 8</td><td>换算上限 M1；M2 需 ≥3 个下游实际消费并通过契约测试</td></tr><tr><td>L10 / L11</td><td>无（明确记录：Source 下没有任何 L10/L11）</td><td>应消费并承担 B-01 采集、B-02 经营数据接入、B-04 实体消歧、B-08 ID 契约四项，作为统一宿主；并入 Emily 监听、Vicky 声誉采集、Clone 视频解析、Echo 多渠道、Signal 多源采集，共 5 处重复</td></tr></tbody></table></div>
+</div></details>
+<details class="prod" data-g="G2"><summary><span class="pname">Signal</span><span class="pmeta">品牌声量Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>M0（原附件：方案中 3）</dd>
+<dt>治理后归属</dt><dd>G1 业务线；CH9-A；对象级 A = <code>event_id</code> 唯一写入口</dd>
+<dt>处置与反证</dt><dd>保留，拆出实验设计给 PMO；拆出后实验覆盖率未升，或「相关性结论进预算」次数 &gt;0 即撤回</dd>
+<dt>上游依赖</dt><dd>Source B-01 采集 · Source B-03 声量归一 · Vicky 舆情分级</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>Vicky / Echo / Paid Media / CS 共享同一 <code>event_id</code> · G1 主指标（SOV）</dd>
+<dt>唯一写入口</dt><dd><code>event_id</code>；<code>metric_snapshot</code> 落 SOV/BSV；无 Gate owner，实验 gate 归 PMO；断点 BP-04 / BP-07</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S4（逐字见 3.3 组标题）</td><td>保留；必须删掉「多源采集」四个字，改为订阅 Source；只出相关性证据</td></tr><tr><td>L4 专家昵称</td><td>Signal</td><td>保留；CH9-A；事件服务向全体共享，但不单独占 G 位</td></tr><tr><td>L5 产品构成</td><td>品牌声量Agent&amp;工作台</td><td>只做量与异动，不做质的深挖：变了没有、变成什么结构、严不严重、该谁处理</td></tr><tr><td>L6 验收工作台</td><td>https://signal.luteos.com/</td><td>保留；无 Gate owner</td></tr><tr><td>L7 业务场景</td><td>多源采集 → 异动检测 → 归因分析 → 告警</td><td>场景 1「竞品异动 24 小时响应」：异动后 24 小时内产出归因假设与证据链，假设被处置方采纳率 ≥60%，7 日复测能判定威胁成立或不成立，事件单 100% 有责任人与关闭时间。场景 2「负面前哨」：P0 60 分钟内触达三个责任人，72 小时内产出关闭或升级结论并附回落数据，竞品黑稿与真实产品问题分类准确率 ≥85%</td></tr><tr><td>L8 能力图谱</td><td>品牌曝光&amp;热度监控：监控品牌曝光与搜索热度日趋势（方案中）；声量异动识别：识别声量异常波动并归因（方案中）；竞品动作&amp;发布监测：追踪竞品动作与新品发布节奏（方案中）</td><td>关键原子 ≤6：品牌与竞品声量监听（B-01）、声量归一化与可比口径（B-03）、异动构成拆解（专用）、付费/自然声量分离（专用，源数据依赖 B-01 标记）、严重度与风险分级（B-07）、异动归因与证据包（专用，只出相关性）。断点：BP-04、BP-07</td></tr><tr><td>L9 进度</td><td>方案中 3</td><td>换算 M0；M2 需 Vicky、Echo、Paid Media 至少三方消费同一 <code>event_id</code></td></tr><tr><td>L10 / L11</td><td>无</td><td>应挂 B-07 事件去重与主单，作为 <code>event_id</code> 唯一宿主，不自建采集；Vicky 舆情分级、Echo 事件观测、Source 采集并入；<code>hyp-*</code> 发号与样本量核定移交 PMO</td></tr></tbody></table></div>
+</div></details>
+</div></details>
+</div></details>
+<details class="g" open data-g="G3"><summary><span class="gtag">G3</span> 留存 · 让买过的人再买</summary><div class="body">
+<p class="gmeta">原 G 表述：【G3】 推进品牌数据资产AI数字化运营 ｜ G-A：Retention ｜ 结算主指标：复购 90@1、CAC payback@1</p>
+<blockquote>原 G3 五条产线全部是平台或职能：守衡是合规 gate、Daisy 是事实库、Main 是工程职能、PMO 是治理机制、Shopify 是渠道。治理定义把前四者移出 G，只保留 Shopify 并拆三条，另补 CS 与 Retention 两条 P0。<strong>原 G3 的「数据资产」叙事在本图里被整体取消，改为支撑层 + 治理机制；新 G3 由两条 P0 构成，均从零起、M0。</strong></blockquote>
+<details class="s" open data-s="S5"><summary><span class="stag">S5</span> 内容审核专家 + 多智能体平台 融合</summary><div class="body">
+<p class="stext">内容审核专家 + 多智能体平台 融合，为品牌内容资产审核、知识库沉淀以及多智能体协作提供品牌资产与协作平台</p>
+<details class="prod" data-g="G3"><summary><span class="pname">守衡</span><span class="pmeta">内容治理Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>M1 上限（原附件：已完成 3）</dd>
+<dt>治理后归属</dt><dd>支撑层合规 gate；CH2-A（仅内容侧），资质侧无 A；追加 <code>claim_rule_binding</code> 子表，不得改 claim 本体</dd>
+<dt>处置与反证</dt><dd>保留为唯一合规裁决源；1 个季度 claim 返工工时未降 ≥30%，或误杀率 &gt;15% 即撤回</dd>
+<dt>上游依赖</dt><dd>Daisy B-06/B-09 claim 与证据 · Source B-01 素材 · B-13 规则库</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>Emily / Clone / GEO 引用回执 · Paid Media 前置校验 · G2/G3 结算前置</dd>
+<dt>唯一写入口</dt><dd>追加 <code>claim_rule_binding</code>，读 <code>claim_id</code>、<code>asset_id</code>；Gate C1–C4 主责 + 授权核验；断点 BP-02</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S5（逐字见 3.4 组标题）</td><td>保留为唯一合规裁决源；claim 三源收敛到 Daisy 主表 + 守衡判定子表；规则不得原创</td></tr><tr><td>L4 专家昵称</td><td>守衡</td><td>保留；CH2-A（内容侧）</td></tr><tr><td>L5 产品构成</td><td>内容治理Agent&amp;工作台</td><td>整条链上唯一有权说不的位置：判品牌发出去的东西、品牌得出的结论站不站得住；不判外部世界发生了什么</td></tr><tr><td>L6 验收工作台</td><td>https://ca.luteos.com/</td><td>保留；Claim Gate 主责 C1–C4；授权 Gate 只读并出判定</td></tr><tr><td>L7 业务场景</td><td>内容上传 → 模型审核 → 审计判定 → 整改推送</td><td>场景 1「达人素材投前放行」：拉素材包与凭证 → 判授权四类覆盖 → 逐条抽取 claim 匹配类目 overlay → 出三态 → 条件放行与阻断退回重谈或改剪 → 登记四元组。验收：20 条 24 小时内判定，阻断 100% 附 rule object 与原文，放行 100% 绑授权编号与有效期，30 天内拒审 100% 可回溯。场景 2「月度复盘结论复核」：每条结论拆成指标变化 + 因果断言 + 建议动作 → 回溯证据来源 → 校验口径与可迁移范围 → 出三态。验收：进入决策的结论 100% 有可定位证据，讲师宣称 100% 降级为打法假设，口径不一致 0 条进预算</td></tr><tr><td>L8 能力图谱</td><td>内容审计规则引擎：按品牌规则自动审计内容合规风险（已完成）；经营动作与结论复核：复核经营结论是否有证据支撑（已完成）；复核结论与整改清单：输出整改清单并闭环推送（已完成）</td><td>关键原子 ≤6：素材与授权凭证采集（B-01）、监听平台处置回执（专用）、规则-对象映射（B-13）、claim 抽取与风险分类（B-06）、证据分层判定（专用）、三态裁定与回执（B-10）。断点：BP-02；B-12 抽检空洞</td></tr><tr><td>L9 进度</td><td>已完成 3</td><td>换算上限 M1；M2 需 Emily / Clone / GEO 三个消费方在生产环境引用回执；M3 需 golden set 与抽检一致率</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-06 claim 与事实校验、B-10 审批门与回执、B-13 规则库与版控；Emily / GEO / Daisy 的 claim 规则表并入，克隆与平台规范清单并入 B-13，人工审批门并入 B-10</td></tr></tbody></table></div>
+</div></details>
+<details class="prod" data-g="G3"><summary><span class="pname">Daisy</span><span class="pmeta">多智能体Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>M1 上限（原附件：方案中 2 / 进行中 2）</dd>
+<dt>治理后归属</dt><dd>支撑层事实底座；对象级 A；段级 0 A</dd>
+<dt>处置与反证</dt><dd>保留并移出业务 G；移出后 claim/evidence 冲突数上升，或下游出现第二事实源即撤回</dd>
+<dt>上游依赖</dt><dd>Source B-01/B-04 实体与采集 · 各 Agent 对象目录</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>守衡 C1 事实与证据 · GEO 事实源 · Echo / Vicky 口径来源</dd>
+<dt>唯一写入口</dt><dd><code>claim_id</code>、<code>evidence_id</code>、<code>asset_id(evidence_file)</code>；供 C1 事实与证据、不裁定；断点 BP-02 / BP-07</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S5（逐字见 3.4 组标题）</td><td>保留并移出业务 G；价值不是统一入口，而是候选区与 canonical 分离、权限统一台账、重复建设收敛</td></tr><tr><td>L4 专家昵称</td><td>Daisy</td><td>保留；对象级 A 三项；不参与 G 目标考核</td></tr><tr><td>L5 产品构成</td><td>多智能体Agent&amp;工作台</td><td>强制候选区与 canonical 分离 + 权限统一台账 + 重复建设收敛；不做业务判断、不做裁定</td></tr><tr><td>L6 验收工作台</td><td>https://mas.luteos.com/</td><td>保留；为 Claim Gate 供事实与证据</td></tr><tr><td>L7 业务场景</td><td>知识库-&gt;MAS-&gt;CLI</td><td>场景 1「跨 Agent 结论冲突裁决」：检测同一 object_id 或 topic 矛盾 → 定位双方 canonical 与 source_refs → 按证据层级排序（官方源 &gt; 内部对照实验 &gt; 内部案例 &gt; Agent 推断 &gt; 第三方/讲师宣称）→ 同层分不出标 <code>unresolved_with</code> → 领域 owner 5 个工作日裁定。验收：冲突 100% 有 owner 与截止日，裁定后 7 天下游口径一致，5 个工作日未裁必须显式标 unresolved，不得静默合并。场景 2「新 Agent 接入」：先声明业务问题、影响 T2、与现有差异、读域写域与权限上限，强制复用 Source 与 Daisy 适配层，用 golden case 跑基线，灰度 2 周。验收：自建采集 0，重叠能力有并入计划或差异声明，权限上限不高于 E2</td></tr><tr><td>L8 能力图谱</td><td>各 Agent 统一接入：九个 Agent 通过适配层统一接入（方案中）；统一入口，把九个 Agent 从九个入口收成一个（方案中）；对话式 CLI 界面：提供对话式 CLI 标准交互（进行中）</td><td>关键原子 ≤6：Agent 能力注册与发现（专用）、冲突检测与关系生成（B-09）、权限与数据边界解析（B-10）、证据层级排序与裁决建议（专用）、重叠度与并入判断（专用）、统一对象仓与版本（B-08/B-09）。断点：BP-02、BP-07</td></tr><tr><td>L9 进度</td><td>方案中 2、进行中 2</td><td>换算上限 M1；M2 需 ≥1 条非 owner 产线在生产环境调用统一对象仓并通过契约测试</td></tr><tr><td>L10 待整合能力</td><td>品牌知识库平台；业务skills平台</td><td>二者都应挂在 Daisy 下作为「待整合能力」，不得各自长成第 15、16 个工作台</td></tr><tr><td>L11 整合来源</td><td>https://asset.luteos.com/；platform-operations-wiki；https://brand.luteos.com/；https://skills.luteos.com/</td><td>品牌知识库平台的来源是 asset 与仓库名；业务skills平台的来源是 brand 与 skills。仓库名 <code>platform-operations-wiki</code> 不是 URL，与图例「整合来源」的 URL 预期不一致，需统一为可定位资源；skills 两源需去重</td></tr></tbody></table></div>
+</div></details>
+</div></details>
+<details class="s" open data-s="S6"><summary><span class="stag">S6</span> Agent全栈专家 + 项目管理专家 + 独立站智能化专家融合</summary><div class="body">
+<p class="stext">Agent全栈专家 + 项目管理专家 + 独立站智能化专家融合，沉淀研发、运营、协作三类AI生产力工具</p>
+<details class="prod" data-g="G3"><summary><span class="pname">Main</span><span class="pmeta">全栈开发Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>部分缺失（L7/L8 存在但错位，无 L9），记 M0</dd>
+<dt>治理后归属</dt><dd>移出 OGSM，降为工程执行层；CH10 的 R；不进 G、不进 M；0 段 A、0 对象级 A</dd>
+<dt>处置与反证</dt><dd>移出；1 个季度工程交付延迟 &gt;20%，或 B-12 抽检无法落地即撤回该处置</dd>
+<dt>上游依赖</dt><dd>各 Agent 的私有评测集（守衡 claim 负例、Emily 脚本采用记录、Echo 评论归类）</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>CH10 质量抽检（B-12）· 各产线换型回归</dd>
+<dt>唯一写入口</dt><dd>无业务主键；无 Gate，受 B-12 前置制约；无直接断点</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S6（逐字见 3.4 组标题）</td><td>处置为移出；模型评测并入 CH10 质量抽检 B-12；产线清单删除，编号不复用</td></tr><tr><td>L4 专家昵称</td><td>Main</td><td>移除；0 段 A、0 对象级 A</td></tr><tr><td>L5 产品构成</td><td>全栈开发Agent&amp;工作台</td><td>业务侧 AI 生产力交付中台：需求 → 工具 → 评测 → 成本 → 回滚；不拥有任何 Agent 的领域逻辑</td></tr><tr><td>L6 验收工作台</td><td>https://main.luteos.com/</td><td>保留为工程入口；B-12 未上线时机器判定只能出 CONDITIONAL</td></tr><tr><td>L7 业务场景</td><td>模型选型与评测（层级错位：业务场景位填了主题名，无流程链）</td><td>场景「模型换代前业务指标回归」：从各 Agent 收集私有评测集（守衡 claim 负例 200 条、Emily 脚本采用记录 300 条、Echo 评论归类 200 条）→ 定义业务指标口径 → 新旧模型同批跑 → 输出分切片对比 → 灰度 10% 两周。验收：每次换型有分 Agent 私有评测报告，换型后 30 天关键业务指标下降 ≤5%，单条任务成本可查</td></tr><tr><td>L8 能力图谱</td><td>https://llm.luteos.com/（层级错位：URL 占了能力图谱位）</td><td>关键原子 ≤6：业务任务到技术规格转译（专用）、失败归因（专用）、品牌私有评测集维护（B-12）、业务指标回归判定（B-12）、灰度发布与回滚（专用）、组件依赖台账（专用）</td></tr><tr><td>L9 进度</td><td>无（缺 L9 进度）</td><td>换算 M0；错位的 URL 应移到 L11 整合来源</td></tr><tr><td>L10 / L11</td><td>无（<code>模型选型与评测</code> 应在此层，原文错放在 L7；<code>https://llm.luteos.com/</code> 应在此层，原文错放在 L8）</td><td>应消费 B-12 判定质量抽检，模型评测能力并入 B-12 的 golden set 维护；不单独占产线</td></tr></tbody></table></div>
+</div></details>
+<details class="prod" data-g="G3"><summary><span class="pname">Shopify</span><span class="pmeta">ABI Shopify Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>部分缺失（L7/L8 三条均错位，无 L9），记 M0</dd>
+<dt>治理后归属</dt><dd>G2；拆三条：DTC 转化、商品与定价、站点技术；CH6-DTC-A 在 DTC 转化线</dd>
+<dt>处置与反证</dt><dd>拆三条并扩为 DTC 交易入口；拆后 1 个季度 CVR 未升 ≥10%，或三线 <code>landing_ref</code> 一致率 &lt;95% 即撤回</dd>
+<dt>上游依赖</dt><dd>Source B-02 交易数据 · B-11 指标口径 · B-13 结构化数据规则 · Paid Media 流量</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>G2 主指标（MER、首单贡献毛利）· Retention（订单与客户主键）</dd>
+<dt>唯一写入口</dt><dd>写订单侧，读 <code>pdp@{version}</code>；<code>order_id</code> / <code>landing_ref</code> 在 8 键之外；Gate X4；断点 BP-03 / BP-16</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S6（逐字见 3.4 组标题）</td><td>拆三条并扩为 DTC 交易入口；一条线同时承担站点技术、PDP 转化、商品定价，CVR 掉点无法区分页面/流量/商品</td></tr><tr><td>L4 专家昵称</td><td>Shopify</td><td>保留；CH6-DTC-A；三条共享 <code>order_id</code> / <code>customer_id</code>；私域、会员、订阅移交 Retention</td></tr><tr><td>L5 产品构成</td><td>ABI Shopify Agent&amp;工作台</td><td>交易与承接入口，不只是独立站：站点能不能卖、CVR 掉在哪、选品在站上卖不卖得动、渠道定价带是否自打</td></tr><tr><td>L6 验收工作台</td><td>https://shopify.luteos.com/</td><td>保留；Gate X4（<code>pdp@{version}</code> 上线 / <code>price_change</code> 生效）+ CH5→CH6 <code>landing_ref</code> 未登记不得开投</td></tr><tr><td>L7 业务场景</td><td>ABI独立站（层级错位：实为待整合能力）；独立站360审计（层级错位）；AI选品（层级错位）</td><td>场景 1「放量前承接体检」：审计覆盖本期目标 LP 100%、Top GMV SKU 100% → 全站 blocker = 0 才允许放量 → 每个 blocker 带 owner 与截止时间 → 复测关闭率 100% → 留下 CVR/AOV/自然搜索三项可复算基线。场景 2「CVR 掉点定位」：把掉点定位到单一漏斗环节并给可证伪假设 → A/B 达显著才全量 → 单季度 ≥4 个有效测试。验收：≥1 个测试带来 CVR 相对 +10% 或 AOV +8%，所有上线改动有回归监控</td></tr><tr><td>L8 能力图谱</td><td>https://platform.shopify.luteos.com/（层级错位：实为整合来源）；https://shopify.luteos.com/（层级错位：与 L6 验收工作台 URL 完全重复）；https://product.luteos.com/（层级错位：实为整合来源）</td><td>关键原子 ≤6：站点审计采集适配器（专用）、交易数据口径归一（B-02）、漏斗掉点归因（专用）、PDP 解释力评估（专用）、结构化数据与 feed 一致性（B-13）、SKU-渠道角色与定价带判定（专用）。断点：BP-03、BP-16</td></tr><tr><td>L9 进度</td><td>无（三个产品均缺 L9 进度）</td><td>换算 M0；三个错位项分别回到 L10/L11 后，DTC 转化线才有可判定进度</td></tr><tr><td>L10 / L11</td><td>无（<code>ABI独立站</code>、<code>独立站360审计</code>、<code>AI选品</code> 应在此层；三个 URL 应在此层）</td><td>应消费 B-02 订单子域、B-11 指标口径；选品判断与 Market 分权，Shopify 只保留站内可验证性否决权；platform.shopify / shopify / product 三个站点并入交易入口，不再各算一条产线</td></tr></tbody></table></div>
+</div></details>
+<details class="prod" data-g="G3"><summary><span class="pname">PMO</span><span class="pmeta">OGSM管理Agent&amp;工作台</span></summary><div class="body">
+<dl class="fields">
+<dt>现状</dt><dd>空节点（L7–L11 全无），记 M0</dd>
+<dt>治理后归属</dt><dd>治理机制（横切）；CH11-A；<code>hyp-*</code> 发号；<code>metric_dict@{version}</code> owner；无业务对象写入口</dd>
+<dt>处置与反证</dt><dd>保留为治理机制，不当作产线；1 个季度承诺签署率 &lt;90%，或 90 天裁决未砍掉任何策略即撤回</dd>
+<dt>上游依赖</dt><dd>各产线 T1 指标与承诺 · Source B-08 主键落库 · 守衡 B-10 回执</dd>
+<dt>下游消费 <code>[推断]</code></dt><dd>全体产线的续投裁决 · Gate 实验判定 · 季度 OGSM 校准</dd>
+<dt>唯一写入口</dt><dd><code>hyp-*</code> 发号、<code>metric_dict@{version}</code>；Gate X1–X5 主责；S11（现 CH11）交接：会前 5 工作日下发、会后 5 工作日签署</dd>
+</dl>
+<h5 class="cmp-title">原附件 vs 治理定义</h5>
+<div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S6（逐字见 3.4 组标题）</td><td>保留为治理机制：指标字典、实验 gate、承诺签署、90 天裁决；不接管预算决策</td></tr><tr><td>L4 专家昵称</td><td>PMO</td><td>保留；CH11-A；无业务对象写入口</td></tr><tr><td>L5 产品构成</td><td>OGSM管理Agent&amp;工作台</td><td>把 14 条产线产出强制折算到 GMV / 毛利 / CAC / 复购，并据此裁决资源；产品是承诺与裁决，不是业务交付</td></tr><tr><td>L6 验收工作台</td><td>https://pmo.luteos.com/</td><td>保留；实验 Gate X1–X5 主责</td></tr><tr><td>L7 业务场景</td><td>无（空节点）</td><td>场景 1「季度 OGSM 校准」：拉 T1 财务口径与 T2 中介 → 对每条 S 做因果贡献拆解 → 判定起效/未到观察窗口/未起效/反向 → 重排下季资源 → 每条 M 定 baseline、target、window、口径版本、owner 并签署。验收：每条 M 有 baseline 与口径版本，每条 S 有可检验因果假设，上季每条 S 有明确判定；一次校准会没有任何策略被砍，这次会判为失效。场景 2「声量异动 → GMV 传导追踪」：30/60 天回看，不允许「待观察」超过 8 周，必须说明用了实验/准实验/相关性哪种证据，相关性结论不得直接进预算</td></tr><tr><td>L8 能力图谱</td><td>无（空节点）</td><td>关键原子 ≤6：经营指标采集与对账（B-11）、目标与承诺台账（B-10）、指标口径解析与冲突检测（B-11）、目标-策略-动作映射（专用）、假设与结论证据分级（B-12）、续投裁决与决策记录（专用）。断点：B-08 主键未落库、B-12 抽检未实现</td></tr><tr><td>L9 进度</td><td>无（空节点）</td><td>换算 M0；不得用开会次数、承诺数量当成熟度</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-08 ID 契约与主数据（定标准）、B-10 审批门与治理回执、B-11 指标口径、B-12 判定质量抽检；各产线自定的品牌词 lift / NTB / 贡献毛利口径并入 B-11，自建审批流并入 B-10</td></tr></tbody></table></div>
+</div></details>
+</div></details>
+</div></details>
+<details class="p0"><summary>3.5 P0 四条新增产线（附件中不存在）</summary><div class="body">
+<div class="tw"><table class="cmp"><thead><tr><th>新增产线</th><th>归属 G</th><th>段位</th><th>主指标</th><th>段 A</th><th>反证条件</th></tr></thead><tbody><tr><td>Paid Media</td><td>G2</td><td>CH5</td><td>MER、增量 ROAS</td><td>G2-A + CH5-A</td><td>3 个月内预算变更单采纳率 &lt;50%</td></tr><tr><td>CS &amp; After-sales</td><td>G3</td><td>CH7</td><td>首响中位、退货原因四层完成率</td><td>CH7-A</td><td>6 个月内首响中位未达 8h，或原因四层完成率 &lt;80%</td></tr><tr><td>Retention / Subscription</td><td>G3</td><td>CH8</td><td>90 天复购率、CAC payback</td><td>G3-A + CH8-A</td><td>2 个季度内 90 天复购率未升 ≥2pp</td></tr><tr><td>Amazon 站内</td><td>G2</td><td>CH6-AMZ</td><td>Amazon CVR、Buy Box 赢得率</td><td>CH6-AMZ-A</td><td>2 个月内建不起 Account Health 巡检与 Buy Box 快照</td></tr></tbody></table></div>
+<p>四条无 L4–L11，只能给「段位 / 主指标 / 段 A / 反证条件」四栏，不得虚构 L6 URL 与 L9 进度。</p>
+</div></details>
+</div></details>
+<details class="sec"><summary>4. 底座 B-01..B-14</summary><div class="body">
+<p>口径：需求产线数与重复建设处数来自补全稿 §3.1；「应挂产品」与「整合来源」是按骨架层级与唯一写入口推导的挂载建议。</p>
+<details class="b"><summary><span class="bid">B-01</span> 多源内容采集与 monitor</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-01</dd><dt>需求线 / 重复处</dt><dd>7 / 5</dd><dt>应挂产品</dt><dd>Source（数据底座）</dd><dt>整合来源</dt><dd>Emily 内容互动监听、Vicky 声誉监听与自建采集、Clone 视频解析/ASR、Echo 多渠道、Signal 多源采集</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-02</span> 经营与投放数据接入</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-02</dd><dt>需求线 / 重复处</dt><dd>6 / 4</dd><dt>应挂产品</dt><dd>Source（数据底座），Paid Media 为首个消费方</dd><dt>整合来源</dt><dd>Emily 直连投放、Clone 素材表现读取、Signal、Echo 各接一遍；Shopify 订单侧接入</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-03</span> 声量与热度时间序列归一</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-03</dd><dt>需求线 / 重复处</dt><dd>5 / 4</dd><dt>应挂产品</dt><dd>Signal（CH9 测量口径）</dd><dt>整合来源</dt><dd>Vicky 监听、Emily 趋势归一、Echo、Market 各一套口径</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-04</span> 实体消歧与品牌一致性</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-04</dd><dt>需求线 / 重复处</dt><dd>5 / 5</dd><dt>应挂产品</dt><dd>Source（数据契约），Daisy 为 canonical 消费方</dd><dt>整合来源</dt><dd>GEO 实体一致性、守衡审计、Daisy 知识库、Echo、Signal 各维护一份实体表</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-05</span> 用户声音 taxonomy 与 objection</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-05</dd><dt>需求线 / 重复处</dt><dd>4 / 3</dd><dt>应挂产品</dt><dd>Echo（VOC 主榜）</dd><dt>整合来源</dt><dd>Emily objection 归类、Vicky 舆情分类、守衡自建分类并入 Echo 主榜</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-06</span> claim 与事实校验</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-06</dd><dt>需求线 / 重复处</dt><dd>4 / 4</dd><dt>应挂产品</dt><dd>守衡（判定）+ Daisy（claim/evidence 本体）</dd><dt>整合来源</dt><dd>Daisy 事实库、守衡规则引擎、GEO 事实校验、Emily claim 与证据库</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-07</span> 事件去重与主单</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-07</dd><dt>需求线 / 重复处</dt><dd>4 / 3</dd><dt>应挂产品</dt><dd>Signal（<code>event_id</code> 唯一写入口）</dd><dt>整合来源</dt><dd>Vicky 舆情分级、Echo 事件观测、CS 公开事件线索并入同一事件单</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-08</span> ID 契约与主数据</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-08</dd><dt>需求线 / 重复处</dt><dd>5 / <strong>0（空洞）</strong></dd><dt>应挂产品</dt><dd>PMO 定标准 + Source 落库；不挂在任何业务产品下</dd><dt>整合来源</dt><dd>Emily/Clone/Radar/Shopify/PMO 的 ID 需求；<code>script→variant→ad→claim</code> 主链；候选键第 9–17 已排序（order_id → sku_id → ticket_id/voice_id → ltv_cohort_id → opportunity_id/category_id → metric_dict@version → work_item_id），与 G §4 第 14 候选键自洽</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-09</span> 品牌事实库</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-09</dd><dt>需求线 / 重复处</dt><dd>5 / 4</dd><dt>应挂产品</dt><dd>Daisy（唯一引用源）</dd><dt>整合来源</dt><dd>Echo、守衡、GEO、Vicky 的事实与口径来源并入；冲突由 Daisy 出 <code>unresolved_with</code></dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-10</span> 审批门与治理回执</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-10</dd><dt>需求线 / 重复处</dt><dd>4 / 4</dd><dt>应挂产品</dt><dd>PMO（回执 schema），三个 Gate 为写方</dd><dt>整合来源</dt><dd>各产线自写「人工审批后执行」；<code>gate_receipt</code> / <code>rule_object</code> / <code>market_overlay</code> 三类已入字典 §0.1 第七–九类；回执定位串统一 <code>{subject_id}@{version}#{gate}-{seq4}</code> 并补齐 <code>gate_version</code> / <code>conditions[]</code> / <code>invalidate_on[]</code> / <code>sla_due_at</code>；<code>rule_object</code> / <code>market_overlay</code> 走独立 ID 空间（<code>rule_id</code> / <code>overlay_id</code>）+ 单 owner，不进业务状态机</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-11</span> 业务价值归因与指标口径</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-11</dd><dt>需求线 / 重复处</dt><dd>5 / 4</dd><dt>应挂产品</dt><dd>PMO（<code>metric_dict@{version}</code>）</dd><dt>整合来源</dt><dd>GEO 品牌词 lift、Vicky coverage 价值、Echo NTB、Shopify 贡献毛利各自定义并入</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-12</span> 判定质量抽检</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-12</dd><dt>需求线 / 重复处</dt><dd>4 / <strong>0（空洞）</strong></dd><dt>应挂产品</dt><dd>PMO（golden set 由非实现方维护）</dd><dt>整合来源</dt><dd>守衡 claim 负例、Emily 脚本采用记录、Echo 评论归类、GEO 事实校验各出私有评测集</dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-13</span> 规则库与版控</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-13</dd><dt>需求线 / 重复处</dt><dd>3 / 3</dd><dt>应挂产品</dt><dd>守衡（唯一合规规则源）</dd><dt>整合来源</dt><dd>守衡规则引擎、Clone 平台规范清单、GEO 事实校验规则并入同一 <code>rule_id@rule_version</code></dd></dl>
+</div></details>
+<details class="b"><summary><span class="bid">B-14</span> 达人与授权档案</summary><div class="body">
+<dl class="fields"><dt>ID</dt><dd>B-14</dd><dt>需求线 / 重复处</dt><dd>3 / 2</dd><dt>应挂产品</dt><dd>Radar（<code>creator_id</code> + <code>asset_rights</code>，七元组已落文；<code>asset.rights</code> 降为只读投影，Radar 物化、其余只读）</dd><dt>整合来源</dt><dd>Radar 达人档案、Clone 授权台账、Emily 依赖的达人档案并入</dd></dl>
+</div></details>
+<p>三条读表规则：① 重复最多的不是最贵的，空洞才是最贵的——B-08 与 B-12 重复 0 次、实现 0 次，不会出现在任何重复建设统计里，但缺了它们全部归因失效。② 底座被写成「下游产品的能力」——B-01 由 Source 声明、B-09 由 Daisy 声明，Emily/Vicky/Clone 又把它们算作自己的能力并重复实现，组织上等于底座 owner 没有否决权。③ L10/L11 不是每个产品都要有的层——原附件只有 4 个产品出现，其余 10 个是结构性空白，不是遗漏；产品树下只写「消费哪个 B-xx」。</p>
+</div></details>
+<details class="sec"><summary>5. 横切断面（CH1–CH11 / BP / 8 主键 / 3 Gate / 循环依赖）</summary><div class="body">
+<details class="sub"><summary>5.1 十一段链路与段 A</summary><div class="body">
+<div class="tw"><table class="cmp"><thead><tr><th>段</th><th>链路</th><th>段 A</th><th>段主指标</th><th>备注</th></tr></thead><tbody><tr><td>CH1</td><td>品类机会与选品</td><td>Market（观察期）→ PMO steward</td><td>新品 90d 动销率</td><td>审计 M-02 判定 RACI 与 G 重构冲突，应改 PMO 为 A</td></tr><tr><td>CH2</td><td>产品定义与合规准入</td><td>守衡（仅内容侧）</td><td>claim 可证率</td><td>资质与认证办理无 A</td></tr><tr><td>CH3</td><td>内容与素材供给</td><td>Emily</td><td>周素材产出中通过 claim 预检的比例</td><td>拥挤段 5 条触达</td></tr><tr><td>CH4</td><td>达人 / 媒体 / 联盟</td><td>Vicky</td><td>buyer guide 收录数</td><td>联盟营销无 A 无 R</td></tr><tr><td>CH5</td><td>付费投放</td><td>Paid Media（P0）</td><td>MER 与增量 ROAS</td><td>14 列基线无 A</td></tr><tr><td>CH6-DTC</td><td>转化承接（独立站）</td><td>Shopify</td><td>独立站 CVR</td><td>CH6 是唯一允许拆的子段</td></tr><tr><td>CH6-AMZ</td><td>转化承接（Amazon）</td><td>Amazon 站内（P0）</td><td>Amazon CVR 与 Buy Box 赢得率</td><td>14 列基线无 A</td></tr><tr><td>CH7</td><td>履约与售后</td><td>CS（P0）</td><td>首响中位与退货原因四层完成率</td><td>14 列基线无 A</td></tr><tr><td>CH8</td><td>复购与 LTV</td><td>Retention（P0）</td><td>90 天复购率与 CAC payback</td><td>14 列基线无 A</td></tr><tr><td>CH9</td><td>品牌资产（搜索·心智·AI）</td><td>Signal</td><td>品牌搜索占比与 SOV</td><td>GEO 为零问责子域</td></tr><tr><td>CH10</td><td>数据与决策基建</td><td>Source</td><td>归因覆盖率与数据延迟</td><td>6 条线争夺</td></tr><tr><td>CH11</td><td>组织与治理</td><td>PMO</td><td>指标口径一致率与承诺签署率</td><td>被当成工具而非治理</td></tr></tbody></table></div>
+<p>源文档写作 S1–S11，与骨架 S1–S6 撞名，本表统一改 CH；引用 RACI 时按「CHn = 源 S n」换算。</p>
+</div></details>
+<details class="sub"><summary>5.2 交接断点（全量 12 个）</summary><div class="body">
+<p>六份文档共登记 12 个 BP 编号：02 / 03 / 04 / 06 / 07 / 10 / 11 / 14 / 16 / 24 / 26 / 27，本表全收。不存在 BP-01 / 05 / 08 / 09 / 12 / 13 / 15 / 17–23 / 25 / 28；旧稿「28 个中的 11 个」是幻影编号且低报了完整度。</p>
+<div class="tw"><table class="cmp"><thead><tr><th>断点</th><th>现状</th><th>修复键</th><th>判定标准</th></tr></thead><tbody><tr><td>BP-02</td><td>claim 三源：Emily 引用、Daisy 事实库、守衡规则库各一份；规则未命中默认放行</td><td><code>claim_id</code> + <code>evidence_id</code></td><td>全库 claim 文本只存在一处；任一内容可反查唯一 <code>claim_id@version</code>；未命中 verdict 必须 <code>manual_required</code></td></tr><tr><td>BP-03</td><td>script→variant→ad→asset 无定义，素材表现无法回写脚本</td><td><code>script_id</code> + <code>variant_id</code> + <code>asset_id</code> + <code>ad_id</code></td><td>任一 ad 花费可沿链反查到叙事假设，≤4 跳</td></tr><tr><td>BP-04</td><td>事件无去重主键，三套告警三套分级，主单按最早命中方建</td><td><code>event_id</code></td><td>同一源帖 24 小时只产生 1 个 <code>event_id</code>；<code>media_negative</code> 主 owner 100% 为 Vicky</td></tr><tr><td>BP-06</td><td>coverage 字段与 PDP/A+/GEO 不一致，授权三态无下游格式</td><td><code>asset_id(earned_coverage)</code> + <code>claim_id</code> + <code>evidence_id</code></td><td>三处引用字段级 diff = 0</td></tr><tr><td>BP-07</td><td>事实源版本不强制，裸引用</td><td><code>{id}@{version}</code></td><td>事实引用必须带版本，否则视为未交接</td></tr><tr><td>BP-10</td><td>brief 无授权字段</td><td><code>creator_id</code> + 授权七元组前置</td><td>无授权的 brief 不得外发</td></tr><tr><td>BP-11</td><td>授权台账缺 <code>creator_id</code>，2 小时内无法定位关联素材</td><td><code>creator_id</code> + <code>asset_id</code></td><td>撤权后 2 小时可列出全部在用 asset；进 paid 100% 有七元组</td></tr><tr><td>BP-14</td><td>实验设计无单变量约束</td><td><code>variant_id</code> + <code>control_variant_id</code></td><td><code>changed_variable</code> 单值；无对照且无例外登记不得开测</td></tr><tr><td>BP-16</td><td>发布记录不回填，内容日历与后台对不上</td><td><code>variant_id</code> + <code>asset_id</code> + <code>ad_id</code></td><td>100% 已发布 variant 有 <code>publish_record</code>，条数差异 = 0</td></tr><tr><td>BP-24</td><td>无发布 owner</td><td><code>publish_record</code> 必填</td><td>未填不得进 <code>testing</code>；回填率是最大落地风险</td></tr><tr><td>BP-26 / BP-27</td><td>Emily 与 Clone 都写「脚本」，叙事层与执行层不分</td><td><code>script_id</code> 叙事层唯一，variant 为执行层</td><td>改 claim 必须回 Emily 新建脚本版本</td></tr></tbody></table></div>
+</div></details>
+<details class="sub"><summary>5.3 八个主键</summary><div class="body">
+<div class="tw"><table class="cmp"><thead><tr><th>#</th><th>主键</th><th>前缀</th><th>型</th><th>唯一写入口</th><th>状态机要点</th></tr></thead><tbody><tr><td>1</td><td><code>event_id</code></td><td><code>evt_</code></td><td>U 单调</td><td>Signal</td><td>open → triaged → assigned → mitigating → resolved → closed；merged / false_positive 旁支</td></tr><tr><td>2</td><td><code>claim_id</code></td><td><code>clm-</code></td><td>R 可读</td><td>Daisy 本体 + 守衡规则绑定子表</td><td>draft → submitted → under_review → approved；rejected / suspended / superseded / expired</td></tr><tr><td>3</td><td><code>evidence_id</code></td><td><code>evd_</code></td><td>U</td><td>Daisy</td><td>active → expired / retracted / disputed；只有出新版本才能复活</td></tr><tr><td>4</td><td><code>script_id</code></td><td><code>scr-</code></td><td>R</td><td>Emily</td><td>draft → approved → in_production → live → retired；draft → rejected_by_clone</td></tr><tr><td>5</td><td><code>variant_id</code></td><td><code>var-</code></td><td>R</td><td>Clone</td><td>draft → rights_checking → ready → testing → scaling → retired；blocked / killed 旁支</td></tr><tr><td>6</td><td><code>asset_id</code></td><td><code>ast_</code></td><td>U + <code>content_hash</code></td><td>按 class 分域：Clone / Daisy / Vicky</td><td>ingested → validated → distributed → retired；quarantined 旁支</td></tr><tr><td>7</td><td><code>ad_id</code></td><td><code>ad-</code></td><td>D 派生</td><td>投放侧（未建，PMO 过渡 steward）</td><td>draft → active → paused → active → ended</td></tr><tr><td>8</td><td><code>creator_id</code></td><td><code>crt-</code></td><td>R</td><td>Radar</td><td>prospect → vetted → contracted → active → dormant → blacklisted</td></tr></tbody></table></div>
+<p>三条编码硬规则：禁用纯自增、纯 UUIDv4、哈希即 ID；空值只允许 <code>NOT_APPLICABLE</code> / <code>NOT_YET_OBSERVED</code>（必带 <code>due_by</code>）/ <code>ABSENT</code>；跨线引用必须 <code>{id}@{version}</code>，禁止裸引用。先落三键 <code>claim_id</code> / <code>variant_id</code> / <code>event_id</code>，合计修掉 5 个断点，其余 5 键有明确降级形态与升级触发条件。</p>
+</div></details>
+<details class="sub"><summary>5.4 三个 Gate</summary><div class="body">
+<div class="tw"><table class="cmp"><thead><tr><th>Gate</th><th>主责</th><th>触发点</th><th>判定三态</th><th>Fail-closed 默认</th><th>关键缺口</th></tr></thead><tbody><tr><td>Claim Gate</td><td>守衡</td><td>C1 脚本审批、C2 素材入库、C3 新增分发目标、C4 claim/证据状态变更</td><td>PASS / CONDITIONAL / BLOCK + 未出判定</td><td>规则未命中转人工；证据缺失阻断；服务不可用 BLOCK；回执过期 BLOCK</td><td>回执/规则/overlay 已入字典 §0.1 第七–九类、四字段齐、定位串用 <code>seq4</code>（BK-06 已修）；覆盖率分子分母与 owner 见 Gate §6.7。残余：TikTok Shop 与独立站规则文件仍为 0，未达覆盖率门槛即无阻断资格；<code>rule_version</code> 仍两种写法（Gate <code>@v3</code> vs 字典 <code>@3</code>），<code>market_overlay_version</code> 仍 <code>{market}@</code> vs <code>{overlay_id}@</code></td></tr><tr><td>授权 Gate</td><td>Radar 台账 + 守衡核验</td><td>A1 进加热池、A2 变体出片、A3 二次剪辑/跨账号、A4 自有 organic、A5 到期撤回</td><td>PASS / CONDITIONAL / BLOCK</td><td>台账无记录即 BLOCK；凭证不在四类白名单即 BLOCK；账号写「全部」即 BLOCK；撤回传播超 2 小时全量隔离</td><td>写入口已统一为 Radar 单写七元组、<code>asset.rights</code> 标只读投影、RACI §1.2 有对象级 A（BK-05 已修）；残余是 L3 三义（人工 4h / 直接 BLOCK / 人工未判即 BLOCK）与平台侧可查率无实测数据</td></tr><tr><td>实验 Gate</td><td>PMO</td><td>X1 立项、X2 开测、X3 放量、X4 页面/定价、X5 中途变更</td><td>PASS / CONDITIONAL / BLOCK</td><td>无 <code>hypothesis_id</code> 不得进 testing；阈值事后改即批次作废；样本不足只能待定；多重比较未处理 BLOCK</td><td>k=5 校正表与三条降级路径已落文（BK-08 已修）；覆盖条件已换为「预注册核算达标率 ≥90% 且平均核算时长 ≤2 工作日」（Gate §6.7）；G §6.3 标志 4 已同步为「预注册核算达标率 ≥90% 且平均核算时长 ≤2 工作日」（BK-07 已修）</td></tr></tbody></table></div>
+<p>三条铁律：无回执 ≠ 通过，不设人工改状态入口；超时只产生升级，不产生回执；不存在加急、老板特批、会议决议、事后补签、拆单、换账号、paid 伪装 organic 等任何绕过通道。Gate 顺序：C1 与 X1 并行，C2 与 A1 并行，X2 最后（须带 C2 + A1 回执号），X3 与 A2 并行，<code>ad_id</code> 创建是全链最后动作。影子期 W1–W4 / W5–W8 / W9–W12，阻断生效 = 日期 AND 覆盖率（BK-07 已修）：Claim 需 overlay 发布 + base rule 覆盖 ≥80%，授权需凭证白名单 + 平台可查率 ≥80%，实验需编号池 + 预注册核算达标率 ≥90% 且核算时长 ≤2 工作日；未达标按类目白名单逐类放开；队列 &gt;50 条或 SLA 违约 &gt;30% 熔断回退影子期 4 周，最多 3 次复评，第 3 次不达标降级为人工 gate——人工 gate 的定义已补（Gate §6.8：固定 owner 按同一判定表双签、<strong>BLOCK 照常阻断</strong>、计入统计、单条 2 工作日 SLA、不得进敞口登记表），不再是「不知道阻不阻断」的空词。</p>
+<p><strong>Gate 的唯一强制力不是「有判定」，是「回执是状态迁移的必要条件」。</strong> 回执不进 schema，上面三条铁律就只是三句口号；BK-06 已把 <code>gate_receipt</code> / <code>rule_object</code> / <code>market_overlay</code> 登记为字典 §0.1 第七–九类子记录，回执引用统一为 <code>{subject_id}@{version}#{gate}-{seq4}</code>（四位补零，不得写 <code>#C-41</code>）。</p>
+</div></details>
+<details class="sub"><summary>5.5 六处循环依赖</summary><div class="body">
+<div class="tw"><table class="cmp"><thead><tr><th>#</th><th>环</th><th>表现</th><th>破解方式</th></tr></thead><tbody><tr><td>1</td><td>记忆 ↔ 评估</td><td>结构库由素材归因回写，又被选题当输入</td><td>版本切开：v0 人工导入；v1 起只读上一版本</td></tr><tr><td>2</td><td>Emily ↔ 守衡</td><td>Emily 依赖规则；守衡规则需要内容侧用例</td><td>守衡唯一写入口 + <code>rule_version</code>；Emily 只引用不回写</td></tr><tr><td>3</td><td>Emily ↔ Echo</td><td>Emily 依赖 objection 榜；Echo 靠 Emily 落地效果校准 taxonomy</td><td>Echo 拥有 taxonomy 与版本；Emily 只读 <code>taxonomy_id</code></td></tr><tr><td>4</td><td>Emily ↔ Clone</td><td>Emily 定阈值 ← Clone 数据；Clone 变体设计 ← Emily 假设</td><td><code>hook_performance</code> 单向视图，owner 归数据层</td></tr><tr><td>5</td><td>Vicky ↔ GEO</td><td>Vicky coverage → GEO 引用源；GEO 事实校验 → Vicky pitch 证据</td><td>品牌事实库为唯一裁决源，双方只读不互写</td></tr><tr><td>6</td><td>Emily ↔ Clone ↔ 投放后台</td><td>三方各有一份「在测/放量/退役」</td><td>状态真相源 = 投放/Clone；Emily 只读，24 小时未同步显示「未知」</td></tr></tbody></table></div>
+</div></details>
+<details class="sub"><summary>5.6 十四条交接契约与停机判据</summary><div class="body">
+<p>交接只认字段入库，会议、文档、群消息都不算。停机或降级的唯一判据是「对象是否已产生」：CH1→CH2、CH2→CH3、CH3→CH4/CH5、CH5→CH6、CH11→全体为<strong>停机</strong>；CH6→CH7、CH7→CH8、CH9→PMO、CH10→下游为<strong>降级</strong>（下游取最后已知值并带 <code>stale_at</code>，不得静默当作新值）。12 条交接里有 6 条（CH1→CH2、CH6→CH7、CH7→CH8、CH8→CH5、CH9→PMO、CH11→全体）涉及 9 个域外键，键登记完成前只记记录项、不作阻断（BK-04 已修：S11→全体 按「纳入」处理，<code>metric_version</code> 复用 <code>metric_dict@version</code> 不另计），实际可拦截 6 条。</p>
+</div></details>
+<details class="sub"><summary>5.7 续投与收缩的四象限</summary><div class="body">
+<p>三条硬规则：没有基线不予续投；每 90 天必裁一次；裁决粒度是产线不是功能。判据是两维相乘——「是否达成主指标」× 「是否被非 owner 实际消费」：达成且被消费 = 续投；达成但只有 owner 自用 = 条件续投（上限 6 个月，到期仍无外部消费即关停）；未达成但被 ≥3 条产线消费 = 条件续投（转底座，不再计入产线）；未达成且无外部消费 = 关停。缺这一格，「90 天裁决」只是口号。</p>
+</div></details>
+</div></details>
+<details class="sec" open><summary>6. 审计状态与下一步 <span class="badge fixed">8 / 8 已修</span></summary><div class="body">
+<details class="sub"><summary>6.1 八条 blocker 状态（BK-01..BK-08）</summary><div class="body">
+<p>核验基准：第二轮复核版（源文档改于 19:12–19:14，复核稿 19:21；审计稿 13:05 的原判保留在审计文档）。状态口径：8 条全部已修（BK-01—BK-08），第三轮已收敛 BK-04/06/07 的全部残余；13 条 Major、7 条 Minor 未动。「原问题」列保留第一轮原判，不因修复而改写——本表的价值是看出演进。</p>
+<div class="tw"><table class="cmp bktable"><thead><tr><th>#</th><th>原问题</th><th>修法（已落文）</th><th>现状</th></tr></thead><tbody><tr><td>BK-01</td><td>同一个 O 的 CAC 目标，一处写降 15%、一处写允许涨 5%</td><td>G §4.1 目标陈述与目标值统一为 ≤ B2 × 0.85，并写明「G1 条目内不得出现第二个 CAC 阈值，出现即该条目标作废」</td><td><strong>已修</strong></td></tr><tr><td>BK-02</td><td>G1 用「滞后相关系数 ≥0.5」做验收，指标字典明文禁止</td><td>G §4.1 目标陈述删去相关系数，传导证据另立假设、最早 2027-09 出结论、不作为本季达成条件；时间窗与验收方式改为「8 周滞后复测只出解释，不进达成判定」</td><td><strong>已修</strong>（已补齐残余两处）</td></tr><tr><td>BK-03</td><td>P0 四条线，P0 文档说 L3 才准入，G 文档说达到 L2 即通过</td><td>G §6.3 完成标志 1–2 与 P0 §0.3、§6 统一为：M2 = 立项验收，M3 = 扩范围与计入达成度，M1 不计入任何验收</td><td><strong>已修</strong></td></tr><tr><td>BK-04</td><td>RACI 说「只有 CH1→CH2 无主键覆盖」，实际至少 5 条</td><td>RACI §4.2 第 3 条改为「共 6 条」，S11→全体 选「纳入」并写明唯一可能的排除口径为何自相矛盾；9 个域外键按第 9–17 候选键登记（order_id → sku_id → ticket_id/voice_id → ltv_cohort_id → opportunity_id/category_id → metric_dict@version → work_item_id），G §4 的 <code>opportunity_id</code> 回改为第 14，§4.3 增逐键降级表；12 − 6 = 6 条可执行</td><td>已修：P0 §5 尾已同步为「第 9–17 个 ID」，与 RACI 上限一致</td></tr><tr><td>BK-05</td><td>授权台账写入口三份文档三种说法，且这一对象没有 A</td><td>字典 §0.1/§0.8 定为 Radar 单写七元组，<code>asset.rights</code> 改标「只读投影」并写明物化方 Radar、刷新时机与「Clone/Daisy/Vicky 无 INSERT/UPDATE 权限」（字典 §6）；P0 §5 改为 <code>asset_id</code> 在前、<code>credential_type</code> 已列；Gate §3 同步；RACI §1.2 增 <code>asset_rights</code> 行（A = Radar），§5.3 授权核验 A = Radar</td><td><strong>已修</strong>（措辞残余：指标 L4-02 与 Gate §3 表仍写「七元组齐全（含 <code>credential_type</code>）」，7/8 字段数两种读法，不影响建表）</td></tr><tr><td>BK-06</td><td>三个 Gate 依赖回执 / 规则 / overlay 三类对象，字典里都不存在</td><td>字典 §0.1 登记第七–九类并各给唯一写入口，§0.9 定位串统一 <code>seq4</code> 并补齐 <code>gate_version</code> / <code>conditions[]</code> / <code>invalidate_on[]</code> / <code>sla_due_at</code> 四字段；论证改为「<code>gate_receipt</code> 由既有键拼成，<code>rule_object</code> / <code>market_overlay</code> 是独立 ID 空间 + 单 owner，不进业务状态机」；Gate §0.4 与指标 L4-01 改用 <code>seq4</code>，§8 补「规则未发布前无阻断资格」</td><td><strong>已修</strong>：<code>rule_version</code> 统一为 <code>@3</code>（Gate 103 已改），<code>market_overlay_version</code> 统一为 <code>{overlay_id}@{overlay_version}</code>（字典 77 已改），<code>receipt_id</code> 措辞统一为「即 <code>receipt_id</code>，是拼成的定位串、不是第 9 个顶层主键」</td></tr><tr><td>BK-07</td><td>fail-closed 只有日历没有覆盖率，规则库为空时只能全阻断或制度失效</td><td>Gate §6.6 改为「日期 AND 覆盖率」双条件 + 类目白名单逐类放开 + 熔断（队列 &gt;50 条或 SLA 违约 &gt;30%）+ 3 次复评上限；新增 §6.7 给三个门槛的分子、分母、抽取口径、数据源、owner、复算频率与未达标行为，§6.8 定义人工 gate（双签、BLOCK 照常阻断、计入统计、2 工作日 SLA、不进敞口登记表）；三条公式补 0 分母 <code>NOT_APPLICABLE</code> 规则（不构成达标、不触发熔断、分母转正即重算），L3 处置按 gate 模式分叉（阻断模式直 BLOCK / 人工模式转人工 4h）；G §6.3 标志 4 已同步新门槛；G §6.3 标志 4 改为「Claim 最早 W5 / 授权最早 W9 / 实验最早 W13」分批生效，RACI §7 风险 4 同步</td><td><strong>已修</strong>：G §6.3 的实验 gate 条件已随 §6.7 换为「预注册核算达标率 ≥90% 且核算时长 ≤2 工作日」；L3 处置已按 gate 模式分叉（阻断模式直 BLOCK / 人工模式转人工 4h），不再三处互斥（人工 4h / 直接 BLOCK / 人工未判即 BLOCK）；覆盖率无 0 分母规则，授权分母「当期」未定义是周还是月</td></tr><tr><td>BK-08</td><td>实验样本量按 15–25 臂校正后约为文档值的 1.49 倍，小体量跑不动</td><td>指标 §10.2 补 k=5 校正表与三条合法降级路径（降臂数到 2 / 放大 MDE / 改判观察），并给 30 万美金月销演算；§8 分级表改为「样本量优先于周数」；Gate §4.4 同步</td><td><strong>已修</strong>（技术瑕疵：表值只对 k=5 精确，正文仍写「同批超过 8 臂不得沿用」，应为「&gt;5 臂即重算」）</td></tr></tbody></table></div>
+<p><strong>第二轮另暴露 7 项（N1–N7），6 项未清</strong>：N1 实验 gate 条件两版本（G 未同步）；N2 L3 三义；N3 覆盖率 0 分母与「当期」未定义；N4 人工 gate 无法建表——Gate §6.8 要求 <code>judged_by.type=human_gate</code> 且双签，字典 <code>judge_identity.type</code> 枚举只有 <code>human / agent</code> 且是单值 obj；N5 版本串两种写法；N6 <code>receipt_id</code> 措辞冲突。N7 是「导图未同步」，由本版消除。N2/N4 直接决定建表与放行，不是措辞问题。</p>
+<p><strong>13 条 Major 里三条最致命</strong>：M-05 十二个段 A 里有 8 个段主指标在字典中没有 <code>metric_id</code> 或没有公式，第一个季度末会因「指标不存在」被判收缩；M-13 G3 的 12 个月 LTV 在 180 天窗口内不可测，只能用 partial；M-09 「连续 4 周真实调用 ≥N 次」的 N 从未定义，M2 门槛不可判定（审计建议值 20 次/周，源文档未落文）。<strong>7 条 Minor</strong> 为编号、术语、记账类，不改不致命但会积累歧义。</p>
+</div></details>
+<details class="sub"><summary>6.2 最可能死在哪里</summary><div class="body">
+<p><strong>主死点（BK-07 前的设计）</strong>：影子期到点 + 规则库没补齐 + 无人有权改日期，三者叠加。推演：W1–W4 Claim Gate 影子期 → 规则库覆盖率仍低（TikTok Shop 与独立站规则为 0，而这两块正是试点类目美妆与户外的投放主战场）→ W5 按日历开阻断 → 内容线大面积 BLOCK → 业务侧第一反应不是补规则，是找绕过路径（拆单、换账号、paid 伪装 organic、直传平台后台）→ 绕过未被检测 → gate 从「强制」退化为「建议」→ 三个月后所有人默认走人工。</p>
+<p><strong>止损条款（BK-07 后已改写）</strong>：原稿「W4 结束时若 Claim Gate 规则库覆盖率 &lt;60%，自动顺延一次」作废。现行规则：阻断生效 = 日期 AND 覆盖率，Claim Gate 需 base rule 覆盖 ≥80%，未达标按类目白名单逐类放开；人工队列 &gt;50 条或 SLA 违约 &gt;30% 熔断回退影子期 4 周；最多 3 次复评，第 3 次仍不达标即降级为人工 gate。</p>
+<p><strong>第二死点（BK-04 后已降级）</strong>：CH1 的 A 真空。原判断是：Market 进 90 天观察期 + CH1→CH2 停机交接，没有下游消费方时 CH2 会因没有机会卡而整体停摆。BK-04 已把 S1→S2 列入 6 条域外键交接，键登记完成前只记记录项、S2 可开工；残余风险回到 A 真空本身（M-02 未修）——Market 关闭后无人对机会卡负责。</p>
+<p><strong>第三死点</strong>：8 个段 A 在第一个季度末无法结算。按「没有基线不予续投」，8 条产线会因指标不存在而不是业绩不好进收缩名单，组织会认定这套治理是来砍项目的。</p>
+</div></details>
+<details class="sub"><summary>6.3 如果只能修三处</summary><div class="body">
+<ol><li><strong>统一目标层口径（BK-01 + BK-02）——已修。</strong> 原问题：目标层是所有下层复核的输入，G1 的 CAC 阈值差 20pp、又用被禁的相关系数做验收，每次季度评审都会退化成「按哪份文档算」。修法：G §4.1 收敛到 ≤B2×0.85，相关系数移出验收条件，传导证据另立假设。</li><li><strong>把 Gate 的三类对象正式入库，并把授权台账的写入口与 A 钉死（BK-05 + BK-06）——BK-05、BK-06 均已修。</strong> 原问题：回执没有 schema、授权台账三份说法且无 A，三个 gate 在系统里无法实现。修法：字典 §0.1 增 <code>gate_receipt</code> / <code>rule_object</code> / <code>market_overlay</code> 三类子记录并补齐四字段，定位串统一 <code>seq4</code>；<code>asset.rights</code> 降为只读投影，<code>asset_rights</code> 定为 Radar 单写七元组，RACI §1.2 增对象级 A。残余：规则与 overlay 的版本串仍是两种写法。</li><li><strong>给 fail-closed 加覆盖率放开与停摆熔断（BK-07），同时把实验协议改成能跑的表（BK-08）——BK-07、BK-08 均已修。</strong> 原问题：阻断按日历封口、样本量表按 α=0.05 单次比较算。修法：日期 AND 覆盖率双条件 + 类目白名单 + 熔断 + 3 次复评；三个门槛的分子分母与 owner 落到 Gate §6.7，人工 gate 在 §6.8 定义；k=5 校正表 + 三条合法降级路径。残余已清：G §6.3 标志 4 已同步新门槛、L3 处置已按 gate 模式分叉、三条公式已补 0 分母 <code>NOT_APPLICABLE</code> 规则。</li></ol>
+<p><strong>顺带零成本</strong>：BK-04 改为「共 6 条」并给第 9–17 候选键登记顺序（已落文，P0 §5 尾句已同步为第 9–17）；BK-03 统一 M2/M3 分工、P0 五处「M3 留存」全改「第 3 月留存」（已落文，<code>grep "M3 留存"</code> = 0，M3 全文只剩成熟度一义）。</p>
+</div></details>
+<details class="sub"><summary>6.4 下一步（T0 / T+1 / T+2）</summary><div class="body">
+<div class="tw"><table class="cmp"><thead><tr><th>阶段</th><th>时间</th><th>动什么</th><th>不动什么</th><th>可验收标志</th></tr></thead><tbody><tr><td>T0</td><td>2026-11-01 → 11-30</td><td>发布 G 结构 v1；锁 B1–B6 与 D；落 B-08 三键；Main 移出、Daisy/守衡/Source 标支撑、PMO 标治理、Market 观察期；任命 3 个 G-A 并签移交条款</td><td>汇报线、编制、薪酬、预算科目、现有写入口</td><td>3 个 G-A 书面接受移交条款；B1–B6 入 metric_dict；新建对象 100% 带三键；100% 产线唯一归属</td></tr><tr><td>T+1</td><td>2026-12-01 → 2027-03-01</td><td>Emily+Clone 合并；Vicky 拆 PR/舆情；Shopify 拆三条；P0 四条立项到 M2；三 gate 上线</td><td>汇报线、薪酬编制、存量系统；GEO 内容生成暂不关</td><td>P0 四条达 M2（连续 4 周 ≥N 次、交接字段 100% 回填、无人工兜底；N 的审计建议值为 20 次/周，未落文）；G1/G2 首次结算；gate 按「日期 AND 覆盖率」分批生效：Claim 最早 W5、授权最早 W9、实验最早 W13（G §6.3 已改，不再是统一 W13）</td></tr><tr><td>T+2</td><td>2027-03-02 → 2027-06-01</td><td>汇报线重挂 3 处；GEO 内容生成关闭；Radar 达人供应链拆分；G3 180 天首次完整结算；第一次 90 天裁决</td><td>已签 G-A、主键 schema、gate 规则不做个案审批</td><td>12 条业务线全部有 G-A 或段 A；G1/G2/G3 至少 2 个达成；4 条支撑各服务 ≥3 条业务线；L5-06 ≤0.5 FTE/新增系统</td></tr></tbody></table></div>
+<p><strong>选择规则</strong>：B-08 三键 30 天内未落库、或无人接 G2-A、或预算无法重分 ≥15%，任一条成立即降级为最小改动；三条都不成立则必须完整重构，不得用「先做最小改动看看」拖延。</p>
+</div></details>
+<details class="sub"><summary>6.5 修完之后的治理体系还缺什么</summary><div class="body">
+<p>八条 blocker 修的是「文档能不能被系统实现」，不是「系统已经实现」；第二轮又把三个覆盖率门槛与人工 gate 从「不可判定」推到「可判定」（Gate §6.7 / §6.8）。三处原始前置仍是 0：</p>
+<ol><li><strong>B-08 三键未落库（0 实现）。</strong> 12 条交接里 6 条只有记录项，实际可拦截 6 条；<code>asset_rights</code> 七元组在过渡期仍靠人工清单。</li><li><strong>B-12 抽检未实现（0 实现）。</strong> 机器判定在 B-12 上线前只能出 CONDITIONAL，M3 的「golden set + 抽检一致率」无数据。</li><li><strong>规则库覆盖近 0。</strong> TikTok Shop 与独立站规则文件为 0，覆盖门槛会把 Claim Gate 长期留在影子期——这是设计要的结果，不是故障；三个门槛的分子、分母、抽取口径、数据源、owner 与复算频率已在 Gate §6.7 定义，剩下的是 0 分母规则与授权分母「当期」窗口（周还是月）未定义，以及 L3 该不该进分母三处互斥。</li></ol>
+<p>另外三笔未清的账：<strong>BK-04/06/07 已全部收敛</strong>（P0 尾句已改 9–17、版本串统一 <code>@3</code> 与 <code>{overlay_id}@</code>、G §6.3 已同步新门槛）；13 条 Major 未动，其中 M-05（12 个段 A 里 8 个没有 <code>metric_id</code> 或公式）、M-13（LTV 在 180 天窗口不可测）、M-09（M2 的 N 未定义，审计建议 20 次/周未落文）仍会让第一次季度结算失真；RACI §2 的 S1 行 A 仍是 Market（M-02 未修），与 G §5 的观察期代持冲突。M-14（无人工改状态入口 vs 双签改状态）与 M-01（状态迁移权无总表）第二轮仍未动，实现者必须先二选一。</p>
+</div></details>
+</div></details>
+<details class="sec" open><summary>7. 一页记住的六句话</summary><div class="body">
+<ol class="six-list"><li><strong>声量是乘数，不是结果。</strong> O 不写基线、目标值、滞后窗口、净情感口径，季度评审必然退化成发稿量汇报。</li><li><strong>交易侧是空的。</strong> 不给 CH5 / CH6-AMZ / CH7 / CH8 补 owner，14 条产线合起来只是在优化入口。</li><li><strong>底座的两个空洞比 45 处重复更贵。</strong> B-08 ID 契约与 B-12 质量抽检都是「重复 0 次、实现 0 次」，缺了它们全部归因失效。</li><li><strong>M 栏只写指标不写进度。</strong> 一次性校准会如果没有砍掉任何策略，这次会就是失效的。</li><li><strong>Gate 的唯一强制力是「回执是状态迁移的必要条件」。</strong> 回执不进 schema，gate 就只是建议。</li><li><strong>六份文档想得比组织的数据基础快两个季度。</strong> 先做 B-08 三键与 B-12 抽检，再按覆盖率逐类放开 gate。</li></ol>
+</div></details>
+<details class="sec"><summary>8. 未核验与风险</summary><div class="body">
+<h4 class="mini">推断项</h4>
+<ul><li>14 个产品的「能力原子」与「B-xx 归属」由补全稿的能力清单与边界反推，原文没有逐条给出「哪条能力属于哪个底座」；§3 的 6 条上限与共享/专用标注属于归纳，不是原文照抄。</li><li>§3 各产品「下游消费」一列是从 L6/L7 与 §5.4 Gate 反推的，标 <code>[推断]</code>；落盘前需与 RACI 稿逐条核对。</li><li>§4 的「应挂产品」一列是挂载建议，除 B-01（Source）、B-05（Echo）、B-07（Signal）、B-09（Daisy）、B-11（PMO）、B-14（Radar）有直接证据外，其余按唯一写入口推导。</li><li>成熟度换算只到 M1 上限。M2 / M3 是本轮治理新增门槛，原附件三态里没有对应词；把「已完成」读成 M2 或 M3 都是越级。</li><li>每条场景的验收阈值（7 天 5 条脚本、48 小时授权、90 天 40 位编辑、20 条 24 小时等）来自补全稿与 P0 文档的推断值，未用本品牌真实系统数据校准。</li><li>§3.0 的 74 条核心问题、68 个场景、202 行能力、31 条边界为补全稿计数，本图只引用总量与 1 条示例，未逐条搬入。</li></ul>
+<h4 class="mini">需真实系统数据才能确认</h4>
+<ul><li>订单、退款、工单、Amazon 结算与 Account Health 的实际字段完整度；<code>landing_ref</code> 能否成为开投前置条件。</li><li>品牌词搜索量在 Google Search Console、Amazon Brand Analytics、TikTok 搜索洞察三处口径能否对齐；不能对齐时 G1 只能按平台分列。</li><li>90 天复购的品类映射表是否存在；不存在时 Retention 的 cohort 表无法按同品类计算。</li><li>各产线当前真实调用量与停机成本；停机对 CH5 与对 CH2 的成本差一个量级，当前只能定性。</li><li>TikTok Shop 四类凭证的实际字段与有效期语义、平台授权状态是否可查；若不可查，「平台可查率 ≥95%」不可达。</li></ul>
+<h4 class="mini">风险</h4>
+<ol><li><strong>Mermaid 未实际渲染。</strong> 本稿只做结构约束检查（缩进为 2 的整数倍、无英文双引号、无括号、单图 ≤30 节点），未执行渲染器。为满足骨架保真已恢复 <code>&amp;</code>、<code>-&gt;</code>、<code>→</code> 与完整 URL，部分渲染器对 <code>%</code>、<code>&amp;</code>、<code>-&gt;</code> 可能不稳；渲染失败时以 §3 的逐级对照表为准，图形版不作为唯一交付。</li><li><strong>L10/L11 的骨架前提已被原文推翻。</strong> 任务简报称 Source 下有完整两层，原文没有；本图按原文记录。若下游按「Source 有底座层」建模，会漏掉 Main / Shopify 的错位形态，并错误期待 Source 的子结构。</li><li><strong>编号体系有五套并存。</strong> 骨架 L1–L11、段位 CH1–CH11、成熟度 M0–M4、指标层 T1–T5、Gate C/A/X。源文档仍写 L1–L5 指标层与 S1–S11 段位，引用源文档时须换算；指标 id（如 <code>m-l1-cac@2</code>）里的 <code>l1</code> 保留源字面，未改。</li><li><strong>审计状态会过期。</strong> §6.1 的「已修」对应六份源文档 2026-11-01 第三轮收敛后版本（19:14 二轮 + 末轮残余清零）；审计稿 §0 状态表已回写为 8 条全修，B-03 起的原判描述保留在正文作为历史依据。13 条 Major / 7 条 Minor 未修，任一文档回退或 Major 修复都会让 §6.1 失效，须重跑交叉审计。</li><li><strong>骨架本身有 17 处形态问题未修。</strong> 4 条层级错位、3 个空节点、2 个部分缺失、2 条 <code>-&gt;</code> 与 <code>→</code> 混用、2 条无「名称：描述」、1 条依赖声明占能力位、1 条缺空格、1 条 3 专家 2 个 <code>+</code>、2 个产品多条 L7 并列。本图保留原文并在对应位置标注，不做静默改写。</li><li><strong>GEO 与 Market 是两个制度性风险点。</strong> GEO 两类 A 都没有，90 天内不补 <code>ai_answer_snapshot_id</code> 或拆 CH9，会按裁决规则被判可并入；Market 观察期结束时若无下游书面承接，CH1→CH2 会停机而 CH2 是 Claim Gate 的上游。</li><li><strong>HTML 版已过期。</strong> 同名 <code>.html</code> 停在 13:36，本版只改 MD、未重渲染。凡 HTML 与 MD 冲突，以 MD 为准；对外分发前必须重渲染。</li></ol>
+</div></details></section>
+  <section id="view-table" aria-label="表格视图" hidden><div class="viewhead"><h2>表格视图 · 原附件 vs 治理定义</h2><p>14 个产品，逐个按 L3–L11 逐级对照。原附件列逐字保留，治理定义列为接枝内容。</p></div><nav class="idx"><a href="#pt-3-2-1">Emily</a><a href="#pt-3-2-2">Clone</a><a href="#pt-3-2-3">Vicky</a><a href="#pt-3-2-4">GEO</a><a href="#pt-3-2-5">Radar</a><a href="#pt-3-3-1">Echo</a><a href="#pt-3-3-2">Market</a><a href="#pt-3-3-3">Source</a><a href="#pt-3-3-4">Signal</a><a href="#pt-3-4-1">守衡</a><a href="#pt-3-4-2">Daisy</a><a href="#pt-3-4-3">Main</a><a href="#pt-3-4-4">Shopify</a><a href="#pt-3-4-5">PMO</a></nav><article class="tcard" id="pt-3-2-1"><h3><span class="num">3.2.1</span> Emily｜社媒Agent&amp;工作台<span class="badge gbadge">G1</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S1（逐字见本节组标题）</td><td>与 Clone 合并为内容产线，内部保留策略域与产能域两套验收；策略侧对产能排期有否决权</td></tr><tr><td>L4 专家昵称</td><td>Emily</td><td>保留；G1-A + CH3-A 兼任；对象级 A = <code>script_id</code></td></tr><tr><td>L5 产品构成</td><td>社媒Agent&amp;工作台</td><td>内容链路上游决策位：说什么、对谁讲、凭什么算有效；不做成片、不做投放出价</td></tr><tr><td>L6 验收工作台</td><td>https://social.luteos.com/</td><td>工作台保留；CH 段 A = CH3；Gate C1 + X1；写 <code>script_id</code>，读 <code>claim_id@version</code> 与 <code>variant_id</code></td></tr><tr><td>L7 业务场景</td><td>社媒趋势洞察 → 内容策略 → 脚本生成</td><td>场景 1「抢趋势窗口」（周）：拉近 30 天 Top100 与上升音源 → 剔除儿童出镜、他牌 logo、平台禁用 claim → 按钩子 × 痛点 × offer 聚类并标出增速转负的尸体趋势。验收：7 天 ≥5 条脚本，≥3 条过 claim 预检，≥1 条 14 天内 CTR 达品类基线 1.5–2%。场景 2「objection 回流」（双周）：拉评论与 DM → 归 objection 类型 → 筛 3 个高频未覆盖项。验收：每轮 ≥3 个 objection 有脚本覆盖，同类占比下一轮降 ≥20%</td></tr><tr><td>L8 能力图谱</td><td>爆款/趋势洞察：发现社媒爆款与趋势，输出可复刻的内容结构（已完成）；互动追踪&amp;评论解析：追踪社媒互动并解析粉丝真实反馈（已完成）；内容策略生成：按趋势与品牌定位生成社媒内容策略（进行中）；脚本生成：按爆款结构批量生成品牌投放脚本（进行中）</td><td>关键原子 ≤6：归一化多平台趋势信号（B-01/B-03）、归类钩子与卖点叙事结构（专用）、匹配 claim 约束（B-06）、判断趋势可跟性（专用）、生成脚本与分镜（专用）、沉淀钩子库与 claim 证据库（B-09）。断点：BP-02、BP-03、BP-26/27</td></tr><tr><td>L9 进度</td><td>已完成 2、进行中 2</td><td>换算上限 M1；M2 要求连续 4 周真实调用 ≥20 次/周、交接字段 100% 回填、无人工兜底；M2 只能由非 owner 消费方升级</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-01 采集、B-03 声量归一、B-06 claim 校验、B-09 品牌事实库，不重复建设；自建的内容互动监听、趋势归一、objection 归类并入 B-01/B-03/B-05，claim 库降为只读缓存</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-2-2"><h3><span class="num">3.2.2</span> Clone｜爆款复刻Agent&amp;工作台<span class="badge gbadge">G1</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S1（逐字见 3.2 组标题）</td><td>与 Emily 合并；保留产能、谱系、授权、疲劳四项</td></tr><tr><td>L4 专家昵称</td><td>Clone</td><td>保留在合并后的内容产线；产能域负责人独立于 G1-A，不得兼任</td></tr><tr><td>L5 产品构成</td><td>爆款复刻Agent&amp;工作台</td><td>内容链路下游产能位：把已验证结构做成能过审、能跑量、可归因的素材；不做投放出价与预算</td></tr><tr><td>L6 验收工作台</td><td>https://video.luteos.com/</td><td>工作台保留；RACI 无段 A；Gate A2 + C2；写 <code>variant_id</code> / <code>asset_id</code>，读 <code>script_id@version</code></td></tr><tr><td>L7 业务场景</td><td>无（空节点）</td><td>场景「结构复刻」（事件驱动）：拉原片逐帧拆解 → 标可迁移机制与不可迁移皮 → 对照可用资产清单 → 设计单变量变体矩阵 15 条。验收：5 个工作日 ≥15 条变体，100% 有谱系标签，单变量比例 ≥80%，≥1 条 CTR 达被复刻原片基线的 80%。场景 2「疲劳预警」：按素材维度监控 CTR/CPM/频次/加购 → 三分正常/衰减/已死 → 提前 3 天进替换队列。验收：衰减后 48 小时内完成替换决策，浪费 ≤5%</td></tr><tr><td>L8 能力图谱</td><td>无（空节点）</td><td>关键原子 ≤6：拆解视频结构与可迁移机制（专用）、判定素材来源与授权边界（B-14）、设计单变量变体矩阵（专用）、批量生产素材变体（专用）、平台规格化与标注（专用）、素材谱系登记（专用）。断点：BP-03、BP-11、BP-16、BP-27</td></tr><tr><td>L9 进度</td><td>无（空节点）</td><td>换算 M0，且必须显式登记为空洞</td></tr><tr><td>L10 / L11</td><td>无</td><td>应挂 B-14 达人与授权档案；视频解析/ASR 并入 B-01；素材授权台账并入 Radar 的 <code>asset_rights</code>；平台规格清单并入 B-13</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-2-3"><h3><span class="num">3.2.3</span> Vicky｜PR Agent&amp;工作台<span class="badge gbadge">G1</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S2（逐字见 3.2 组标题）</td><td>拆成 PR 与舆情；PR 的外部对象是媒体编辑，舆情的外部对象是事件；共线会导致 coverage 与 severity 两套口径</td></tr><tr><td>L4 专家昵称</td><td>Vicky</td><td>保留；CH4-A；舆情线只做 R，<code>event_id</code> 写入口归 Signal</td></tr><tr><td>L5 产品构成</td><td>PR Agent&amp;工作台</td><td>earned media 关系与声誉防守段：把媒体/编辑关系变成可复用、可验证、可归因的第三方信任资产；不做内容生产、不做声量数量</td></tr><tr><td>L6 验收工作台</td><td>https://pr.luteos.com/</td><td>保留；Gate C3（分发目标含 pr）+ A1（若进 paid）；写 <code>asset_id(earned_coverage)</code>，追加 <code>event_observation</code></td></tr><tr><td>L7 业务场景</td><td>PR 线：竞品监测 → 风险预警 → 工作台协同；舆情线：看板对话化 → 自动分类 → 工单闭环</td><td>场景 1「季度 editorial 攻占」：定 3 个议题 → 反查 90 天写过该议题的媒体与作者拉 60 位 → 按 media fit / beat / 可达性 / 互动分 A/B/C 砍到 40 位。验收：90 天 40 位 fit≥B 全部触达，回复率 ≥8%，≥5 篇 organic，其中 ≥2 篇 buyer guide，0 起 route 误判。场景 2「舆情分级到回扫」：多源去重 → 分类 → 按媒体级别 × 传播速度 × 事实严重性定 P0–P3 → 30 分钟派单 → 处置 → 48 小时回扫。验收：P0 30 分钟触达，48 小时回扫 100%，同类事件季度重复 ≤1</td></tr><tr><td>L8 能力图谱</td><td>线索管理： PR 媒体&amp;编辑线索管理（已完成）；线索推荐：行业话题推荐、编辑匹配（已完成）；舆情预警：品牌舆情监控与预警分发（已完成）；数据查询与分析：舆情、核心媒体&amp;编辑查询与分析（已完成）</td><td>关键原子 ≤6：媒体与编辑源监测（B-01/B-03）、判定媒体 fit 与 beat（专用）、判定合作 route（专用）、事件分类与影响面分级（B-07）、coverage 质量与授权矩阵（专用）、编辑关系记忆（专用）。断点：BP-04、BP-06、BP-11</td></tr><tr><td>L9 进度</td><td>已完成 4</td><td>换算上限 M1；舆情线并入事件服务后，M2 由 Echo / CS / Paid Media 三个消费方升级</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-07 事件去重与主单；舆情分级并入 Signal 的 <code>event_type</code> / <code>severity</code>；自建舆情采集与分级下线并入 B-01 + B-07；coverage 资产卡并入 <code>asset_id(earned_coverage)</code></td></tr></tbody></table></div></article><article class="tcard" id="pt-3-2-4"><h3><span class="num">3.2.4</span> GEO｜专家内容Agent&amp;工作台<span class="badge gbadge">G1</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S2（逐字见 3.2 组标题）</td><td>保留测量闭环，砍内容生成（T+2 关闭）；补 Amazon Rufus 与 TikTok Shop 站内 AI</td></tr><tr><td>L4 专家昵称</td><td>GEO</td><td>保留；两类 A 都没有；90 天裁决会被判为可并入</td></tr><tr><td>L5 产品构成</td><td>专家内容Agent&amp;工作台</td><td>AI 搜索可见度的测量与攻占：护城河是问句库 → 采集探针 → 指标 → 诊断 → 内容 → 复测的闭环，不是内容生成本身</td></tr><tr><td>L6 验收工作台</td><td>https://geo.luteos.com</td><td>保留原样，无尾斜杠；Gate C2/C3；读 <code>claim_id@version</code>、<code>evidence_id</code>，缺 <code>ai_answer_snapshot_id</code></td></tr><tr><td>L7 业务场景</td><td>问句库 → 采集探针 → 解析与指标 → 诊断洞察 → 内容生成 → 复测报告</td><td>场景 1「建立品牌问句库与多引擎基线」：按品类决策、场景、对比、品牌、疑虑 5 类生成 300–500 条 → 每条标市场/类目/购买阶段/意图价值/产品线 → 5 个引擎与地区跑基线，记录提及/排位/引用源/准确性。验收：≥300 条带版本，5 引擎 × 目标地区，四项记录齐全。场景 2「缺口诊断」：解析五项指标 → 按意图价值 × 缺口 × 可攻占性排 Top10 → 每个缺口归因到内容不存在/不被引用/事实冲突/引用源被占。验收：每月 Top10 带归因、owner、动作、复测判据</td></tr><tr><td>L8 能力图谱</td><td>配置与问句库：建立品牌问句库并版本化管理（方案中）；采集探针：真实采集 AI 引擎回答并留存快照（方案中）；解析与指标：解析品牌提及与排位，算出五项可见度指标（方案中）；诊断洞察：定位可见度缺口并排出优先攻占主题（方案中）；内容生成：基于事实库生成可被 AI 引用的权威内容（方案中）；复测与报告：复测效果并产出可交付月报（方案中）</td><td>关键原子 ≤6：AI 引擎回答采集与快照（专用，Source 覆盖不到的唯一例外）、引用源与占位归因（专用）、实体消歧（B-04）、claim 与事实校验（B-06）、缺口诊断与优先级（专用）、结构化内容生成（T+2 关闭）。断点：BP-02；无主键宿主</td></tr><tr><td>L9 进度</td><td>方案中 6</td><td>换算 M0；<code>m-x-ai-mention</code> 与 <code>m-x-ai-accuracy</code> 无公式、无主键宿主，不得进 M 栏</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-06 claim 与事实校验、B-09 品牌事实库；不自建采集器，只采 AI 引擎回答；事实源并入 Daisy，引用源数据并入 B-01，内容生成能力并入 Emily 的权威内容生产规格</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-2-5"><h3><span class="num">3.2.5</span> Radar｜IP/名人Agent&amp;工作台<span class="badge gbadge">G1</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S2（逐字见 3.2 组标题）</td><td>保留并收窄到 IP/名人；达人供应链（寄样/回收/结算/授权回收）降为支撑层 creator 域 R；affiliate 90 天临时归 Radar</td></tr><tr><td>L4 专家昵称</td><td>Radar</td><td>保留；对象级 A 见节点头</td></tr><tr><td>L5 产品构成</td><td>IP/名人Agent&amp;工作台</td><td>达人/IP 合作的权属与商业路线 owner：定找谁、给什么约束、素材能用到哪、这次合作值多少</td></tr><tr><td>L6 验收工作台</td><td>https://magpie.luteos.com/</td><td>保留；Gate A1 / A2 / A5（台账写域）；写 <code>creator_id</code> 与 <code>asset_rights</code></td></tr><tr><td>L7 业务场景</td><td>粉丝分析 → 合作计划 → 动态监测 → 机会推荐</td><td>场景 1「新品首发达人金字塔」：5 个工作日 ≥40 个候选、覆盖 4 层级，wave-1 ≥12 人，每个候选有公开合作入口与 route 判定。验收：审定通过率 ≥60%，editorial-only 与 no-sponsorship 对象为 0。场景 2「爆量 48 小时授权放大」：识别首条付费素材 → 核授权四类覆盖 → 首批测试预算 ≤$1000。验收：48 小时内上线，每条放大素材 100% 有书面凭证与到期日</td></tr><tr><td>L8 能力图谱</td><td>IP 合作计划制定：分析 IP 粉丝结构与声量，输出合作计划（方案中）；全渠道动态监测：跨平台追踪 IP 动态并聚类关键事件（方案中）；合作机会识别：识别合作机会信号并给出推荐理由（方案中）</td><td>关键原子 ≤6：监测达人内容与互动异动（B-01）、判定商业路线与门禁（专用）、识别素材可放大性与授权状态（B-14）、配置分层与预算配比（专用）、生成约束型 brief（专用）、维护合作资产档案（B-14）。断点：BP-10、BP-11</td></tr><tr><td>L9 进度</td><td>方案中 3</td><td>换算 M0；M2 需 Paid Media 与 Clone 两个消费方实际调用授权接口</td></tr><tr><td>L10 / L11</td><td>无</td><td>应挂 B-14 达人与授权档案，作为唯一「待整合能力」宿主；不再新建第 15 个工作台；Clone 授权台账、Emily 达人 brief、affiliate 名单并入 <code>creator_id</code> 与 <code>asset_rights</code></td></tr></tbody></table></div></article><article class="tcard" id="pt-3-3-1"><h3><span class="num">3.3.1</span> Echo｜VOC Agent&amp;工作台<span class="badge gbadge">G2</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S3（逐字见 3.3 组标题）</td><td>保留并升为 VOC 主榜 owner；Market 砍独立产线后机会卡并入 Echo 输入</td></tr><tr><td>L4 专家昵称</td><td>Echo</td><td>保留；段级 0 A；taxonomy 未进 8 主键，问责靠 taxonomy 版本与抽检一致率</td></tr><tr><td>L5 产品构成</td><td>VOC Agent&amp;工作台</td><td>回答说了什么、指向哪个 SKU 与哪句卖点、该怎么改；服务产品与运营</td></tr><tr><td>L6 验收工作台</td><td>https://radar.luteos.com/</td><td>保留；不持 Gate；主键只追加 <code>event_observation</code>，读 <code>claim_id</code></td></tr><tr><td>L7 业务场景</td><td>舆情线：品牌/品类/SPU舆情预警；话题线：高质量内容机会挖掘；产品机会线：品类机会挖掘</td><td>场景 1「新品差评根因」：T+3 定位变体与 listing 承诺失准 → 派整改项 → T+14 复核。验收：尺码/适配类一星二星占比降 ≥30%，每条整改项有 owner、deadline、回填证据，挂空率 0，未达阈值必须写未解决原因。场景 2「objection 变 PDP 承接」：前 10 条 objection 中 ≥8 条能指认到 PDP 具体位置，100% 过守衡预检；上线 14 天提及率降 ≥30% 或该页 CVR 升 ≥10%，至少达成一项并附样本量</td></tr><tr><td>L8 能力图谱</td><td>舆情线：多渠道数据查询：售前、售后、独立站、Reddit 等用户反馈（已完成）；风险指数&amp;机会洞察：量化用户风险指数并挖掘产品机会（进行中）｜话题线：拖拉式多维分析：拖拽式多维分析用户声音（进行中）｜产品机会线：自动化品类洞察报告（进行中）</td><td>关键原子 ≤6：多源声音接入（B-01）、评论树与说话人还原（专用）、评论到 SPU/变体绑定消歧（B-04）、卖点承诺比对（B-06）、VOC 四字段打标（B-05）、风险指数与平台门槛对齐（专用）。断点：BP-04、BP-02</td></tr><tr><td>L9 进度</td><td>已完成 1、进行中 3</td><td>换算上限 M1；taxonomy 只读接口与抽检一致率 ≥85% 是保留条件</td></tr><tr><td>L10 待整合能力</td><td>数据采集插件；品类洞察平台；品类洞察报告</td><td>三者在治理定义下都不是「待整合能力」，而是应被 B-01 采集与 B-05 taxonomy 吸收的下游；Echo 只保留「未满足需求主题 + 原话证据」</td></tr><tr><td>L11 整合来源</td><td>https://plugin.luteos.com/；https://business.luteos.com/；https://report.luteos.com/</td><td>采集插件并入 Source；品类洞察平台与报告移交 Market 或降为 Echo 报告模板，不再单独建平台</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-3-2"><h3><span class="num">3.3.2</span> Market｜市场洞察Agent&amp;工作台<span class="badge gbadge">G2</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S3（逐字见 3.3 组标题）</td><td>与 Echo 融合；若保留独立，必须同时满足三条：品类洞察报告整体迁出、独立事实库与 Source 补齐 Amazon BSR/价格、产出被至少一个决策消费</td></tr><tr><td>L4 专家昵称</td><td>Market</td><td>观察期；RACI 现状 S1 行 A = Market，审计 M-02 判为冲突，应改 <code>C</code>、PMO 列改 <code>A</code></td></tr><tr><td>L5 产品构成</td><td>市场洞察Agent&amp;工作台</td><td>品类机会、价格带、竞品动作与市场进入判断；回答这个类目值不值得进</td></tr><tr><td>L6 验收工作台</td><td>https://mkt.luteos.com/</td><td>保留；无 Gate</td></tr><tr><td>L7 业务场景</td><td>无（空节点）</td><td>场景 1「细分品类是否值得进入」：机会卡必须带数据来源、样本量、时间窗与「不进入的代价」。验收：季度 ≥1 个明确结论（进入/不进入/换切角）在 2 周内进入立项或否决记录；只写「建议继续观察」视为未交付。场景 2「竞品动作响应」：每周竞品集合覆盖率 100%，每个高影响动作 48 小时内给出跟/不跟/差异化与代价测算</td></tr><tr><td>L8 能力图谱</td><td>无（空节点）</td><td>关键原子 ≤6：品类与竞品事实接入（B-02，当前缺 Amazon BSR/价格/上新）、品类边界与竞品集合（专用）、价格带与价格-销量建模（专用）、竞品动作性质判定（专用）、类目合规门槛核对（B-13）、机会卡与新品输入包（专用）。断点：CH1→CH2 属 6 条域外键交接之一（BK-04 已修，登记前只记记录项）</td></tr><tr><td>L9 进度</td><td>无（空节点）</td><td>换算 M0，登记为空洞；观察期 90 天内无下游书面承接即关闭</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-02 经营数据接入的品类事实子域，不自建第二套品类报告；Echo 的产品机会线与品类洞察报告并入；Source 补 Amazon BSR 后由 Market 消费</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-3-3"><h3><span class="num">3.3.3</span> Source｜数据采集Agent&amp;工作台<span class="badge gbadge">G2</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S4（逐字见 3.3 组标题）</td><td>保留并升为数据底座；B-08 由 PMO 定标准、Source 落库</td></tr><tr><td>L4 专家昵称</td><td>Source</td><td>保留；CH10-A；不是任何业务对象的 writer</td></tr><tr><td>L5 产品构成</td><td>数据采集Agent&amp;工作台</td><td>只负责拿得到、拿得全、拿得合规，不做任何分析结论；形态应是内部数据平台，工作台只保留源管理、质量验收、事件处置</td></tr><tr><td>L6 验收工作台</td><td>https://scrapy.luteos.com/</td><td>保留；无 Gate；CH10 交接规则见节点头</td></tr><tr><td>L7 业务场景</td><td>统一采集平台与 monitor 层 → 分渠道采集器 → 统一表结构-&gt;采集工具-&gt;洞察工具</td><td>场景 1「新市场采集合规预检」：计划数据源 100% 有允许/受限/禁止结论与责任人，200 条抽样 0 越界，PII 100% 脱敏或丢弃，法务 5 个工作日签字。场景 2「采集质量月度验收」：五项指标有数且与上月可比，黄金集准确率 ≥90%、召回 ≥80%，T1 源 P95 延迟 ≤2 小时，三个下游书面确认</td></tr><tr><td>L8 能力图谱</td><td>统一采集平台与 monitor 层：统一采集调度、降级链路与 12 表建模（进行中）；TikTok 采集MCP/skill：采集 TikTok 榜单、视频、评论（进行中）；Reddit 采集MCP/skill：采集 Reddit 帖子与评论树（进行中）；YouTube 采集MCP/skill：采集 YouTube 视频、频道、字幕（进行中）；Instagram 采集MCP/skill：采集 Instagram 媒体与评论（进行中）；Facebook 采集MCP/skill：采集 Facebook 页面与互动快照（进行中）；Google Trends 采集MCP/skill：采集 Google 趋势指数与关联查询（进行中）；上游数据底座，支撑 GEO、Vicky、Echo、Signal、Emily、Radar 六方（进行中）</td><td>关键原子 ≤6：源发现与准入（专用）、多通道采集与调度（底座本体）、实体对齐与消歧（B-04）、跨源去重与同源合并（B-07 前置）、PII 识别与脱敏（专用）、统一表结构与数据契约（B-08）。第 8 条原文是依赖声明，不是能力项，治理定义不把它计为能力。断点：BP-07</td></tr><tr><td>L9 进度</td><td>进行中 8</td><td>换算上限 M1；M2 需 ≥3 个下游实际消费并通过契约测试</td></tr><tr><td>L10 / L11</td><td>无（明确记录：Source 下没有任何 L10/L11）</td><td>应消费并承担 B-01 采集、B-02 经营数据接入、B-04 实体消歧、B-08 ID 契约四项，作为统一宿主；并入 Emily 监听、Vicky 声誉采集、Clone 视频解析、Echo 多渠道、Signal 多源采集，共 5 处重复</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-3-4"><h3><span class="num">3.3.4</span> Signal｜品牌声量Agent&amp;工作台<span class="badge gbadge">G2</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S4（逐字见 3.3 组标题）</td><td>保留；必须删掉「多源采集」四个字，改为订阅 Source；只出相关性证据</td></tr><tr><td>L4 专家昵称</td><td>Signal</td><td>保留；CH9-A；事件服务向全体共享，但不单独占 G 位</td></tr><tr><td>L5 产品构成</td><td>品牌声量Agent&amp;工作台</td><td>只做量与异动，不做质的深挖：变了没有、变成什么结构、严不严重、该谁处理</td></tr><tr><td>L6 验收工作台</td><td>https://signal.luteos.com/</td><td>保留；无 Gate owner</td></tr><tr><td>L7 业务场景</td><td>多源采集 → 异动检测 → 归因分析 → 告警</td><td>场景 1「竞品异动 24 小时响应」：异动后 24 小时内产出归因假设与证据链，假设被处置方采纳率 ≥60%，7 日复测能判定威胁成立或不成立，事件单 100% 有责任人与关闭时间。场景 2「负面前哨」：P0 60 分钟内触达三个责任人，72 小时内产出关闭或升级结论并附回落数据，竞品黑稿与真实产品问题分类准确率 ≥85%</td></tr><tr><td>L8 能力图谱</td><td>品牌曝光&amp;热度监控：监控品牌曝光与搜索热度日趋势（方案中）；声量异动识别：识别声量异常波动并归因（方案中）；竞品动作&amp;发布监测：追踪竞品动作与新品发布节奏（方案中）</td><td>关键原子 ≤6：品牌与竞品声量监听（B-01）、声量归一化与可比口径（B-03）、异动构成拆解（专用）、付费/自然声量分离（专用，源数据依赖 B-01 标记）、严重度与风险分级（B-07）、异动归因与证据包（专用，只出相关性）。断点：BP-04、BP-07</td></tr><tr><td>L9 进度</td><td>方案中 3</td><td>换算 M0；M2 需 Vicky、Echo、Paid Media 至少三方消费同一 <code>event_id</code></td></tr><tr><td>L10 / L11</td><td>无</td><td>应挂 B-07 事件去重与主单，作为 <code>event_id</code> 唯一宿主，不自建采集；Vicky 舆情分级、Echo 事件观测、Source 采集并入；<code>hyp-*</code> 发号与样本量核定移交 PMO</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-4-1"><h3><span class="num">3.4.1</span> 守衡｜内容治理Agent&amp;工作台<span class="badge gbadge">G3</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S5（逐字见 3.4 组标题）</td><td>保留为唯一合规裁决源；claim 三源收敛到 Daisy 主表 + 守衡判定子表；规则不得原创</td></tr><tr><td>L4 专家昵称</td><td>守衡</td><td>保留；CH2-A（内容侧）</td></tr><tr><td>L5 产品构成</td><td>内容治理Agent&amp;工作台</td><td>整条链上唯一有权说不的位置：判品牌发出去的东西、品牌得出的结论站不站得住；不判外部世界发生了什么</td></tr><tr><td>L6 验收工作台</td><td>https://ca.luteos.com/</td><td>保留；Claim Gate 主责 C1–C4；授权 Gate 只读并出判定</td></tr><tr><td>L7 业务场景</td><td>内容上传 → 模型审核 → 审计判定 → 整改推送</td><td>场景 1「达人素材投前放行」：拉素材包与凭证 → 判授权四类覆盖 → 逐条抽取 claim 匹配类目 overlay → 出三态 → 条件放行与阻断退回重谈或改剪 → 登记四元组。验收：20 条 24 小时内判定，阻断 100% 附 rule object 与原文，放行 100% 绑授权编号与有效期，30 天内拒审 100% 可回溯。场景 2「月度复盘结论复核」：每条结论拆成指标变化 + 因果断言 + 建议动作 → 回溯证据来源 → 校验口径与可迁移范围 → 出三态。验收：进入决策的结论 100% 有可定位证据，讲师宣称 100% 降级为打法假设，口径不一致 0 条进预算</td></tr><tr><td>L8 能力图谱</td><td>内容审计规则引擎：按品牌规则自动审计内容合规风险（已完成）；经营动作与结论复核：复核经营结论是否有证据支撑（已完成）；复核结论与整改清单：输出整改清单并闭环推送（已完成）</td><td>关键原子 ≤6：素材与授权凭证采集（B-01）、监听平台处置回执（专用）、规则-对象映射（B-13）、claim 抽取与风险分类（B-06）、证据分层判定（专用）、三态裁定与回执（B-10）。断点：BP-02；B-12 抽检空洞</td></tr><tr><td>L9 进度</td><td>已完成 3</td><td>换算上限 M1；M2 需 Emily / Clone / GEO 三个消费方在生产环境引用回执；M3 需 golden set 与抽检一致率</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-06 claim 与事实校验、B-10 审批门与回执、B-13 规则库与版控；Emily / GEO / Daisy 的 claim 规则表并入，克隆与平台规范清单并入 B-13，人工审批门并入 B-10</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-4-2"><h3><span class="num">3.4.2</span> Daisy｜多智能体Agent&amp;工作台<span class="badge gbadge">G3</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S5（逐字见 3.4 组标题）</td><td>保留并移出业务 G；价值不是统一入口，而是候选区与 canonical 分离、权限统一台账、重复建设收敛</td></tr><tr><td>L4 专家昵称</td><td>Daisy</td><td>保留；对象级 A 三项；不参与 G 目标考核</td></tr><tr><td>L5 产品构成</td><td>多智能体Agent&amp;工作台</td><td>强制候选区与 canonical 分离 + 权限统一台账 + 重复建设收敛；不做业务判断、不做裁定</td></tr><tr><td>L6 验收工作台</td><td>https://mas.luteos.com/</td><td>保留；为 Claim Gate 供事实与证据</td></tr><tr><td>L7 业务场景</td><td>知识库-&gt;MAS-&gt;CLI</td><td>场景 1「跨 Agent 结论冲突裁决」：检测同一 object_id 或 topic 矛盾 → 定位双方 canonical 与 source_refs → 按证据层级排序（官方源 &gt; 内部对照实验 &gt; 内部案例 &gt; Agent 推断 &gt; 第三方/讲师宣称）→ 同层分不出标 <code>unresolved_with</code> → 领域 owner 5 个工作日裁定。验收：冲突 100% 有 owner 与截止日，裁定后 7 天下游口径一致，5 个工作日未裁必须显式标 unresolved，不得静默合并。场景 2「新 Agent 接入」：先声明业务问题、影响 T2、与现有差异、读域写域与权限上限，强制复用 Source 与 Daisy 适配层，用 golden case 跑基线，灰度 2 周。验收：自建采集 0，重叠能力有并入计划或差异声明，权限上限不高于 E2</td></tr><tr><td>L8 能力图谱</td><td>各 Agent 统一接入：九个 Agent 通过适配层统一接入（方案中）；统一入口，把九个 Agent 从九个入口收成一个（方案中）；对话式 CLI 界面：提供对话式 CLI 标准交互（进行中）</td><td>关键原子 ≤6：Agent 能力注册与发现（专用）、冲突检测与关系生成（B-09）、权限与数据边界解析（B-10）、证据层级排序与裁决建议（专用）、重叠度与并入判断（专用）、统一对象仓与版本（B-08/B-09）。断点：BP-02、BP-07</td></tr><tr><td>L9 进度</td><td>方案中 2、进行中 2</td><td>换算上限 M1；M2 需 ≥1 条非 owner 产线在生产环境调用统一对象仓并通过契约测试</td></tr><tr><td>L10 待整合能力</td><td>品牌知识库平台；业务skills平台</td><td>二者都应挂在 Daisy 下作为「待整合能力」，不得各自长成第 15、16 个工作台</td></tr><tr><td>L11 整合来源</td><td>https://asset.luteos.com/；platform-operations-wiki；https://brand.luteos.com/；https://skills.luteos.com/</td><td>品牌知识库平台的来源是 asset 与仓库名；业务skills平台的来源是 brand 与 skills。仓库名 <code>platform-operations-wiki</code> 不是 URL，与图例「整合来源」的 URL 预期不一致，需统一为可定位资源；skills 两源需去重</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-4-3"><h3><span class="num">3.4.3</span> Main｜全栈开发Agent&amp;工作台<span class="badge gbadge">G3</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S6（逐字见 3.4 组标题）</td><td>处置为移出；模型评测并入 CH10 质量抽检 B-12；产线清单删除，编号不复用</td></tr><tr><td>L4 专家昵称</td><td>Main</td><td>移除；0 段 A、0 对象级 A</td></tr><tr><td>L5 产品构成</td><td>全栈开发Agent&amp;工作台</td><td>业务侧 AI 生产力交付中台：需求 → 工具 → 评测 → 成本 → 回滚；不拥有任何 Agent 的领域逻辑</td></tr><tr><td>L6 验收工作台</td><td>https://main.luteos.com/</td><td>保留为工程入口；B-12 未上线时机器判定只能出 CONDITIONAL</td></tr><tr><td>L7 业务场景</td><td>模型选型与评测（层级错位：业务场景位填了主题名，无流程链）</td><td>场景「模型换代前业务指标回归」：从各 Agent 收集私有评测集（守衡 claim 负例 200 条、Emily 脚本采用记录 300 条、Echo 评论归类 200 条）→ 定义业务指标口径 → 新旧模型同批跑 → 输出分切片对比 → 灰度 10% 两周。验收：每次换型有分 Agent 私有评测报告，换型后 30 天关键业务指标下降 ≤5%，单条任务成本可查</td></tr><tr><td>L8 能力图谱</td><td>https://llm.luteos.com/（层级错位：URL 占了能力图谱位）</td><td>关键原子 ≤6：业务任务到技术规格转译（专用）、失败归因（专用）、品牌私有评测集维护（B-12）、业务指标回归判定（B-12）、灰度发布与回滚（专用）、组件依赖台账（专用）</td></tr><tr><td>L9 进度</td><td>无（缺 L9 进度）</td><td>换算 M0；错位的 URL 应移到 L11 整合来源</td></tr><tr><td>L10 / L11</td><td>无（<code>模型选型与评测</code> 应在此层，原文错放在 L7；<code>https://llm.luteos.com/</code> 应在此层，原文错放在 L8）</td><td>应消费 B-12 判定质量抽检，模型评测能力并入 B-12 的 golden set 维护；不单独占产线</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-4-4"><h3><span class="num">3.4.4</span> Shopify｜ABI Shopify Agent&amp;工作台<span class="badge gbadge">G3</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S6（逐字见 3.4 组标题）</td><td>拆三条并扩为 DTC 交易入口；一条线同时承担站点技术、PDP 转化、商品定价，CVR 掉点无法区分页面/流量/商品</td></tr><tr><td>L4 专家昵称</td><td>Shopify</td><td>保留；CH6-DTC-A；三条共享 <code>order_id</code> / <code>customer_id</code>；私域、会员、订阅移交 Retention</td></tr><tr><td>L5 产品构成</td><td>ABI Shopify Agent&amp;工作台</td><td>交易与承接入口，不只是独立站：站点能不能卖、CVR 掉在哪、选品在站上卖不卖得动、渠道定价带是否自打</td></tr><tr><td>L6 验收工作台</td><td>https://shopify.luteos.com/</td><td>保留；Gate X4（<code>pdp@{version}</code> 上线 / <code>price_change</code> 生效）+ CH5→CH6 <code>landing_ref</code> 未登记不得开投</td></tr><tr><td>L7 业务场景</td><td>ABI独立站（层级错位：实为待整合能力）；独立站360审计（层级错位）；AI选品（层级错位）</td><td>场景 1「放量前承接体检」：审计覆盖本期目标 LP 100%、Top GMV SKU 100% → 全站 blocker = 0 才允许放量 → 每个 blocker 带 owner 与截止时间 → 复测关闭率 100% → 留下 CVR/AOV/自然搜索三项可复算基线。场景 2「CVR 掉点定位」：把掉点定位到单一漏斗环节并给可证伪假设 → A/B 达显著才全量 → 单季度 ≥4 个有效测试。验收：≥1 个测试带来 CVR 相对 +10% 或 AOV +8%，所有上线改动有回归监控</td></tr><tr><td>L8 能力图谱</td><td>https://platform.shopify.luteos.com/（层级错位：实为整合来源）；https://shopify.luteos.com/（层级错位：与 L6 验收工作台 URL 完全重复）；https://product.luteos.com/（层级错位：实为整合来源）</td><td>关键原子 ≤6：站点审计采集适配器（专用）、交易数据口径归一（B-02）、漏斗掉点归因（专用）、PDP 解释力评估（专用）、结构化数据与 feed 一致性（B-13）、SKU-渠道角色与定价带判定（专用）。断点：BP-03、BP-16</td></tr><tr><td>L9 进度</td><td>无（三个产品均缺 L9 进度）</td><td>换算 M0；三个错位项分别回到 L10/L11 后，DTC 转化线才有可判定进度</td></tr><tr><td>L10 / L11</td><td>无（<code>ABI独立站</code>、<code>独立站360审计</code>、<code>AI选品</code> 应在此层；三个 URL 应在此层）</td><td>应消费 B-02 订单子域、B-11 指标口径；选品判断与 Market 分权，Shopify 只保留站内可验证性否决权；platform.shopify / shopify / product 三个站点并入交易入口，不再各算一条产线</td></tr></tbody></table></div></article><article class="tcard" id="pt-3-4-5"><h3><span class="num">3.4.5</span> PMO｜OGSM管理Agent&amp;工作台<span class="badge gbadge">G3</span></h3><div class="tw"><table class="cmp"><thead><tr><th>级</th><th>原附件（逐字）</th><th>治理定义接枝</th></tr></thead><tbody><tr><td>L3 S</td><td>S6（逐字见 3.4 组标题）</td><td>保留为治理机制：指标字典、实验 gate、承诺签署、90 天裁决；不接管预算决策</td></tr><tr><td>L4 专家昵称</td><td>PMO</td><td>保留；CH11-A；无业务对象写入口</td></tr><tr><td>L5 产品构成</td><td>OGSM管理Agent&amp;工作台</td><td>把 14 条产线产出强制折算到 GMV / 毛利 / CAC / 复购，并据此裁决资源；产品是承诺与裁决，不是业务交付</td></tr><tr><td>L6 验收工作台</td><td>https://pmo.luteos.com/</td><td>保留；实验 Gate X1–X5 主责</td></tr><tr><td>L7 业务场景</td><td>无（空节点）</td><td>场景 1「季度 OGSM 校准」：拉 T1 财务口径与 T2 中介 → 对每条 S 做因果贡献拆解 → 判定起效/未到观察窗口/未起效/反向 → 重排下季资源 → 每条 M 定 baseline、target、window、口径版本、owner 并签署。验收：每条 M 有 baseline 与口径版本，每条 S 有可检验因果假设，上季每条 S 有明确判定；一次校准会没有任何策略被砍，这次会判为失效。场景 2「声量异动 → GMV 传导追踪」：30/60 天回看，不允许「待观察」超过 8 周，必须说明用了实验/准实验/相关性哪种证据，相关性结论不得直接进预算</td></tr><tr><td>L8 能力图谱</td><td>无（空节点）</td><td>关键原子 ≤6：经营指标采集与对账（B-11）、目标与承诺台账（B-10）、指标口径解析与冲突检测（B-11）、目标-策略-动作映射（专用）、假设与结论证据分级（B-12）、续投裁决与决策记录（专用）。断点：B-08 主键未落库、B-12 抽检未实现</td></tr><tr><td>L9 进度</td><td>无（空节点）</td><td>换算 M0；不得用开会次数、承诺数量当成熟度</td></tr><tr><td>L10 / L11</td><td>无</td><td>应消费 B-08 ID 契约与主数据（定标准）、B-10 审批门与治理回执、B-11 指标口径、B-12 判定质量抽检；各产线自定的品牌词 lift / NTB / 贡献毛利口径并入 B-11，自建审批流并入 B-10</td></tr></tbody></table></div></article></section>
+  <section id="view-status" aria-label="状态视图" hidden><div class="viewhead"><h2>状态视图 · Blocker / 断点 / Gate</h2><p>8 条审计 blocker 已全部闭合（8/8 已修）；交接断点与仍标「残余」的 Gate 计入待修。Gate 卡状态按 Gate 表「关键缺口」列是否仍标残余判定。</p></div><div class="filters" id="status-filters"><button class="btn on" data-f="all">全部 <b>22</b></button><button class="btn" data-f="fixed">已修 <b>9</b></button><button class="btn" data-f="open">待修 <b>13</b></button></div><h3 class="status-h">审计 blocker（BK-01—BK-08）</h3><div class="cards"><article class="card" data-status="fixed" data-kind="blocker"><h4><span class="cid">BK-01</span><span class="badge fixed">已修</span><span class="kind">审计 blocker</span></h4><dl><dt>原问题</dt><dd>同一个 O 的 CAC 目标，一处写降 15%、一处写允许涨 5%</dd><dt>修法（已落文）</dt><dd>G §4.1 目标陈述与目标值统一为 ≤ B2 × 0.85，并写明「G1 条目内不得出现第二个 CAC 阈值，出现即该条目标作废」</dd><dt>现状</dt><dd><strong>已修</strong></dd></dl></article><article class="card" data-status="fixed" data-kind="blocker"><h4><span class="cid">BK-02</span><span class="badge fixed">已修</span><span class="kind">审计 blocker</span></h4><dl><dt>原问题</dt><dd>G1 用「滞后相关系数 ≥0.5」做验收，指标字典明文禁止</dd><dt>修法（已落文）</dt><dd>G §4.1 目标陈述删去相关系数，传导证据另立假设、最早 2027-09 出结论、不作为本季达成条件；时间窗与验收方式改为「8 周滞后复测只出解释，不进达成判定」</dd><dt>现状</dt><dd><strong>已修</strong>（已补齐残余两处）</dd></dl></article><article class="card" data-status="fixed" data-kind="blocker"><h4><span class="cid">BK-03</span><span class="badge fixed">已修</span><span class="kind">审计 blocker</span></h4><dl><dt>原问题</dt><dd>P0 四条线，P0 文档说 L3 才准入，G 文档说达到 L2 即通过</dd><dt>修法（已落文）</dt><dd>G §6.3 完成标志 1–2 与 P0 §0.3、§6 统一为：M2 = 立项验收，M3 = 扩范围与计入达成度，M1 不计入任何验收</dd><dt>现状</dt><dd><strong>已修</strong></dd></dl></article><article class="card" data-status="fixed" data-kind="blocker"><h4><span class="cid">BK-04</span><span class="badge fixed">已修</span><span class="kind">审计 blocker</span></h4><dl><dt>原问题</dt><dd>RACI 说「只有 CH1→CH2 无主键覆盖」，实际至少 5 条</dd><dt>修法（已落文）</dt><dd>RACI §4.2 第 3 条改为「共 6 条」，S11→全体 选「纳入」并写明唯一可能的排除口径为何自相矛盾；9 个域外键按第 9–17 候选键登记（order_id → sku_id → ticket_id/voice_id → ltv_cohort_id → opportunity_id/category_id → metric_dict@version → work_item_id），G §4 的 <code>opportunity_id</code> 回改为第 14，§4.3 增逐键降级表；12 − 6 = 6 条可执行</dd><dt>现状</dt><dd>已修：P0 §5 尾已同步为「第 9–17 个 ID」，与 RACI 上限一致</dd></dl></article><article class="card" data-status="fixed" data-kind="blocker"><h4><span class="cid">BK-05</span><span class="badge fixed">已修</span><span class="kind">审计 blocker</span></h4><dl><dt>原问题</dt><dd>授权台账写入口三份文档三种说法，且这一对象没有 A</dd><dt>修法（已落文）</dt><dd>字典 §0.1/§0.8 定为 Radar 单写七元组，<code>asset.rights</code> 改标「只读投影」并写明物化方 Radar、刷新时机与「Clone/Daisy/Vicky 无 INSERT/UPDATE 权限」（字典 §6）；P0 §5 改为 <code>asset_id</code> 在前、<code>credential_type</code> 已列；Gate §3 同步；RACI §1.2 增 <code>asset_rights</code> 行（A = Radar），§5.3 授权核验 A = Radar</dd><dt>现状</dt><dd><strong>已修</strong>（措辞残余：指标 L4-02 与 Gate §3 表仍写「七元组齐全（含 <code>credential_type</code>）」，7/8 字段数两种读法，不影响建表）</dd></dl></article><article class="card" data-status="fixed" data-kind="blocker"><h4><span class="cid">BK-06</span><span class="badge fixed">已修</span><span class="kind">审计 blocker</span></h4><dl><dt>原问题</dt><dd>三个 Gate 依赖回执 / 规则 / overlay 三类对象，字典里都不存在</dd><dt>修法（已落文）</dt><dd>字典 §0.1 登记第七–九类并各给唯一写入口，§0.9 定位串统一 <code>seq4</code> 并补齐 <code>gate_version</code> / <code>conditions[]</code> / <code>invalidate_on[]</code> / <code>sla_due_at</code> 四字段；论证改为「<code>gate_receipt</code> 由既有键拼成，<code>rule_object</code> / <code>market_overlay</code> 是独立 ID 空间 + 单 owner，不进业务状态机」；Gate §0.4 与指标 L4-01 改用 <code>seq4</code>，§8 补「规则未发布前无阻断资格」</dd><dt>现状</dt><dd><strong>已修</strong>：<code>rule_version</code> 统一为 <code>@3</code>（Gate 103 已改），<code>market_overlay_version</code> 统一为 <code>{overlay_id}@{overlay_version}</code>（字典 77 已改），<code>receipt_id</code> 措辞统一为「即 <code>receipt_id</code>，是拼成的定位串、不是第 9 个顶层主键」</dd></dl></article><article class="card" data-status="fixed" data-kind="blocker"><h4><span class="cid">BK-07</span><span class="badge fixed">已修</span><span class="kind">审计 blocker</span></h4><dl><dt>原问题</dt><dd>fail-closed 只有日历没有覆盖率，规则库为空时只能全阻断或制度失效</dd><dt>修法（已落文）</dt><dd>Gate §6.6 改为「日期 AND 覆盖率」双条件 + 类目白名单逐类放开 + 熔断（队列 &gt;50 条或 SLA 违约 &gt;30%）+ 3 次复评上限；新增 §6.7 给三个门槛的分子、分母、抽取口径、数据源、owner、复算频率与未达标行为，§6.8 定义人工 gate（双签、BLOCK 照常阻断、计入统计、2 工作日 SLA、不进敞口登记表）；三条公式补 0 分母 <code>NOT_APPLICABLE</code> 规则（不构成达标、不触发熔断、分母转正即重算），L3 处置按 gate 模式分叉（阻断模式直 BLOCK / 人工模式转人工 4h）；G §6.3 标志 4 已同步新门槛；G §6.3 标志 4 改为「Claim 最早 W5 / 授权最早 W9 / 实验最早 W13」分批生效，RACI §7 风险 4 同步</dd><dt>现状</dt><dd><strong>已修</strong>：G §6.3 的实验 gate 条件已随 §6.7 换为「预注册核算达标率 ≥90% 且核算时长 ≤2 工作日」；L3 处置已按 gate 模式分叉（阻断模式直 BLOCK / 人工模式转人工 4h），不再三处互斥（人工 4h / 直接 BLOCK / 人工未判即 BLOCK）；覆盖率无 0 分母规则，授权分母「当期」未定义是周还是月</dd></dl></article><article class="card" data-status="fixed" data-kind="blocker"><h4><span class="cid">BK-08</span><span class="badge fixed">已修</span><span class="kind">审计 blocker</span></h4><dl><dt>原问题</dt><dd>实验样本量按 15–25 臂校正后约为文档值的 1.49 倍，小体量跑不动</dd><dt>修法（已落文）</dt><dd>指标 §10.2 补 k=5 校正表与三条合法降级路径（降臂数到 2 / 放大 MDE / 改判观察），并给 30 万美金月销演算；§8 分级表改为「样本量优先于周数」；Gate §4.4 同步</dd><dt>现状</dt><dd><strong>已修</strong>（技术瑕疵：表值只对 k=5 精确，正文仍写「同批超过 8 臂不得沿用」，应为「&gt;5 臂即重算」）</dd></dl></article></div><h3 class="status-h">交接断点（12 个，11 张卡；BP-26 / BP-27 合并）</h3><div class="cards"><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-02</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>claim 三源：Emily 引用、Daisy 事实库、守衡规则库各一份；规则未命中默认放行</dd><dt>修复键</dt><dd><code>claim_id</code> + <code>evidence_id</code></dd><dt>判定标准</dt><dd>全库 claim 文本只存在一处；任一内容可反查唯一 <code>claim_id@version</code>；未命中 verdict 必须 <code>manual_required</code></dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-03</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>script→variant→ad→asset 无定义，素材表现无法回写脚本</dd><dt>修复键</dt><dd><code>script_id</code> + <code>variant_id</code> + <code>asset_id</code> + <code>ad_id</code></dd><dt>判定标准</dt><dd>任一 ad 花费可沿链反查到叙事假设，≤4 跳</dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-04</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>事件无去重主键，三套告警三套分级，主单按最早命中方建</dd><dt>修复键</dt><dd><code>event_id</code></dd><dt>判定标准</dt><dd>同一源帖 24 小时只产生 1 个 <code>event_id</code>；<code>media_negative</code> 主 owner 100% 为 Vicky</dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-06</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>coverage 字段与 PDP/A+/GEO 不一致，授权三态无下游格式</dd><dt>修复键</dt><dd><code>asset_id(earned_coverage)</code> + <code>claim_id</code> + <code>evidence_id</code></dd><dt>判定标准</dt><dd>三处引用字段级 diff = 0</dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-07</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>事实源版本不强制，裸引用</dd><dt>修复键</dt><dd><code>{id}@{version}</code></dd><dt>判定标准</dt><dd>事实引用必须带版本，否则视为未交接</dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-10</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>brief 无授权字段</dd><dt>修复键</dt><dd><code>creator_id</code> + 授权七元组前置</dd><dt>判定标准</dt><dd>无授权的 brief 不得外发</dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-11</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>授权台账缺 <code>creator_id</code>，2 小时内无法定位关联素材</dd><dt>修复键</dt><dd><code>creator_id</code> + <code>asset_id</code></dd><dt>判定标准</dt><dd>撤权后 2 小时可列出全部在用 asset；进 paid 100% 有七元组</dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-14</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>实验设计无单变量约束</dd><dt>修复键</dt><dd><code>variant_id</code> + <code>control_variant_id</code></dd><dt>判定标准</dt><dd><code>changed_variable</code> 单值；无对照且无例外登记不得开测</dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-16</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>发布记录不回填，内容日历与后台对不上</dd><dt>修复键</dt><dd><code>variant_id</code> + <code>asset_id</code> + <code>ad_id</code></dd><dt>判定标准</dt><dd>100% 已发布 variant 有 <code>publish_record</code>，条数差异 = 0</dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-24</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>无发布 owner</dd><dt>修复键</dt><dd><code>publish_record</code> 必填</dd><dt>判定标准</dt><dd>未填不得进 <code>testing</code>；回填率是最大落地风险</dd></dl></article><article class="card" data-status="open" data-kind="bp"><h4><span class="cid">BP-26 / BP-27</span><span class="badge open">待修</span><span class="kind">交接断点</span></h4><dl><dt>现状</dt><dd>Emily 与 Clone 都写「脚本」，叙事层与执行层不分</dd><dt>修复键</dt><dd><code>script_id</code> 叙事层唯一，variant 为执行层</dd><dt>判定标准</dt><dd>改 claim 必须回 Emily 新建脚本版本</dd></dl></article></div><h3 class="status-h">Gate（C / A / X）</h3><div class="cards"><article class="card" data-status="open" data-kind="gate"><h4><span class="cid">Claim Gate</span><span class="badge open">待修</span><span class="kind">Gate</span></h4><dl><dt>主责</dt><dd>守衡</dd><dt>触发点</dt><dd>C1 脚本审批、C2 素材入库、C3 新增分发目标、C4 claim/证据状态变更</dd><dt>判定三态</dt><dd>PASS / CONDITIONAL / BLOCK + 未出判定</dd><dt>Fail-closed 默认</dt><dd>规则未命中转人工；证据缺失阻断；服务不可用 BLOCK；回执过期 BLOCK</dd><dt>关键缺口</dt><dd>回执/规则/overlay 已入字典 §0.1 第七–九类、四字段齐、定位串用 <code>seq4</code>（BK-06 已修）；覆盖率分子分母与 owner 见 Gate §6.7。残余：TikTok Shop 与独立站规则文件仍为 0，未达覆盖率门槛即无阻断资格；<code>rule_version</code> 仍两种写法（Gate <code>@v3</code> vs 字典 <code>@3</code>），<code>market_overlay_version</code> 仍 <code>{market}@</code> vs <code>{overlay_id}@</code></dd></dl></article><article class="card" data-status="open" data-kind="gate"><h4><span class="cid">授权 Gate</span><span class="badge open">待修</span><span class="kind">Gate</span></h4><dl><dt>主责</dt><dd>Radar 台账 + 守衡核验</dd><dt>触发点</dt><dd>A1 进加热池、A2 变体出片、A3 二次剪辑/跨账号、A4 自有 organic、A5 到期撤回</dd><dt>判定三态</dt><dd>PASS / CONDITIONAL / BLOCK</dd><dt>Fail-closed 默认</dt><dd>台账无记录即 BLOCK；凭证不在四类白名单即 BLOCK；账号写「全部」即 BLOCK；撤回传播超 2 小时全量隔离</dd><dt>关键缺口</dt><dd>写入口已统一为 Radar 单写七元组、<code>asset.rights</code> 标只读投影、RACI §1.2 有对象级 A（BK-05 已修）；残余是 L3 三义（人工 4h / 直接 BLOCK / 人工未判即 BLOCK）与平台侧可查率无实测数据</dd></dl></article><article class="card" data-status="fixed" data-kind="gate"><h4><span class="cid">实验 Gate</span><span class="badge fixed">已修</span><span class="kind">Gate</span></h4><dl><dt>主责</dt><dd>PMO</dd><dt>触发点</dt><dd>X1 立项、X2 开测、X3 放量、X4 页面/定价、X5 中途变更</dd><dt>判定三态</dt><dd>PASS / CONDITIONAL / BLOCK</dd><dt>Fail-closed 默认</dt><dd>无 <code>hypothesis_id</code> 不得进 testing；阈值事后改即批次作废；样本不足只能待定；多重比较未处理 BLOCK</dd><dt>关键缺口</dt><dd>k=5 校正表与三条降级路径已落文（BK-08 已修）；覆盖条件已换为「预注册核算达标率 ≥90% 且平均核算时长 ≤2 工作日」（Gate §6.7）；G §6.3 标志 4 已同步为「预注册核算达标率 ≥90% 且平均核算时长 ≤2 工作日」（BK-07 已修）</dd></dl></article></div></section>
+  <p class="note" style="margin-top:36px">源文件：brand-agent-ogsm-governance-mindmap-draft-20261101.md（2026-11-01）。本页内容由该 MD 渲染；如有冲突，以 MD 为准。单文件自包含，无外部脚本、字体或 CDN。</p>
+</main>
+<script>
+(function(){
+  var tree = document.getElementById('view-tree');
+  var topbar = document.getElementById('topbar');
+  var root = document.documentElement;
+  var q = document.getElementById('q');
+  var qcount = document.getElementById('qcount');
+  var gFilter = null;
+
+  function syncTop(){ root.style.setProperty('--top-h', topbar.offsetHeight + 'px'); }
+  window.addEventListener('resize', syncTop);
+  window.addEventListener('load', syncTop);
+  syncTop();
+
+  document.getElementById('tbar-toggle').addEventListener('click', function(){
+    var collapsed = topbar.classList.toggle('collapsed');
+    this.textContent = collapsed ? '展开六句话' : '收起';
+    this.setAttribute('aria-expanded', String(!collapsed));
+    syncTop();
+  });
+
+  var own = new Map();
+  function ownText(el){
+    var s = '';
+    (function walk(node){
+      for (var i = 0; i < node.childNodes.length; i++){
+        var n = node.childNodes[i];
+        if (n.nodeType === 3) s += n.nodeValue;
+        else if (n.nodeType === 1 && n.tagName !== 'DETAILS') walk(n);
+      }
+    })(el);
+    return s.toLowerCase();
+  }
+  tree.querySelectorAll('details').forEach(function(d){
+    own.set(d, ownText(d));
+    d.dataset.def = d.hasAttribute('open') ? '1' : '0';
+  });
+
+  function resetTree(){
+    tree.querySelectorAll('details').forEach(function(d){
+      d.open = d.dataset.def === '1';
+      d.style.display = '';
+      d.classList.remove('path');
+    });
+  }
+
+  function updateGBtns(){
+    document.querySelectorAll('#treebtns [data-g]').forEach(function(b){
+      b.classList.toggle('on', b.dataset.g === gFilter);
+    });
+  }
+
+  function clearGFilter(){
+    gFilter = null;
+    var sec = document.getElementById('sec-products');
+    if (sec){
+      sec.style.display = '';
+      sec.querySelectorAll('details').forEach(function(d){ d.style.display = ''; });
+    }
+    tree.querySelectorAll(':scope > details.sec').forEach(function(d){ d.style.display = ''; });
+    updateGBtns();
+  }
+
+  function setG(g){
+    if (gFilter === g){ clearGFilter(); resetTree(); return; }
+    resetTree();
+    gFilter = g;
+    q.value = '';
+    qcount.textContent = '';
+    clearMarks();
+    tree.querySelectorAll(':scope > details.sec').forEach(function(s){
+      s.style.display = (s.id === 'sec-products') ? '' : 'none';
+    });
+    var sec = document.getElementById('sec-products');
+    sec.open = true;
+    sec.querySelectorAll('details.g').forEach(function(d){
+      var on = d.dataset.g === g;
+      d.style.display = on ? '' : 'none';
+      if (on){
+        d.open = true;
+        d.querySelectorAll('details.s').forEach(function(s){ s.open = true; });
+        d.querySelectorAll('details.prod').forEach(function(p){ p.open = false; });
+      }
+    });
+    sec.querySelectorAll('details.p0, details.sub').forEach(function(d){ d.style.display = 'none'; });
+    updateGBtns();
+  }
+
+  var timer = null;
+  function clearMarks(){
+    tree.querySelectorAll('mark').forEach(function(m){
+      m.replaceWith(document.createTextNode(m.textContent));
+    });
+    tree.normalize();
+  }
+
+  function highlight(val){
+    var esc = val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var re = new RegExp(esc, 'gi');
+    var walker = document.createTreeWalker(tree, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(n){
+        if (!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        if (n.parentElement && n.parentElement.closest('mark')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function(n){
+      var text = n.nodeValue;
+      var matches = Array.from(text.matchAll(re));
+      if (!matches.length) return;
+      var frag = document.createDocumentFragment();
+      var last = 0;
+      matches.forEach(function(m){
+        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        var mk = document.createElement('mark');
+        mk.textContent = m[0];
+        frag.appendChild(mk);
+        last = m.index + m[0].length;
+      });
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      n.replaceWith(frag);
+    });
+  }
+
+  function applyFilter(raw){
+    var val = raw.trim().toLowerCase();
+    clearMarks();
+    if (!val){
+      clearGFilter();
+      resetTree();
+      qcount.textContent = '';
+      return;
+    }
+    clearGFilter();
+    var hits = 0;
+    function visit(d){
+      var self = (own.get(d) || '').indexOf(val) !== -1;
+      var kid = false;
+      d.querySelectorAll(':scope > .body > details').forEach(function(c){
+        if (visit(c)) kid = true;
+      });
+      var show = self || kid;
+      d.style.display = show ? '' : 'none';
+      d.classList.toggle('path', show && kid && !self);
+      if (show) { d.open = true; hits++; }
+      return show;
+    }
+    tree.querySelectorAll(':scope > details').forEach(visit);
+    qcount.textContent = hits + ' 个节点命中';
+    highlight(val);
+  }
+
+  q.addEventListener('input', function(){
+    clearTimeout(timer);
+    timer = setTimeout(function(){ applyFilter(q.value); }, 130);
+  });
+  q.addEventListener('keydown', function(e){
+    if (e.key === 'Escape'){ q.value = ''; applyFilter(''); }
+  });
+
+  document.getElementById('toolbar').addEventListener('click', function(e){
+    var b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.view){ switchView(b.dataset.view); return; }
+    if (b.dataset.g){ setG(b.dataset.g); return; }
+    if (b.dataset.act === 'expand'){
+      clearGFilter();
+      tree.querySelectorAll('details').forEach(function(d){ d.open = true; });
+    } else if (b.dataset.act === 'collapse'){
+      clearGFilter();
+      tree.querySelectorAll('details').forEach(function(d){ d.open = false; });
+    }
+  });
+
+  function switchView(v){
+    document.body.dataset.view = v;
+    document.querySelectorAll('.tab').forEach(function(t){
+      var on = t.dataset.view === v;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', String(on));
+    });
+    ['tree', 'table', 'status'].forEach(function(k){
+      document.getElementById('view-' + k).hidden = (k !== v);
+    });
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  var statusCards = Array.prototype.slice.call(document.querySelectorAll('#view-status .card'));
+  document.getElementById('status-filters').addEventListener('click', function(e){
+    var b = e.target.closest('button');
+    if (!b) return;
+    var f = b.dataset.f;
+    this.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); });
+    statusCards.forEach(function(c){
+      c.hidden = !(f === 'all' || c.dataset.status === f);
+    });
+  });
+
+  var printState = null;
+  window.addEventListener('beforeprint', function(){
+    printState = Array.prototype.map.call(tree.querySelectorAll('details'), function(d){ return d.open; });
+    tree.querySelectorAll('details').forEach(function(d){ d.open = true; });
+  });
+  window.addEventListener('afterprint', function(){
+    if (printState){
+      tree.querySelectorAll('details').forEach(function(d, i){ d.open = printState[i]; });
+    }
+    printState = null;
+  });
+})();
+</script>
+</body>
+</html>

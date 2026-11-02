@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sage 项目成果总结 2026-11-02</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --border: #e5e7eb;
+  --card-bg: #f9fafb;
+  --ok: #059669;
+  --warn: #d97706;
+  --code-bg: #f3f4f6;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --border: #334155;
+    --card-bg: #1e293b;
+    --ok: #34d399;
+    --warn: #fbbf24;
+    --code-bg: #1e293b;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.7;
+  font-size: 15px;
+}
+.container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+header {
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+}
+h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+.meta span { margin-right: 16px; }
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 40px 0 16px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 24px 0 12px;
+  color: var(--fg);
+}
+ul {
+  margin: 8px 0;
+  padding-left: 22px;
+}
+li {
+  margin: 6px 0;
+}
+li::marker { color: var(--accent); }
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  background: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+}
+th, td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  font-weight: 600;
+  background: var(--code-bg);
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+tr:last-child td { border-bottom: none; }
+.status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.status.ok { background: rgba(5,150,105,0.12); color: var(--ok); }
+.status.warn { background: rgba(217,119,6,0.12); color: var(--warn); }
+.summary {
+  background: var(--card-bg);
+  border-left: 3px solid var(--accent);
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  margin: 24px 0;
+}
+.summary ul { margin: 0; }
+footer {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Sage 项目成果总结</h1>
+  <div class="meta">
+    <span>日期：2026-11-02</span>
+    <span>窗口：2026-11-01 至 2026-11-02</span>
+    <span>主线：ADR-0429 D20–D30</span>
+    <span>状态：<span class="status ok">已完成</span></span>
+  </div>
+</header>
+
+<h2>0. 概要</h2>
+<div class="summary">
+  <ul>
+    <li>本报告覆盖 2026-11-01 至 2026-11-02。</li>
+    <li>本期主线是 ADR-0429 的 D20 至 D30 共 11 个 Wave。</li>
+    <li>窗口内提交 13 次。11-01 提交 6 次，11-02 提交 7 次。</li>
+    <li>状态：已完成。</li>
+  </ul>
+</div>
+
+<h2>1. 核心结论</h2>
+<ul>
+  <li>受保护准入 <code>plan.execute-step</code> 清零 <code>unsupportedOperations</code>。<span class="status ok">已验证</span> 证据：提交 <code>48c5d5d6</code>。</li>
+  <li>建立四段式 AST 纸老虎巡检门禁。<span class="status ok">已验证</span> 证据：提交 <code>017f3a9b</code>。</li>
+  <li>落地跨境电商四大确定性核算合规引擎。<span class="status ok">已验证</span> 证据：提交 <code>ad8a205b</code>。</li>
+  <li>落地 53 位跨境电商专家专属交付物工作流。<span class="status ok">已验证</span> 证据：提交 <code>720ee123</code>。</li>
+  <li>完成发版前 UI 布局、动态视口与紧凑密度闭环。<span class="status ok">已验证</span> 证据：提交 <code>4bd7a9f8</code>。</li>
+  <li>新增 Sage.app 用户操作手册与 Sprint 1-4 闭环总纲。<span class="status ok">已验证</span> 证据：提交 <code>a5aa38ae</code>、<code>fc47e4d3</code>。</li>
+</ul>
+
+<h2>2. 当日关键指标</h2>
+<table>
+  <thead><tr><th>指标</th><th>读数</th><th>证据</th></tr></thead>
+  <tbody>
+    <tr><td>窗口内提交</td><td>13 次</td><td><code>git log --since="yesterday" --oneline</code></td></tr>
+    <tr><td>最新 ADR</td><td>ADR-0429</td><td><code>docs/adr/ADR-0429.md</code></td></tr>
+    <tr><td>门禁豁免台账</td><td>空</td><td><code>scripts/gates/exemptions.json = []</code></td></tr>
+    <tr><td>服务矩阵行数</td><td>237 行</td><td><code>docs/specs/2026-09-27-sanbao-to-sage-ui-state-map.json</code> summary</td></tr>
+    <tr><td>桌面 UI TS/TSX 文件</td><td>55 个</td><td><code>find apps/sage-shell/src/product/app/desktop</code></td></tr>
+    <tr><td>主进程 main TS 文件</td><td>113 个</td><td><code>find apps/sage-shell/src/main -name '*.ts'</code></td></tr>
+    <tr><td><code>main/index.ts</code></td><td>1788 行</td><td><code>wc -l apps/sage-shell/src/main/index.ts</code></td></tr>
+    <tr><td><code>main/app-service.ts</code></td><td>1893 行</td><td><code>wc -l apps/sage-shell/src/main/app-service.ts</code></td></tr>
+    <tr><td>单测 spec 文件</td><td>255 个</td><td><code>ls apps/sage-shell/test/*.spec.*</code></td></tr>
+    <tr><td>累计提交（自 2026-09-01）</td><td>1115 次</td><td><code>git log --since=2026-09-01 --oneline | wc -l</code></td></tr>
+  </tbody>
+</table>
+
+<h2>3. 质量基线</h2>
+
+<h3>3.1 测试与门禁</h3>
+<ul>
+  <li>笔记 D5 现场实跑：284 文件 / 3088 通过 / 1 跳过。<span class="status ok">已验证</span> 证据：<code>node scripts/test.mjs run</code>。</li>
+  <li>笔记 D5 现场门禁：quick 51/51 通过，exit 0。<span class="status ok">已验证</span> 证据：<code>pnpm run gate</code>。</li>
+  <li>今日未独立重跑全量单测。<span class="status warn">未验证</span> 规则：禁止沿用旧值。</li>
+</ul>
+
+<h3>3.2 行数预算</h3>
+<ul>
+  <li><code>main/index.ts</code> 当前 1788 行，低于 2000 行硬门槛。<span class="status ok">已验证</span></li>
+  <li><code>main/app-service.ts</code> 当前 1893 行，低于 2000 行硬门槛。<span class="status ok">已验证</span></li>
+  <li>豁免台账为空。<span class="status ok">已验证</span></li>
+</ul>
+
+<h2>4. 本期核心成果（ADR-0429 D20–D30）</h2>
+
+<h3>4.1 受保护准入收口</h3>
+<ul>
+  <li>D20 收口 <code>plan.execute-step</code> 受保护准入并清零 <code>unsupportedOperations</code>。证据：提交 <code>48c5d5d6</code>。</li>
+  <li>D21 建立四段式 AST 纸老虎巡检门禁。证据：提交 <code>017f3a9b</code>。</li>
+  <li>D22 完成四定律跨层对称性加固。证据：提交 <code>e2408797</code>。</li>
+  <li>D23 完成状态机生命周期与跨层接缝加固。证据：提交 <code>90347c09</code>。</li>
+  <li>D24 完成 69 路由四端接缝加固与跨事项投影隔离。证据：提交 <code>a455b21a</code>。</li>
+  <li>D25 完成功能链路底座闭环、真机流式 chunk 与 sha256 附件摘要。证据：提交 <code>34928ae0</code>。</li>
+</ul>
+
+<h3>4.2 跨境电商核算引擎</h3>
+<ul>
+  <li>D26 落地四大确定性核算合规引擎与 MCP Tool Schema 注入。证据：提交 <code>ad8a205b</code>。</li>
+  <li>D27 落地 53 位专家专属交付物工作流与一键三步计划立项。证据：提交 <code>720ee123</code>。</li>
+  <li>D28 加固六模块分模块核算、消除专家核算误触发。证据：提交 <code>49f17c76</code>。</li>
+  <li>D29 完成多选技能芯片渲染、动态参数跨境核算与 CSV 复制。证据：提交 <code>9013373c</code>。</li>
+</ul>
+
+<h3>4.3 发版前 UI 闭环</h3>
+<ul>
+  <li>D30 修复发版前 UI 布局与响应式适配。证据：提交 <code>4bd7a9f8</code>。</li>
+  <li>D30 修复 <code>home-page</code> 高度、<code>home-composer</code> 宽度对齐与对话框高度边界。证据：同上。</li>
+  <li>D30 加入 Composer <code>textarea</code> 自适应、深色模式监听、窄视口 rail 自收。证据：同上。</li>
+</ul>
+
+<h3>4.4 用户文档与总纲</h3>
+<ul>
+  <li>新增 Sage.app 用户操作手册、全量复盘与功能闭环蓝图。证据：提交 <code>a5aa38ae</code>。</li>
+  <li>升级零返工用户手册与 Sprint 1-4 闭环总纲。证据：提交 <code>fc47e4d3</code>。</li>
+  <li>手册对标 Qoder llms.txt 58 篇桌面文档淘金。证据：同上。</li>
+</ul>
+
+<h2>5. 矩阵读数</h2>
+<ul>
+  <li>服务矩阵共 237 行。证据：<code>docs/specs/2026-09-27-sanbao-to-sage-ui-state-map.json</code> summary。</li>
+  <li>sourceKinds：entry-observed 28，observed 154，static-only 55。证据：同上。</li>
+  <li>sourceImplementedFlags：false 237 行。证据：同上。</li>
+  <li>状态：<span class="status warn">未确认</span>。说明：未逐行复核。</li>
+</ul>
+
+<h2>6. 未覆盖与风险</h2>
+<ul>
+  <li>真实模型回合未跑通。环境无 <code>DEEPSEEK_API_KEY</code>。<span class="status warn">未验证</span></li>
+  <li>未重新出 DMG。<span class="status warn">未验证</span></li>
+  <li>未逐条复核 237 行台账全部条目。<span class="status warn">未确认</span></li>
+  <li>全量单测今日未独立重跑。<span class="status warn">未验证</span></li>
+  <li>矩阵 <code>sourceImplementedFlags</code> 全为 false。需复核定义与一致性。<span class="status warn">未确认</span></li>
+</ul>
+
+<h2>7. 证据清单</h2>
+<ul>
+  <li>提交：<code>git log --since="yesterday" --oneline</code>（13 条）。</li>
+  <li>最新 ADR：<code>docs/adr/ADR-0429.md</code>。</li>
+  <li>最新 implemented 笔记：<code>docs/notes/implemented/architecture/2026-10-31-trial-scope-artifact-declaration-and-second-matter-entry.md</code>。</li>
+  <li>矩阵：<code>docs/specs/2026-09-27-sanbao-to-sage-ui-state-map.json</code>。</li>
+  <li>用户手册：<code>docs/product/product-manual-sage-user-guide-and-closure-roadmap-stable.md</code>。</li>
+</ul>
+
+<footer>
+  <div>owner: self · source: human+ai · status: stable</div>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,163 @@
+{
+  "manifest_version": "v1",
+  "format": "ndjson",
+  "base_token": "I17db5Qr4aNHf8syN2WcKMFpnfC",
+  "table_id": "tblYMKne5LII3aTV",
+  "rev": 292,
+  "timezone": "Asia/Shanghai",
+  "query_context": {
+    "field_scope": "all_fields",
+    "record_scope": "all_records"
+  },
+  "requested_limit": 500,
+  "records_count": 23,
+  "page_count": 1,
+  "has_more": false,
+  "record_file": "/Users/lute/Project/SI-Agent/tmp_ogsm_analysis/data/video_log.ndjson",
+  "record_file_size_bytes": 10079,
+  "manifest_file": "/Users/lute/Project/SI-Agent/tmp_ogsm_analysis/data/video_log.manifest.json",
+  "columns": {
+    "record_id": {
+      "physical_type": "string",
+      "stats": {
+        "max_length": 14
+      },
+      "example": "recvtmTmhut5Wt"
+    },
+    "交付日期": {
+      "field_id": "fldV3bzFHj",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 0,
+        "max_length": 1,
+        "avg_length": 1
+      },
+      "example": [
+        "9.21-9.25"
+      ]
+    },
+    "交付素材链接": {
+      "field_id": "fldQSFXzd8",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 23,
+        "max_length": 0
+      },
+      "hint": "All values are empty; type inference may be ambiguous. Avoid analyzing this column unless required."
+    },
+    "内容制作日期": {
+      "field_id": "fldtjHcm68",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 0,
+        "max_length": 1,
+        "avg_length": 1
+      },
+      "example": [
+        "9.13-9.20"
+      ]
+    },
+    "发帖日期": {
+      "field_id": "fldL2y0Rfn",
+      "field_type": "datetime",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 0,
+        "min": "2026-10-02T00:00:00.000+08:00",
+        "max": "2026-10-30T00:00:00.000+08:00"
+      },
+      "example": "2026-10-02T00:00:00.000+08:00"
+    },
+    "状态": {
+      "field_id": "fldhR5uvpl",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 0,
+        "max_length": 1,
+        "avg_length": 1
+      },
+      "example": [
+        "未启动"
+      ]
+    },
+    "确定合作日期": {
+      "field_id": "fldyG8HgY0",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 7,
+        "max_length": 1,
+        "avg_length": 0.6956521739130435
+      },
+      "example": [
+        "9.7-9.11"
+      ]
+    },
+    "素材来源": {
+      "field_id": "fldFlYM5ma",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 0,
+        "max_length": 1,
+        "avg_length": 1
+      },
+      "example": [
+        "短视频-HP"
+      ]
+    },
+    "脚本完成日期": {
+      "field_id": "fldGLWQogx",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 0,
+        "max_length": 1,
+        "avg_length": 1
+      },
+      "example": [
+        "8.24-8.28"
+      ]
+    },
+    "视频详细需求": {
+      "field_id": "fldl5dNlU5",
+      "field_type": "link",
+      "physical_type": "array<struct<id string>>",
+      "stats": {
+        "empty_count": 0,
+        "max_length": 1,
+        "avg_length": 1
+      },
+      "example": [
+        {
+          "id": "recvsUNJWnWWGl"
+        }
+      ]
+    },
+    "视频需求概述": {
+      "field_id": "fldV6DZtRg",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 0,
+        "max_length": 56
+      },
+      "example": "mom's multi-task"
+    },
+    "负责人": {
+      "field_id": "fldrFsrIxQ",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 23,
+        "max_length": 0,
+        "avg_length": 0
+      },
+      "hint": "All values are empty; type inference may be ambiguous. Avoid analyzing this column unless required."
+    }
+  }
+}

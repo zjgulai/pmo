@@ -1,0 +1,103 @@
+{
+  "manifest_version": "v1",
+  "format": "ndjson",
+  "base_token": "I17db5Qr4aNHf8syN2WcKMFpnfC",
+  "table_id": "tbliwosJqOoXWyvA",
+  "rev": 164,
+  "timezone": "Asia/Shanghai",
+  "query_context": {
+    "field_scope": "all_fields",
+    "record_scope": "all_records"
+  },
+  "requested_limit": 200,
+  "records_count": 21,
+  "page_count": 1,
+  "has_more": false,
+  "record_file": "/Users/lute/Project/SI-Agent/tmp_ogsm_analysis/data/product_links.ndjson",
+  "record_file_size_bytes": 20881,
+  "manifest_file": "/Users/lute/Project/SI-Agent/tmp_ogsm_analysis/data/product_links.manifest.json",
+  "columns": {
+    "FB": {
+      "field_id": "fldOqAIlL2",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 4,
+        "max_length": 314
+      },
+      "example": "[https://tr.ee/r7BWM6](https://tr.ee/r7BWM6)"
+    },
+    "IG": {
+      "field_id": "fldanzZYe0",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 8,
+        "max_length": 1534
+      },
+      "example": "[https://momcozy.com/pages/black-friday?utm_source=instagram&utm_medium=sns&utm_campaign=us_BFCM2026](https://momcozy.com/pages/",
+      "example_truncated": true
+    },
+    "PIN": {
+      "field_id": "fldOYXgAUo",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 2,
+        "max_length": 316
+      },
+      "example": "[https://momcozy.com/?utm_source=pinterest&utm_medium=sns&utm_campaign=us_website](https://momcozy.com/?utm_source=pinterest&utm",
+      "example_truncated": true
+    },
+    "TK": {
+      "field_id": "fldqwSqRmn",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 13,
+        "max_length": 310
+      },
+      "example": "[https://momcozy.com/pages/black-friday?utm_source=tiktok&utm_medium=sns&utm_campaign=us_BFCM2026](https://momcozy.com/pages/bla",
+      "example_truncated": true
+    },
+    "X": {
+      "field_id": "fldOcyInGv",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 20,
+        "max_length": 196
+      },
+      "example": "[https://momcozy.com/pages/baby-registry?utm_source=x&utm_medium=sns&utm_campaign=us_BFCM2026_bbr](https://momcozy.com/pages/bab",
+      "example_truncated": true
+    },
+    "YT": {
+      "field_id": "fldxYhIhHc",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 5,
+        "max_length": 312
+      },
+      "example": "[https://momcozy.com/pages/black-friday?utm_source=youtube&utm_medium=sns&utm_campaign=us_BFCM2026](https://momcozy.com/pages/bl",
+      "example_truncated": true
+    },
+    "record_id": {
+      "physical_type": "string",
+      "stats": {
+        "max_length": 16
+      },
+      "example": "recvm8u1nPWLlZ"
+    },
+    "项目名称": {
+      "field_id": "fldnGyfokM",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 0,
+        "max_length": 15
+      },
+      "example": "W1"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "ok": false,
+  "error": {
+    "type": "validation",
+    "subtype": "invalid_argument",
+    "message": "unknown command \"docx\" for \"lark-cli\"\n\nDid you mean this?\n\tdocs\n"
+  },
+  "_notice": {
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.91",
+      "latest": "1.0.98",
+      "message": "lark-cli 1.0.98 available, current 1.0.91, run: lark-cli update"
+    }
+  }
+}

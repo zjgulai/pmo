@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Momcozy 北美 PR 业务分析总结（2026 YTD）· OGSM</title>
+<style>
+:root{
+  --ink:#241f1c; --muted:#6b6058; --paper:#fbf8f5; --card:#ffffff;
+  --line:#e9dfd6; --line2:#f2ebe5;
+  --rose:#b4536f; --rose2:#8d3f57; --rose-soft:#f8e9ee;
+  --slate:#2f4858; --slate-soft:#eaf0f3;
+  --gold:#b8862f; --gold-soft:#fbf2df;
+  --green:#3f7a5c; --green-soft:#e8f2ec;
+  --amber:#a8651c; --amber-soft:#fbeedb;
+  --red:#a33a3a; --red-soft:#f8e6e6;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(36,31,28,.04),0 8px 24px rgba(36,31,28,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px; margin:0 auto; padding:0 28px 96px}
+a{color:var(--rose2); text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ---------- top nav ---------- */
+.topbar{
+  position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(12px);
+  background:rgba(251,248,245,.88); border-bottom:1px solid var(--line);
+}
+.topbar .inner{max-width:1120px; margin:0 auto; padding:10px 28px; display:flex; gap:18px; align-items:center}
+.topbar .brand{font-weight:700; letter-spacing:.02em; color:var(--rose2); white-space:nowrap}
+.topbar nav{display:flex; gap:16px; overflow-x:auto; scrollbar-width:none}
+.topbar nav::-webkit-scrollbar{display:none}
+.topbar nav a{font-size:13px; color:var(--muted); white-space:nowrap}
+.topbar nav a:hover{color:var(--rose2)}
+
+/* ---------- hero ---------- */
+.hero{padding:56px 0 30px}
+.eyebrow{font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--rose); font-weight:700}
+h1{font-size:40px; line-height:1.25; margin:14px 0 10px; letter-spacing:-.01em}
+.sub{font-size:17px; color:var(--muted); max-width:860px; margin:0 0 22px}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{font-size:12.5px; padding:5px 11px; border-radius:999px; background:var(--card); border:1px solid var(--line); color:var(--muted)}
+.chip b{color:var(--ink); font-weight:600}
+
+/* ---------- sections ---------- */
+section{margin-top:56px; scroll-margin-top:70px}
+.sec-head{display:flex; align-items:baseline; gap:14px; border-bottom:2px solid var(--ink); padding-bottom:10px; margin-bottom:24px}
+.sec-num{font-size:13px; font-weight:800; color:var(--rose); letter-spacing:.08em}
+h2{font-size:26px; margin:0; letter-spacing:-.01em}
+h3{font-size:18.5px; margin:34px 0 12px; letter-spacing:-.005em}
+h4{font-size:15.5px; margin:22px 0 8px}
+p{margin:0 0 14px}
+.lead{font-size:16px; color:#3d3530}
+
+/* ---------- cards ---------- */
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:22px 24px; box-shadow:var(--shadow)}
+.grid{display:grid; gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:860px){.g2,.g3,.g4{grid-template-columns:1fr}
+}
+
+/* ---------- kpi ---------- */
+.kpis{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:26px 0 8px}
+@media(max-width:860px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.kpi{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 18px 16px; box-shadow:var(--shadow)}
+.kpi .v{font-size:30px; font-weight:750; line-height:1.1; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:15px; font-weight:600; color:var(--muted); margin-left:2px}
+.kpi .l{font-size:12.5px; color:var(--muted); margin-top:6px}
+.kpi .accent{color:var(--rose)}
+.kpi.warn .v{color:var(--amber)}
+
+/* ---------- tables ---------- */
+.table-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow)}
+.table-scroll table{border-collapse:collapse; width:100%; font-size:13.5px; line-height:1.6}
+.table-scroll th{
+  background:#f7f1ec; color:#4a403a; text-align:left; font-weight:650; font-size:12.5px;
+  padding:11px 14px; border-bottom:1px solid var(--line); white-space:nowrap; position:sticky; top:0;
+}
+.table-scroll td{padding:10px 14px; border-bottom:1px solid var(--line2); vertical-align:top}
+.table-scroll tbody tr:last-child td{border-bottom:none}
+.table-scroll tbody tr:nth-child(even){background:#fdfbf9}
+.table-scroll td.num,.table-scroll th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+.table-scroll tfoot td{background:#f7f1ec; font-weight:650; border-top:1px solid var(--line)}
+.table-scroll.compact td,.table-scroll.compact th{padding:8px 11px}
+.cap{font-size:12.5px; color:var(--muted); margin:8px 2px 0}
+
+/* ---------- badges ---------- */
+.badge{display:inline-block; font-size:11.5px; font-weight:650; padding:2px 8px; border-radius:999px; white-space:nowrap}
+.b-ok{background:var(--green-soft); color:var(--green)}
+.b-warn{background:var(--amber-soft); color:var(--amber)}
+.b-bad{background:var(--red-soft); color:var(--red)}
+.b-info{background:var(--slate-soft); color:var(--slate)}
+.b-rose{background:var(--rose-soft); color:var(--rose2)}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:var(--radius); padding:18px 20px; margin:20px 0; border:1px solid var(--line); background:var(--card)}
+.callout .tag{font-size:11.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:6px}
+.c-insight{border-left:4px solid var(--slate); background:#f6fafb}
+.c-insight .tag{color:var(--slate)}
+.c-warn{border-left:4px solid var(--amber); background:#fdf8f0}
+.c-warn .tag{color:var(--amber)}
+.c-ok{border-left:4px solid var(--green); background:#f4faf6}
+.c-ok .tag{color:var(--green)}
+.c-rose{border-left:4px solid var(--rose); background:#fdf5f7}
+.c-rose .tag{color:var(--rose2)}
+
+/* ---------- objective ---------- */
+.objective{
+  background:linear-gradient(135deg,#2f4858 0%,#3d5a68 55%,#7a4258 100%);
+  color:#fff; border-radius:18px; padding:34px 36px; box-shadow:0 16px 40px rgba(47,72,88,.22);
+}
+.objective .k{font-size:12px; letter-spacing:.18em; text-transform:uppercase; opacity:.72; font-weight:700}
+.objective .q{font-size:24px; line-height:1.55; margin:14px 0 0; font-weight:600; letter-spacing:-.005em}
+.objective .n{font-size:13.5px; opacity:.78; margin-top:14px}
+
+/* ---------- strategy ---------- */
+.strat{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+.strat-top{display:flex; gap:16px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
+.strat-id{font-size:12px; font-weight:800; color:var(--rose); letter-spacing:.12em}
+.strat h3{margin:2px 0 6px; font-size:20px}
+.strat .one{color:#4a403a; font-size:14.5px; margin:0}
+.strat .metrics{display:flex; gap:26px; flex-wrap:wrap; margin:16px 0 6px}
+.strat .m .v{font-size:22px; font-weight:750; font-variant-numeric:tabular-nums; line-height:1.15}
+.strat .m .l{font-size:11.5px; color:var(--muted); letter-spacing:.04em}
+.strat ul{margin:8px 0 0; padding-left:20px}
+.strat li{margin:4px 0}
+.strat .risk{font-size:13px; color:var(--amber); background:var(--amber-soft); border-radius:8px; padding:8px 12px; margin-top:12px}
+
+/* ---------- bars ---------- */
+.bar{height:8px; background:#efe7e0; border-radius:999px; overflow:hidden; margin:6px 0 2px}
+.bar-fill{height:100%; border-radius:999px; background:var(--rose)}
+.bar-fill.slate{background:var(--slate)}
+.bar-fill.gold{background:var(--gold)}
+.bar-fill.green{background:var(--green)}
+.bar-fill.amber{background:var(--amber)}
+.barlow{display:grid; grid-template-columns:150px 1fr 64px; gap:12px; align-items:center; font-size:13px}
+.barlow .n{color:var(--muted)}
+.barlow .v{text-align:right; font-variant-numeric:tabular-nums; font-weight:650}
+@media(max-width:640px){.barlow{grid-template-columns:110px 1fr 54px; font-size:12.5px}
+}
+
+/* ---------- monthly chart ---------- */
+.chart{display:flex; align-items:flex-end; gap:10px; height:230px; padding:18px 6px 0; border-bottom:1px solid var(--line)}
+.chart-col{flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; gap:6px}
+.chart-bar{width:100%; max-width:46px; border-radius:6px 6px 0 0; background:#c9b8ae; transition:height .3s}
+.chart-bar.hot{background:var(--rose)}
+.chart-col .num{font-size:12px; font-weight:700; font-variant-numeric:tabular-nums}
+.chart-col .lab{font-size:11.5px; color:var(--muted); padding-bottom:6px}
+.chart-legend{display:flex; gap:18px; font-size:12px; color:var(--muted); margin-top:10px}
+.chart-legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; vertical-align:-1px}
+
+/* ---------- flywheel ---------- */
+.flywheel{display:grid; gap:12px}
+.fw-row{display:grid; grid-template-columns:180px 1fr 56px; gap:14px; align-items:center}
+.fw-row .name{font-weight:650; font-size:14px}
+.fw-row .name small{display:block; font-weight:400; color:var(--muted); font-size:11.5px}
+.fw-row .score{text-align:right; font-variant-numeric:tabular-nums; font-weight:750}
+@media(max-width:640px){.fw-row{grid-template-columns:120px 1fr 48px}
+}
+.chain{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:18px 20px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px;
+  line-height:1.9; color:#4a403a; overflow-x:auto; white-space:pre;
+}
+
+/* ---------- misc ---------- */
+ul.clean{padding-left:20px; margin:10px 0}
+ul.clean li{margin:6px 0}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+@media(max-width:860px){.two-col{grid-template-columns:1fr}
+}
+.note{font-size:12.5px; color:var(--muted)}
+.hr{height:1px; background:var(--line); margin:36px 0}
+footer{margin-top:64px; padding-top:22px; border-top:1px solid var(--line); color:var(--muted); font-size:12.5px}
+.anchor{scroll-margin-top:76px}
+
+@media print{
+  .topbar{display:none}
+  body{background:#fff; font-size:11.5px}
+  .wrap{max-width:none; padding:0}
+  section{margin-top:28px; break-inside:avoid}
+  .card,.table-scroll,.strat{box-shadow:none}
+  h1{font-size:26px}
+  .objective{padding:22px}
+  .objective .q{font-size:17px}
+}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="inner">
+  <span class="brand">Momcozy · PR OGSM</span>
+  <nav>
+    <a href="#s0">数据底座</a>
+    <a href="#so">Objective</a>
+    <a href="#sg">Goals</a>
+    <a href="#ss">Strategies</a>
+    <a href="#sm">Measurements</a>
+    <a href="#sop">业务场景与 SOP</a>
+    <a href="#gap">完成点 / GAP</a>
+    <a href="#fly">飞轮诊断</a>
+    <a href="#end">结论</a>
+  </nav>
+</div></div>
+<div class="wrap">
+
+
+<header class="hero">
+  <div class="eyebrow">Brand PR · North America · 2026 YTD</div>
+  <h1>Momcozy 北美 PR 业务分析总结</h1>
+  <p class="sub">基于「品牌PR All-in-One」7 张表的 OGSM 梳理 —— 从业务场景与运营 SOP 出发，与当前 PR Agent（Vicky）的产品能力融合，识别完成点与 GAP 点。</p>
+  <div class="chips">
+    <span class="chip">数据截止 <b>2026-10-31</b></span>
+    <span class="chip">样本区间 <b>2026-01-01 – 2026-10-31</b></span>
+    <span class="chip">全量记录 <b>666 条</b></span>
+    <span class="chip">表 <b>7 张</b></span>
+    <span class="chip">口径 <b>Tracker 发布时间</b></span>
+  </div>
+</header>
+
+<section id="s0" class="anchor">
+<div class="sec-head"><span class="sec-num">00</span><h2>数据底座与八个数</h2></div>
+<p class="lead">先说结论：<b>产出层很饱满，计划层和执行层很薄，成本层完全空白。</b>这是一条「哑铃型」业务链——能证明做了多少，还不能证明为什么做、投入多少、下一步该做什么。</p>
+<div class="kpis">
+<div class="kpi accent"><div class="v">347<small>条</small></div><div class="l">上线报道（336 条有日期）</div></div>
+<div class="kpi "><div class="v">149<small>家</small></div><div class="l">覆盖媒体（库内 246 家）</div></div>
+<div class="kpi "><div class="v">6.85<small>:1</small></div><div class="l">Earned : Paid = 267 : 39</div></div>
+<div class="kpi "><div class="v">100<small>条</small></div><div class="l">S 级报道（占已评级 48.1%）</div></div>
+<div class="kpi warn"><div class="v">31<small>%</small></div><div class="l">媒体库激活率（76 / 246）</div></div>
+<div class="kpi "><div class="v">33.6<small>条/月</small></div><div class="l">月均产出，10 月峰值 68 条</div></div>
+<div class="kpi "><div class="v">43<small>个</small></div><div class="l">规划机会（Calendar 23 + Editorial 20）</div></div>
+<div class="kpi warn"><div class="v">0<small>条</small></div><div class="l">付费成本记录（付费表为空）</div></div>
+</div>
+<div class="table-scroll compact"><table><thead><tr><th class="">#</th><th class="">表</th><th class="">记录</th><th class="">字段</th><th class="">在业务中的角色</th><th class="">数据状态</th></tr></thead><tbody><tr><td>1</td><td><b>媒体资源库</b></td><td>246</td><td>28</td><td>媒体主数据：谁值得投</td><td>仅 8 个字段有值，20 个空占位；S/A/B/C 齐全但无 D 级 <span class="badge b-b-warn">见明细</span></td></tr><tr><td>2</td><td><b>媒体报道上线Tracker (2026)</b></td><td>347</td><td>16</td><td>产出台账：做了什么</td><td>链接 99%、时间 97%、媒体 100%、合作类型 100%；品线 0% <span class="badge b-b-ok">见明细</span></td></tr><tr><td>3</td><td><b>Pitching Calendar</b></td><td>23</td><td>6</td><td>战役排期：什么时候做</td><td>12/23 的 Key Product 为 / 或 TBD（52%） <span class="badge b-b-warn">见明细</span></td></tr><tr><td>4</td><td><b>Editorial Opportunities</b></td><td>20</td><td>9</td><td>选题机会：为什么能做</td><td>Key Product 65%、Pitch Angle 70%、Media Examples 70%、Pitch Timing 80% <span class="badge b-b-warn">见明细</span></td></tr><tr><td>5</td><td><b>吸奶器榜单媒体进展跟踪</b></td><td>12</td><td>15</td><td>品类渗透：占没占住</td><td>12 家目标媒体、11 家已出现、5/10 已决入选 <span class="badge b-b-ok">见明细</span></td></tr><tr><td>6</td><td><b>PR资源库</b></td><td>18</td><td>6</td><td>知识资产：怎么复用</td><td>6 条无文档类型、5 条无 Owner <span class="badge b-b-warn">见明细</span></td></tr><tr><td>7</td><td><b>付费媒体合作数据</b></td><td>0</td><td>1</td><td>付费成本与效果</td><td>空表，仅一个「文本」字段 <span class="badge b-b-bad">见明细</span></td></tr></tbody></table></div>
+<p class="cap">注：付费媒体合作数据为 0 条实质记录，是本次分析中唯一的完全空表。</p>
+<h3>月度产出：一年两个脉冲</h3>
+<div class="chart">
+<div class="chart-col"><span class="num">24</span><div class="chart-bar" style="height:35%"></div><span class="lab">1月</span></div>
+<div class="chart-col"><span class="num">11</span><div class="chart-bar" style="height:16%"></div><span class="lab">2月</span></div>
+<div class="chart-col"><span class="num">31</span><div class="chart-bar" style="height:46%"></div><span class="lab">3月</span></div>
+<div class="chart-col"><span class="num">26</span><div class="chart-bar" style="height:38%"></div><span class="lab">4月</span></div>
+<div class="chart-col"><span class="num">31</span><div class="chart-bar" style="height:46%"></div><span class="lab">5月</span></div>
+<div class="chart-col"><span class="num">51</span><div class="chart-bar hot" style="height:75%"></div><span class="lab">6月</span></div>
+<div class="chart-col"><span class="num">36</span><div class="chart-bar" style="height:53%"></div><span class="lab">7月</span></div>
+<div class="chart-col"><span class="num">16</span><div class="chart-bar" style="height:24%"></div><span class="lab">8月</span></div>
+<div class="chart-col"><span class="num">42</span><div class="chart-bar hot" style="height:62%"></div><span class="lab">9月</span></div>
+<div class="chart-col"><span class="num">68</span><div class="chart-bar hot" style="height:100%"></div><span class="lab">10月</span></div>
+</div>
+<div class="chart-legend"><span><i style="background:#c9b8ae"></i>常规月</span><span><i style="background:#b4536f"></i>大促 / 品牌战役月</span></div>
+<p class="cap">2026 年 6 月（Prime Day）与 9–10 月（品牌日 + 26FPD）构成两个明显脉冲；10 月单月 68 条占全年 20.2%。</p>
+</section>
+<section id="so" class="anchor">
+<div class="sec-head"><span class="sec-num">O</span><h2>Objective（目的）</h2></div>
+
+<div class="objective">
+  <div class="k">Core Objective</div>
+  <div class="q">把 Momcozy 做成北美母婴媒体在「喂养—睡眠—出行」三大场景中的默认推荐品牌；同时把 S 级媒体关系从「偶发命中」变成「可复用的资产」，让每一次销售节点的放量都不以稀释权威结构为代价。</div>
+  <div class="n">一句话：短期靠节点放大，长期靠关系资产；节点可以冲量，但不能冲掉权威。</div>
+</div>
+
+<h3>为什么是这句话：四条数据依据</h3>
+<div class="grid g2">
+<div class="card"><h4 style="margin-top:0">现有增长是关系驱动，不是预算驱动</h4><p class="note" style="margin:0">267 条 Earned 对 39 条 Paid（6.85:1），Earned 占全部产出 77%。增长主要来自选题命中与编辑关系，而不是买量。关系有带宽上限，所以目的必须落在「资产化」。</p></div>
+<div class="card"><h4 style="margin-top:0">业务节奏是节点脉冲，但脉冲正在稀释权威</h4><p class="note" style="margin:0">大促节点贡献 106 条（30.5%），10 月单月 68 条；与此同时 S 级占比从 7 月的 47% 掉到 9、10 月的 19%。量上去了，权威结构被摊薄。</p></div>
+<div class="card"><h4 style="margin-top:0">品牌叙事与新品是两条被明确排产的主线</h4><p class="note" style="margin:0">Calendar 23 条里 Brand Campaign 11 条、Promotion 6 条；Editorial 20 条里 New Product Launch 11 条（55%）。规划层已用行动表明主战场。</p></div>
+<div class="card"><h4 style="margin-top:0">榜单是唯一被单独建表的占位型目标</h4><p class="note" style="margin:0">吸奶器品类单开 15 字段的表，12 家目标媒体、5/10 已决入选。说明团队已把「榜单入选」当作可运营 KPI，而不是运气。</p></div>
+</div>
+
+<div class="callout c-rose"><span class="tag">目的的边界 · 不做什么</span>
+<ul class="clean" style="margin-bottom:0">
+<li>不与 Eufy 硬拼 wearable 总榜叙事，守「细分冠军 + 价值首选」双定位（media_relations_playbook 规律 4）。</li>
+<li>不追求媒体数量最大化：149 家媒体中 100 家只出现 1 次，广撒网已被数据证明低效。</li>
+<li>不把付费当增长引擎：Paid 只做 P0 媒体买不到 earned 时的补位，并用 earned 证据对冲独立性质疑。</li>
+</ul></div>
+
+</section>
+<section id="sg" class="anchor">
+<div class="sec-head"><span class="sec-num">G</span><h2>Goals（目标）</h2></div>
+<p class="lead">时间窗口统一为 <b>2027 全年</b>，Q4 2026（11–12 月）为爬坡期。所有基线均来自 2026-01-01 至 2026-10-31 实测。</p>
+<div class="table-scroll compact"><table><thead><tr><th class="">#</th><th class="">Goal</th><th class="">当前基线</th><th class="">2027 目标</th><th class="">时间窗口</th><th class="">支撑数据（表 / 字段）</th><th class="">进度基线</th></tr></thead><tbody><tr><td><b>G1</b></td><td>报道总量与节奏</td><td>336 条（33.6/月）</td><td><b style="color:#8d3f57">500 条（41.7/月）</b></td><td>2027 全年</td><td>Tracker 发布时间；月度分布</td><td><div class="bar" style="margin:0;min-width:70px"><div class="bar-fill" style="width:67%"></div></div></td></tr><tr><td><b>G2</b></td><td>权威层级</td><td>100 条 S / 19 家 S 媒体</td><td><b style="color:#8d3f57">150 条 S / 26 家</b></td><td>2027 全年</td><td>Tracker 媒体评级 + 媒体库评级</td><td><div class="bar" style="margin:0;min-width:70px"><div class="bar-fill" style="width:67%"></div></div></td></tr><tr><td><b>G3</b></td><td>媒体资产激活</td><td>76/246 = 31%</td><td><b style="color:#8d3f57">135/246 = 55%；库外率 <10%</b></td><td>2027 Q2 前</td><td>媒体库 × Tracker 媒体名</td><td><div class="bar" style="margin:0;min-width:70px"><div class="bar-fill" style="width:31%"></div></div></td></tr><tr><td><b>G4</b></td><td>Earned / Paid 结构</td><td>6.85:1；成本记录 0%</td><td><b style="color:#8d3f57">≥8:1；Paid ≤12%；成本 100%</b></td><td>2027 全年</td><td>Tracker 合作类型 + 付费表</td><td><div class="bar" style="margin:0;min-width:70px"><div class="bar-fill" style="width:69%"></div></div></td></tr><tr><td><b>G5</b></td><td>吸奶器榜单</td><td>5/10 入选（50%）</td><td><b style="color:#8d3f57">8/12 入选（67%）</b></td><td>2027 全年</td><td>吸奶器榜单表 入选 / 报道角度</td><td><div class="bar" style="margin:0;min-width:70px"><div class="bar-fill" style="width:50%"></div></div></td></tr><tr><td><b>G6</b></td><td>规划到产出闭环</td><td>20 个机会；字段 65–80%</td><td><b style="color:#8d3f57">30 个机会；字段 100%；转化 ≥30%</b></td><td>2027 全年</td><td>Editorial 4 字段 + Tracker</td><td><div class="bar" style="margin:0;min-width:70px"><div class="bar-fill" style="width:65%"></div></div></td></tr></tbody></table></div>
+<p class="cap">进度基线条表示「当前值 / 2027 目标」的粗略比例，仅用于视觉参照，不作为考核口径。</p>
+<div class="grid g2" style="margin-top:18px">
+<div class="card"><h4 style="margin-top:0">G1 为什么是 500 条</h4><p class="note" style="margin:0">2026 年化 = 336 ÷ 10 × 12 = 403 条；Q4 实际跑速 = (42+68) ÷ 2 = 55 条/月，年化 660。500 条落在「年化值」与「Q4 跑速」之间，同比 +24%，够得着但不冒进。</p></div>
+<div class="card"><h4 style="margin-top:0">G2 为什么 S 级只要求 30%</h4><p class="note" style="margin:0">当前 S 占总产出 28.8%、占已评级 48.1%。若 2027 评级完整度从 60% 提到 90%，在 500 条总量下维持 48% 需要约 216 条 S，仍接近翻倍。150 条 / 500 条 = 30%，是「总量增长 + 权威占比稳住微升」的结构性目标。</p></div>
+<div class="card"><h4 style="margin-top:0">G3 为什么同时看激活率与库外率</h4><p class="note" style="margin:0">同一问题的两面：库里有 246 家只出过 76 家（存量没盘活）；Tracker 149 家有 63 家不在库里（增量没沉淀）。只提激活率会诱导「为指标骚扰低价值媒体」，所以必须配库外率上限。</p></div>
+<div class="card"><h4 style="margin-top:0">G4 为什么强调成本记录 100%</h4><p class="note" style="margin:0">Paid 有 39 条，付费表 0 条——知道买了 39 篇，不知道花了多少钱、买了谁、效果如何。成本不可见时谈 Earned:Paid 优化没有分母。</p></div>
+<div class="card"><h4 style="margin-top:0">G5 为什么是 8/12</h4><p class="note" style="margin:0">12 家目标媒体里 11 家已出现 Momcozy（关系在），10 家有结论、5 家入选。8/12 意味着再把 3 家从「提及」推到「入选」，属关系深耕而非冷启动。</p></div>
+<div class="card"><h4 style="margin-top:0">G6 为什么把「转化率可计算」当目标</h4><p class="note" style="margin:0">今天无法回答「pitch 了多少次、中了多少篇」——Tracker 无 pitch/编辑/反馈字段，规划表无状态。先让链路可算，再谈提升。</p></div>
+</div>
+</section>
+<section id="ss" class="anchor">
+<div class="sec-head"><span class="sec-num">S</span><h2>Strategies（策略）</h2></div>
+<p class="lead">七条策略中，S1–S5、S7 为互斥的产出桶（合计 100%），S6 是贯穿所有桶的质量视角，不单独占产出份额。</p>
+<div class="strat">
+<div class="strat-top"><div><div class="strat-id">S1</div><h3>大促节点饱和覆盖</h3><p class="one">把 Prime Day / Prime Big Deal Days / 26FPD / BFCM 做成「固定排产 + 饱和投放」的确定性战役，而不是临时追热点。</p></div></div>
+<div class="metrics">
+<div class="m"><div class="v">106</div><div class="l">条产出</div></div>
+<div class="m"><div class="v">30.5</div><div class="l">% 占比</div></div>
+<div class="m"><div class="v">44</div><div class="l">条 / 3 天峰值</div></div>
+</div>
+<div class="barlow"><span class="n">产出占比</span><div class="bar"><div class="bar-fill" style="width:30.5%"></div></div><span class="v">30.5%</span></div>
+<ul><li>26FPD 59 条（10 月 53 条）、Prime Day Sale 40 条（6 月 37 条）。</li><li>单日峰值：10/7 23 条、6/23 20 条、10/6 19 条；10/6–10/8 三天合计 44 条。</li><li>10 月 68 条 = 全年 20.2%，其中 26FPD 占 53 条（78%）。</li><li>大促类记录在 6 月与 10 月合计 90 条（37 + 53），占大促总量 106 条的 85%。付费向这里倾斜：39 条 Paid 中 17 条（44%）在大促项目。</li></ul>
+<div class="risk">判断：大促月 S 级占比只有 19%（9、10 月），远低于 7 月的 47%——冲量正在用权威换数量。</div>
+</div>
+<div class="strat">
+<div class="strat-top"><div><div class="strat-id">S2</div><h3>品牌日 + 线下事件驱动品牌叙事</h3><p class="one">用 Brand Day、Babylist NYC 快闪、LA Showroom 开业、ABC Kids Expo 这些「可到场」的事件，产出无法被竞品复制的一手品牌故事。</p></div></div>
+<div class="metrics">
+<div class="m"><div class="v">25</div><div class="l">条产出</div></div>
+<div class="m"><div class="v">48</div><div class="l">条 Brand Storytelling</div></div>
+<div class="m"><div class="v">48</div><div class="l">% 品牌日占 9 月产出</div></div>
+</div>
+<div class="barlow"><span class="n">产出占比</span><div class="bar"><div class="bar-fill" style="width:7.2%"></div></div><span class="v">7.2%</span></div>
+<ul><li>品牌日类 25 条（7.2%），9 月 20 条——当月 42 条产出的 48% 由品牌日贡献。</li><li>Brand Storytelling 48 条（13.8%），5 月 14、7 月 13、9 月 9 条。</li><li>线下事件已落地：Babylist NYC Event、Try Before You Buy、LA Showroom、ABC Kids Expo。</li><li>通稿 17 条（PR Newswire 10、GlobeNewswire 4），其中 5 条服务品牌日，其余分散在文化时刻与大促。</li></ul>
+<div class="risk">判断：品牌溢价最高、可复用性最强的一桶，却只占 7.2%，明显偏低。</div>
+</div>
+<div class="strat">
+<div class="strat-top"><div><div class="strat-id">S3</div><h3>新品上市 Editorial 化</h3><p class="one">每个新品上市前 6–8 周锁定 Editorial 机会、准备好编辑证据包，把「发新品」变成「被媒体写成趋势」。</p></div></div>
+<div class="metrics">
+<div class="m"><div class="v">11</div><div class="l">个新品机会</div></div>
+<div class="m"><div class="v">55</div><div class="l">% 占 Editorial</div></div>
+<div class="m"><div class="v">114</div><div class="l">条产品族覆盖</div></div>
+</div>
+<div class="barlow"><span class="n">产出占比</span><div class="bar"><div class="bar-fill" style="width:55.0%"></div></div><span class="v">55.0%</span></div>
+<ul><li>Editorial 20 条中 11 条是 New Product Launch（55%），第一大机会类型。</li><li>已排产：M5 Ultra、V3/V3 Pro、D8、BN09、WN08、MW08、CB004、FB095/96、光疗仪。</li><li>奶瓶清洗机 69 条（19.9%）已超过吸奶器 64 条（18.4%）——新品能快速成为第一露出品类。</li><li>ChangeGo 推车 16 条中 15 条集中在 10 月，典型上市爆发曲线。</li></ul>
+<div class="risk">判断：截至 10/31，Tracker 中 M5 Ultra / V3 / V3 Pro 露出均为 0 条。注意「露出产品」25% 为空，0 提及可能是未回填而非未上线。</div>
+</div>
+<div class="strat">
+<div class="strat-top"><div><div class="strat-id">S4</div><h3>榜单与奖项占位</h3><p class="one">把「Best of / Best Value / 年度大奖」当成可申请的阵地，用「保卫战 + 进攻战」分开打。</p></div></div>
+<div class="metrics">
+<div class="m"><div class="v">33</div><div class="l">条奖项相关</div></div>
+<div class="m"><div class="v">38</div><div class="l">条 Awards 内容</div></div>
+<div class="m"><div class="v">5/10</div><div class="l">榜单入选</div></div>
+</div>
+<div class="barlow"><span class="n">产出占比</span><div class="bar"><div class="bar-fill" style="width:9.5%"></div></div><span class="v">9.5%</span></div>
+<ul><li>奖项相关项目 33 条（9.5%）；Awards 内容类型 38 条；coop=Awards 18 条；备注「榜单」13 条。</li><li>时间集中：4 月 9、7 月 7、8 月 6 条，与申报季吻合。</li><li>媒体集中：Nappaawards 11、Parents 7、Good Housekeeping 5。</li><li>吸奶器榜单：12 家目标媒体、11 家已出现、10 家有结论、5 家入选；W1 已 pitch 11 家。</li></ul>
+<div class="risk">判断：话术已成型（S12 Pro Best Value / M5 Best Hands-Free / Air1 Best Wearable），但只有吸奶器一个品类有跟踪表。</div>
+</div>
+<div class="strat">
+<div class="strat-top"><div><div class="strat-id">S5</div><h3>文化时刻与公益借势</h3><p class="one">用母乳喂养月、母亲节/父亲节、IWD、世界心理健康日、早产儿日、PSI/CHKD 捐赠这些「有公共议题的时点」，让品牌进入编辑的选题日历而不是广告位。</p></div></div>
+<div class="metrics">
+<div class="m"><div class="v">61</div><div class="l">条产出</div></div>
+<div class="m"><div class="v">17.6</div><div class="l">% 占比</div></div>
+<div class="m"><div class="v">19</div><div class="l">条 Breastfeeding Month</div></div>
+</div>
+<div class="barlow"><span class="n">产出占比</span><div class="bar"><div class="bar-fill" style="width:17.6%"></div></div><span class="v">17.6%</span></div>
+<ul><li>文化时刻/节日 61 条（17.6%），第二大产出桶。</li><li>Breastfeeding Month 19 条（7 月 16）；母亲节系列 23 条；IWD 系列 10 条；父亲节 3 条。</li><li>公益：PSI 捐赠、CHKD 捐赠、King's Daughters Milk Bank 均有记录。</li><li>规划层对应：Calendar Cultural 4 条、Editorial Cultural 6 条。</li></ul>
+<div class="risk">判断：Earned 44 / Paid 10；10 条 Paid 中 6 条是母亲节 KOL 合作。剔除后 BFM、父亲节、公益几乎全为 Earned——性价比最高，但规划只给 4–6 个机会。</div>
+</div>
+<div class="strat">
+<div class="strat-top"><div><div class="strat-id">S6</div><h3>头部 S 媒体深关系（贯穿型）</h3><p class="one">把 80% 的关系精力压在 19 家 S 媒体和 9 位 P0 编辑身上，而不是把 149 家媒体平均对待。</p></div></div>
+<div class="metrics">
+<div class="m"><div class="v">100</div><div class="l">条 S 级</div></div>
+<div class="m"><div class="v">19</div><div class="l">家 S 媒体</div></div>
+<div class="m"><div class="v">37.5</div><div class="l">% Top10 集中度</div></div>
+</div>
+<div class="barlow"><span class="n">产出占比</span><div class="bar"><div class="bar-fill" style="width:28.8%"></div></div><span class="v">28.8%</span></div>
+<ul><li>头部：Parents 16、Good Housekeeping 14、The Bump 13、MSN 9、Babylist 7、What to Expect 6。</li><li>149 家媒体中 100 家只出现 1 次（67%）；BuzzFeed 单家 10.4%。</li><li>S 级内部结构：Earned 73、Awards 13、Paid 10、Organic 3——73% 是挣来的。</li><li>S 产出 10 条/月、5.3 条/家。</li></ul>
+<div class="risk">判断：集中度已偏高，且 100 家一次性媒体说明广撒网仍在发生。下一步不是加媒体，而是加深度。</div>
+</div>
+<div class="strat">
+<div class="strat-top"><div><div class="strat-id">S7</div><h3>付费媒体补位与效果可见</h3><p class="one">付费只做三件事——补 P0 媒体缺口、放大已被验证的内容、买榜单/评测位；且每一笔都要能算出成本与回报。</p></div></div>
+<div class="metrics">
+<div class="m"><div class="v">39</div><div class="l">条 Paid</div></div>
+<div class="m"><div class="v">11.2</div><div class="l">% 占比</div></div>
+<div class="m"><div class="v">0</div><div class="l">条成本记录</div></div>
+</div>
+<div class="barlow"><span class="n">产出占比</span><div class="bar"><div class="bar-fill" style="width:11.2%"></div></div><span class="v">11.2%</span></div>
+<ul><li>月度极不均：1 月 6（25%）、5 月 8（26%）、10 月 12（18%），三个月占 67%。</li><li>项目集中：26FPD 12、Prime Day 5、品牌日 3、Wellness 1 3、Air 1 2。</li><li>媒体集中：Scary Mommy 3、USA Today 3、SheKnows 2、NYP 2、What to Expect 2。</li><li>付费媒体合作数据表 0 条——媒体、形式、成本、曝光、CPM 全部缺失。</li></ul>
+<div class="risk">判断：有动作、无账本。在成本不可见之前，任何 Earned:Paid 优化都是纸上谈兵。</div>
+</div>
+</section>
+<section id="sm" class="anchor">
+<div class="sec-head"><span class="sec-num">M</span><h2>Measurements（衡量）</h2></div>
+<p class="lead">每条策略 2–3 个可量化指标，基线全部来自本报告的实测取数。</p>
+<div class="table-scroll compact"><table><thead><tr><th class="">策略</th><th class="">指标</th><th class="">当前基线</th><th class="">2027 目标</th><th class="">取数口径</th></tr></thead><tbody><tr><td>S1 大促</td><td>大促类产出 / 月</td><td>10.6 条（脉冲月 45–53）</td><td><b style="color:#3f7a5c">12 条 / 月，脉冲月 ≥50</b></td><td>Tracker 项目名聚类</td></tr><tr><td>S1 大促</td><td>大促月 S 级占比</td><td>19%（9、10 月）</td><td><b style="color:#3f7a5c">≥30%</b></td><td>Tracker 媒体评级 按月</td></tr><tr><td>S1 大促</td><td>单日峰值集中度</td><td>10/7 单日 23 条</td><td><b style="color:#3f7a5c">保持 ≤25 条 / 日</b></td><td>Tracker 发布时间</td></tr><tr><td>S2 品牌日</td><td>品牌日产出</td><td>25 条</td><td><b style="color:#3f7a5c">40 条</b></td><td>项目名含 Brand Day / 品牌日</td></tr><tr><td>S2 品牌日</td><td>Brand Storytelling 占比</td><td>13.8%（48 条）</td><td><b style="color:#3f7a5c">≥18%</b></td><td>Tracker 文章类型</td></tr><tr><td>S2 品牌日</td><td>线下事件转报道数</td><td>6 条</td><td><b style="color:#3f7a5c">15 条</b></td><td>项目名事件类</td></tr><tr><td>S3 新品</td><td>新品机会数</td><td>11（占 55%）</td><td><b style="color:#3f7a5c">15</b></td><td>Editorial Opportunity Type</td></tr><tr><td>S3 新品</td><td>上市 90 天内报道数</td><td>M5 Ultra 0；ChangeGo 15</td><td><b style="color:#3f7a5c">每个新品 ≥8 条</b></td><td>Tracker 露出产品 + 时间窗</td></tr><tr><td>S3 新品</td><td>新品首月产品提及</td><td>KleanPal 43 / D8 24</td><td><b style="color:#3f7a5c">每个新品 ≥10</b></td><td>Tracker 露出产品 关键词</td></tr><tr><td>S4 奖项</td><td>奖项类记录</td><td>33 条 / 38 条（内容类型）</td><td><b style="color:#3f7a5c">45 条</b></td><td>项目名 + 文章类型</td></tr><tr><td>S4 奖项</td><td>吸奶器榜单入选率</td><td>5/10 = 50%</td><td><b style="color:#3f7a5c">8/12 = 67%</b></td><td>吸奶器榜单表</td></tr><tr><td>S4 奖项</td><td>榜单前三 / 首选位</td><td>未结构化记录</td><td><b style="color:#3f7a5c">≥3 家</b></td><td>吸奶器表 媒体报道角度</td></tr><tr><td>S5 文化</td><td>文化类产出</td><td>61 条（17.6%）</td><td><b style="color:#3f7a5c">85 条（20%）</b></td><td>项目名聚类</td></tr><tr><td>S5 文化</td><td>节日月峰值</td><td>BFM 7 月 16 条</td><td><b style="color:#3f7a5c">≥20 条</b></td><td>Tracker 按月</td></tr><tr><td>S5 文化</td><td>公益项目数</td><td>3（PSI / CHKD / King's Daughters）</td><td><b style="color:#3f7a5c">5</b></td><td>项目名</td></tr><tr><td>S6 S 媒体</td><td>S 级记录</td><td>100 条</td><td><b style="color:#3f7a5c">150 条</b></td><td>Tracker 媒体评级</td></tr><tr><td>S6 S 媒体</td><td>S 媒体家数</td><td>19 家</td><td><b style="color:#3f7a5c">26 家</b></td><td>Tracker 媒体 + 评级</td></tr><tr><td>S6 S 媒体</td><td>Top10 集中度</td><td>37.5%</td><td><b style="color:#3f7a5c">≤40%（不加剧）</b></td><td>媒体计数</td></tr><tr><td>S7 付费</td><td>Paid 条数 / 占比</td><td>39 条 / 11.2%</td><td><b style="color:#3f7a5c">50 条 / ≤12%</b></td><td>Tracker 合作类型</td></tr><tr><td>S7 付费</td><td>Earned : Paid</td><td>6.85 : 1</td><td><b style="color:#3f7a5c">≥8 : 1</b></td><td>同上</td></tr><tr><td>S7 付费</td><td>付费成本记录率</td><td>0%</td><td><b style="color:#3f7a5c">100%</b></td><td>付费媒体合作数据表</td></tr></tbody></table></div>
+<h3>建议新增的月度记分卡（5 个数就够）</h3>
+<div class="table-scroll compact"><table><thead><tr><th class="">#</th><th class="">指标</th><th class="">公式</th><th class="">当前值</th><th class="">状态</th></tr></thead><tbody><tr><td>1</td><td>月产出</td><td>COUNT(本月有日期记录)</td><td>33.6</td><td><span class="badge b-ok">已有</span></td></tr><tr><td>2</td><td>S 级占比</td><td>S 记录 / 已评级记录</td><td>48.1%</td><td><span class="badge b-ok">已有</span></td></tr><tr><td>3</td><td>评级完整度</td><td>有评级记录 / 全部记录</td><td>60.0%</td><td><span class="badge b-ok">已有</span></td></tr><tr><td>4</td><td>库外媒体率</td><td>库外媒体 / 本月媒体数</td><td>42%（全期）</td><td><span class="badge b-warn">需治理</span></td></tr><tr><td>5</td><td>计划兑现率</td><td>本月上线机会 / 本月计划机会</td><td>不可计算</td><td><span class="badge b-bad">缺主键</span></td></tr></tbody></table></div>
+
+<div class="callout c-warn"><span class="tag">关键判断</span>
+第 5 项是整份报告里<b>最重要但今天算不出来</b>的指标。它算不出来，不是因为数据少，而是因为规划表与产出表没有共同主键。</div>
+
+</section>
+<section id="sop" class="anchor">
+<div class="sec-head"><span class="sec-num">05</span><h2>业务场景与运营 SOP</h2></div>
+<h3>八个业务场景：六个核心 + 两个缺口</h3>
+<div class="table-scroll compact"><table><thead><tr><th class="">场景</th><th class="">类型</th><th class="">触发</th><th class="">关键动作</th><th class="">产出物</th><th class="">表落点</th><th class="">数据支撑度</th></tr></thead><tbody><tr><td><b>① 日常选题 Pitch</b></td><td><span class="note">Always-on</span></td><td>编辑选题 / 新品卖点 / 季节话题</td><td>查重 → 选角 → 备证据 → 发 pitch → 跟进</td><td>单篇报道</td><td>Tracker（结果）+ Editorial（机会）</td><td><span class="badge b-b-warn">中</span></td></tr><tr><td><b>② 大促战役</b></td><td><span class="note">Prime Day / FPD / BFCM</span></td><td>平台大促日历</td><td>提前 6–8 周锁媒体 → 批量 pitch → 集中上线</td><td>促销 / 清单类报道</td><td>Tracker 项目名 + Calendar Promotion</td><td><span class="badge b-b-ok">高</span></td></tr><tr><td><b>③ 新品上市</b></td><td><span class="note">Launch</span></td><td>产品上市计划</td><td>定角度 → 送测 → 编辑体验 → 首发 / 评测</td><td>评测、首发、roundup</td><td>Editorial New Product Launch + Calendar</td><td><span class="badge b-b-warn">中</span></td></tr><tr><td><b>④ 榜单 / 奖项</b></td><td><span class="note">Ranking & Awards</span></td><td>榜单更新窗口 / 申报季</td><td>选奖 → 备料 → 提交 → 跟进结果</td><td>入选 / 获奖</td><td>吸奶器榜单表 + Tracker Awards</td><td><span class="badge b-b-ok">较高</span></td></tr><tr><td><b>⑤ 品牌 Campaign</b></td><td><span class="note">线下事件</span></td><td>品牌日 / 快闪 / 展会 / Showroom</td><td>事件策划 → 媒体邀约 → 现场素材 → 二次传播</td><td>品牌故事、通稿</td><td>Calendar Brand Campaign + Tracker</td><td><span class="badge b-b-warn">中</span></td></tr><tr><td><b>⑥ 文化时刻 / 公益</b></td><td><span class="note">Cultural & CSR</span></td><td>母乳喂养月 / 母亲节 / IWD / PSI</td><td>议题绑定 → 专家背书 → 故事化</td><td>专题、访谈、公益报道</td><td>Calendar Cultural + Editorial Cultural</td><td><span class="badge b-b-warn">中</span></td></tr><tr><td><b>⑦ 媒体关系维护</b></td><td><span class="note">Editor Relations</span></td><td>持续</td><td>编辑画像 → 冷却期管理 → 定期触达</td><td>关系资产</td><td>仅吸奶器表 12 条编辑记录</td><td><span class="badge b-b-bad">低</span></td></tr><tr><td><b>⑧ 危机响应</b></td><td><span class="note">Crisis</span></td><td>负面 / 舆情</td><td>分级 → 声明 → 媒体沟通</td><td>声明、Q&A</td><td>不在本 7 表内（有独立 SOP 文档）</td><td><span class="badge b-b-info">不适用</span></td></tr></tbody></table></div>
+<h3>标准 Pitch SOP 六步 vs 数据支撑度</h3>
+<p>项目 <code>kb/pr/knowledge-system/媒体资源库管理规则与SOP.md</code> 定义了六步 SOP。逐条对照 7 张表：<b>6 步里 0 步能完整支撑、4 步部分支撑、2 步完全支撑不了。</b></p>
+<div class="table-scroll compact"><table><thead><tr><th class="">步骤</th><th class="">SOP 要求</th><th class="">需要的数据</th><th class="">现有表能否支撑</th><th class="">判定</th></tr></thead><tbody><tr><td>1</td><td>Pitch 前按编辑姓名查近 30 天记录</td><td>编辑名 + 日期 + 项目</td><td>Tracker 无 Editor 字段；仅吸奶器表有 11 位编辑，且只覆盖一个品类</td><td><span class="badge b-b-warn">部分</span></td></tr><tr><td>2</td><td>判断是否同项目 / 需错峰</td><td>编辑 + 项目 + 时间窗</td><td>缺编辑维度，无法跨项目查同一人</td><td><span class="badge b-b-bad">不支持</span></td></tr><tr><td>3</td><td>执行 pitch</td><td>pitch 日期、素材、渠道</td><td>没有任何 pitch 事件表</td><td><span class="badge b-b-bad">不支持</span></td></tr><tr><td>4</td><td>3 个工作日内补全台账</td><td>发送日期、媒体反馈、是否发布、链接</td><td>Tracker 有链接/时间/标题，无反馈字段</td><td><span class="badge b-b-warn">部分</span></td></tr><tr><td>5</td><td>特殊情况写备注</td><td>结构化备注</td><td>备注填充率 5%（16/347）</td><td><span class="badge b-b-warn">弱</span></td></tr><tr><td>6</td><td>月度按区域 / 品线汇总</td><td>品线 + 区域 + 月度</td><td>月度可做；品线 0%、项目 21% 缺失</td><td><span class="badge b-b-warn">部分</span></td></tr></tbody></table></div>
+
+<div class="callout c-warn"><span class="tag">三个 SOP 级断点</span>
+<ul class="clean" style="margin-bottom:0">
+<li><b>查重断点：</b>SOP 要求「按编辑搜 30 天」，但全库没有编辑级台账。实际执行只能靠人脑或私聊，多人重复 pitch 同一编辑的风险不可控。</li>
+<li><b>反馈断点：</b>SOP 要求记录「感兴趣 / 拒绝 / 无回复」，Tracker 只记录「已上线」。被拒绝的 pitch 完全不留痕，同一媒体可能被反复无效触达。</li>
+<li><b>归因断点：</b>SOP 要求按品线汇总，<code>品线</code> 字段 0% 填充。今天只能按「露出产品」自由文本做关键词归类，无法做品线级 ROI。</li>
+</ul></div>
+
+</section>
+<section id="gap" class="anchor">
+<div class="sec-head"><span class="sec-num">06</span><h2>业务视角 × 产品视角：完成点与 GAP 点</h2></div>
+<p class="lead">「产品」指当前项目 <code>pr-agent</code> 中的 Vicky（PR Agent）。判断基于本仓 README、<code>kb/pr/</code> 知识库与 <code>tools/pr_intel/</code> 现有能力。</p>
+<h3>已经完成的（可复用资产）</h3>
+<div class="table-scroll compact"><table><thead><tr><th class="">#</th><th class="">完成点</th><th class="">证据</th></tr></thead><tbody><tr><td><b>C1</b></td><td>媒体分级口径已统一</td><td>媒体分级标准.md：S/A/B/C/D 五级 + 100 分制（声量 25 / DA 25 / 受众 15 / 跨平台 10 / 内容深度 15 / 合作历史 5 / 意愿 5）</td></tr><tr><td><b>C2</b></td><td>资源库管理规则与 Pitch SOP 已成文</td><td>媒体资源库管理规则与SOP.md：谁先接触谁录入、3 工作日更新、30 天冲突检查、月度 1 号前汇总</td></tr><tr><td><b>C3</b></td><td>机会方法论已沉淀</td><td>opportunity_library.md：7 类机会 + 评分公式（覆盖空白 / 选题契合 / 榜单窗口 / 工作母亲 / 产后恢复 / 节日采购 / 奖项季）</td></tr><tr><td><b>C4</b></td><td>媒体关系规律已数据化</td><td>media_relations_playbook.md：编辑幂律（聚焦 9 位）、证据偏好四类、冷却期即预登记、细分冠军定位、赞助需 earned 对冲、奖项时间窗、负面清单按占位管理</td></tr><tr><td><b>C5</b></td><td>全量数据可读、可算</td><td>7 表 666 条记录全部拉通，月度 / 项目 / 媒体 / 评级 / 合作类型均可复算</td></tr><tr><td><b>C6</b></td><td>产出层数据质量高</td><td>链接 99%、时间 97%、媒体 100%、合作类型 100%、内容类型 99%</td></tr><tr><td><b>C7</b></td><td>自动写入通道已建</td><td>Meltwater → Tracker 写入路径已实现（只写媒体/时间/链接/标题 4 列，判断列不臆测，默认 dry-run）</td></tr><tr><td><b>C8</b></td><td>交付链完整</td><td>周报 / 月报 / PPT / 行动池 / 群问答 / 舆情监控 / 每日 15 项巡检（含「媒体上线缺口」）</td></tr></tbody></table></div>
+<h3>GAP 点（按严重度排序）</h3>
+<div class="table-scroll compact"><table><thead><tr><th class="">#</th><th class="">GAP</th><th class="">量化证据</th><th class="">业务后果</th><th class="">类型</th></tr></thead><tbody><tr><td><b>P1</b></td><td>写权限被拒，自动回写未上线</td><td>写 Tracker 返回 91403 Forbidden（应用对该 Base 只读）</td><td>台账仍靠人工，3 工作日更新规则无法自动执行</td><td><span class="badge b-b-bad">权限</span></td></tr><tr><td><b>P2</b></td><td>无编辑级主数据</td><td>Tracker 无 Editor 字段；全库编辑记录仅 12 条（吸奶器品类）</td><td>30 天查重、编辑画像、冷却期管理全部落空</td><td><span class="badge b-b-bad">数据模型</span></td></tr><tr><td><b>P3</b></td><td>无 Pitch 事件表</td><td>7 表中没有任何 pitch 发送 / 反馈 / 跟进记录</td><td>pitch→上线转化率不可计算；被拒记录不留痕</td><td><span class="badge b-b-bad">数据模型</span></td></tr><tr><td><b>P4</b></td><td>两套规划表并行且无关联</td><td>Calendar 23 + Editorial 20，字段体系不同，无外键、无状态、无 Owner</td><td>计划层双源，无法回答「哪些机会兑现了」</td><td><span class="badge b-b-warn">流程</span></td></tr><tr><td><b>P5</b></td><td>媒体主数据无稳定 ID</td><td>14 组近重复（BuzzFeed/Buzzfeed、Yahoo! Shopping/Yahoo Shopping 等）；13 条名称含 Markdown 链接</td><td>跨表 join 只能模糊匹配，指标不可复现</td><td><span class="badge b-b-warn">数据治理</span></td></tr><tr><td><b>P6</b></td><td>品线字段 0% 填充</td><td>347 条中 0 条有品线</td><td>无法按产品线核算 PR 产出与 ROI</td><td><span class="badge b-b-bad">数据治理</span></td></tr><tr><td><b>P7</b></td><td>付费成本完全空白</td><td>付费表 0 条记录，Paid 却有 39 条</td><td>付费 ROI、CPM、Earned:Paid 优化无分母</td><td><span class="badge b-b-bad">数据模型</span></td></tr><tr><td><b>P8</b></td><td>评级缺口 40%</td><td>139/347 无媒体评级；9 月单月 55% 无评级</td><td>S 级占比、媒体质量结构失真</td><td><span class="badge b-b-warn">数据治理</span></td></tr><tr><td><b>P9</b></td><td>库外媒体 63 家</td><td>占 Tracker 媒体的 42%</td><td>资源库不是单一真源，「谁先接触谁录入」未执行</td><td><span class="badge b-b-warn">流程</span></td></tr><tr><td><b>P10</b></td><td>机会字段不完整</td><td>Key Product 65%、Pitch Angle 70%、Media Examples 70%、Pitch Timing 80%</td><td>机会无法直接转 pitch 包，依赖个人经验</td><td><span class="badge b-b-warn">流程</span></td></tr></tbody></table></div>
+<h3>产品能力映射：业务动作 → Vicky 现在能做什么 → 还缺什么</h3>
+<div class="table-scroll compact"><table><thead><tr><th class="">业务动作</th><th class="">Vicky 现有能力</th><th class="">缺口</th><th class="">建议的最小产品动作</th></tr></thead><tbody><tr><td>媒体分级与选媒</td><td>已内置 S/A/B/C/D 口径；可读媒体库 246 条</td><td>无媒体 ID、无别名表</td><td><b>P1：建 dim_media（媒体 ID + 别名 + 分级 + 层级），一次治理解决 join</b></td></tr><tr><td>选题与机会评分</td><td>已有 7 类机会库 + 评分公式；可读 Editorial 20 条</td><td>机会与产出无关联，评分无法回验</td><td><b>P2：给机会加 opportunity_id，Tracker 加外键</b></td></tr><tr><td>Pitch 执行与查重</td><td>有 SOP 文档，无系统支撑</td><td>无 pitch 事件、无编辑库</td><td><b>P3：建 fact_pitch（编辑 / 媒体 / 日期 / 素材 / 反馈 / 结果）</b></td></tr><tr><td>上线台账</td><td>可读全量；有自动写入通道（dry-run）</td><td>写权限被拒；品线 / 编辑 / 项目 ID 缺失</td><td><b>P4：申请写权限 + Tracker 增 3 列并回填</b></td></tr><tr><td>榜单占位</td><td>有吸奶器专项表 + 媒体角度话术</td><td>仅覆盖一个品类</td><td><b>P5：把榜单表模板复制到奶瓶清洗机 / 监护器 / 出行</b></td></tr><tr><td>付费效果</td><td>无</td><td>付费表为空</td><td><b>P6：建付费合作模型（媒体 / 形式 / 成本 / 曝光 / CPM）</b></td></tr><tr><td>月度复盘</td><td>周报 / 月报 / PPT 全链</td><td>缺「计划兑现率」「品线 ROI」两个口径</td><td><b>P7：月度记分卡 5 指标自动化</b></td></tr></tbody></table></div>
+
+<div class="callout c-insight"><span class="tag">融合结论</span>
+业务侧已经把「怎么打分、怎么 pitch、怎么复盘」写清楚了；产品侧已经把「怎么读、怎么算、怎么交付」跑通了；<b>断点在中间——没有 ID、没有事件、没有成本。</b>这不是分析能力问题，是数据模型问题。</div>
+
+</section>
+<section id="fly" class="anchor">
+<div class="sec-head"><span class="sec-num">07</span><h2>业务飞轮诊断</h2></div>
+<h3>五环状态</h3>
+<div class="card"><div class="flywheel">
+<div class="fw-row"><div class="name">① 资源层<small>媒体资源库 246 条</small></div><div class="bar" style="margin:0"><div class="bar-fill amber" style="width:60%"></div></div><div class="score">6/10</div></div>
+<div class="note" style="margin:-6px 0 6px 194px">广度够，20 个字段空置、无编辑、无 ID</div>
+<div class="fw-row"><div class="name">② 规划层<small>Calendar 23 + Editorial 20</small></div><div class="bar" style="margin:0"><div class="bar-fill amber" style="width:40%"></div></div><div class="score">4/10</div></div>
+<div class="note" style="margin:-6px 0 6px 194px">字段 65–80%、52% 无 Key Product、无状态无 Owner</div>
+<div class="fw-row"><div class="name">③ 执行层<small>（无表）</small></div><div class="bar" style="margin:0"><div class="bar-fill rose" style="width:10%"></div></div><div class="score">1/10</div></div>
+<div class="note" style="margin:-6px 0 6px 194px">pitch 发送、反馈、跟进完全无记录</div>
+<div class="fw-row"><div class="name">④ 产出层<small>Tracker 347 条</small></div><div class="bar" style="margin:0"><div class="bar-fill green" style="width:80%"></div></div><div class="score">8/10</div></div>
+<div class="note" style="margin:-6px 0 6px 194px">链接 99%、时间 97%、媒体 100%；品线 0%、评级 60%</div>
+<div class="fw-row"><div class="name">⑤ 复盘层<small>PR资源库 18 + 知识库</small></div><div class="bar" style="margin:0"><div class="bar-fill amber" style="width:50%"></div></div><div class="score">5/10</div></div>
+<div class="note" style="margin:-6px 0 6px 194px">方法论丰富但与数据未打通，6 条文档无类型</div>
+</div></div>
+<h3>三个量化断点</h3>
+<div class="grid g3">
+<div class="card"><h4 style="margin-top:0;color:#8d3f57">资源 → 产出：31%</h4><p class="note" style="margin:0">246 家库里媒体只有 76 家在 Tracker 出现。S 级 71%、A 级 31%、B 级 15%、<b>C 级 0%</b>；Tier 3 的 88 家基本「存而不用」。</p></div>
+<div class="card"><h4 style="margin-top:0;color:#8d3f57">产出 → 资源：42% 黑户</h4><p class="note" style="margin:0">Tracker 149 家媒体中 63 家不在库里，包括 Yahoo! Shopping、NBC Select、The Guardian、Newsbreak、GlobeNewswire。「谁先接触谁录入」未落地。</p></div>
+<div class="card"><h4 style="margin-top:0;color:#8d3f57">规划 → 产出：无法对齐</h4><p class="note" style="margin:0">Calendar 的 23 个 Opportunity Name 与 Tracker 的 57 个项目名是两套自由文本（Brand Day Core Products vs 品牌日2026），没有共同主键。</p></div>
+</div>
+<h3>飞轮的真实形状：哑铃型</h3>
+<div class="chain">资源层 246 ──31%──▶ 产出层 347 ──42% 库外──▶ 资源层（回流失败）
+       ▲                  ▲
+       │                  │
+   规划层 43 ──无法 join──┘
+                          ▲
+   执行层 0 ──────────────┘（缺环）</div>
+
+<div class="callout c-insight"><span class="tag">诊断</span>
+<b>重的一端</b>是产出层：347 条、字段质量高、可做月度 / 媒体 / 项目多维分析。<b>轻的一端</b>是规划 43 条、执行 0 条、成本 0 条。<b>连接方式</b>靠人——这就是为什么「月度复盘能写、季度策略难写」：复盘只需要产出层，策略需要计划层和执行层。</div>
+
+<h3>修复顺序（先做哪一件）</h3>
+<div class="table-scroll compact"><table><thead><tr><th class="">顺序</th><th class="">动作</th><th class="">解决的断点</th><th class="">成本</th><th class="">收益</th><th class="">优先级</th></tr></thead><tbody><tr><td>1</td><td>建媒体 ID + 别名表，回填历史</td><td>断点一、二</td><td>低（一次治理）</td><td>所有跨表指标可复现</td><td><span class="badge b-b-ok">P0</span></td></tr><tr><td>2</td><td>规划表加 opportunity_id + status，Tracker 加外键</td><td>断点三</td><td>低</td><td>计划兑现率第一次可算</td><td><span class="badge b-b-ok">P0</span></td></tr><tr><td>3</td><td>建 pitch 事件表（编辑 / 日期 / 素材 / 反馈）</td><td>执行层缺环</td><td>中</td><td>转化率、30 天查重、编辑画像</td><td><span class="badge b-b-warn">P1</span></td></tr><tr><td>4</td><td>申请 Base 写权限，开放自动回写</td><td>P1</td><td>中（跨团队）</td><td>3 工作日更新规则可自动执行</td><td><span class="badge b-b-warn">P1</span></td></tr><tr><td>5</td><td>付费合作建模</td><td>成本层空白</td><td>中</td><td>付费 ROI 有分母</td><td><span class="badge b-b-warn">P2</span></td></tr><tr><td>6</td><td>月度记分卡自动化</td><td>复盘层</td><td>低</td><td>管理闭环</td><td><span class="badge b-b-ok">P2</span></td></tr></tbody></table></div>
+<p class="cap">判断：第 1、2 两件事是「一次投入、长期复用」的杠杆点，应在 30 天内完成；第 3、4 件需要跨团队协作，放在 60 天；第 5、6 件放 90 天。</p>
+</section>
+<section id="end" class="anchor">
+<div class="sec-head"><span class="sec-num">08</span><h2>结论</h2></div>
+<div class="card" style="margin-bottom:12px"><div class="grid" style="grid-template-columns:42px 1fr;gap:14px;align-items:start"><div style="font-size:22px;font-weight:800;color:#b4536f;line-height:1.3">1</div><div><h4 style="margin:0 0 4px">业务是健康的，但增长方式有隐性代价。</h4><p class="note" style="margin:0">77% Earned、6.85:1 的 Earned:Paid、48% 的 S 级占比，说明这是一支靠关系和选题吃饭的团队，而不是靠预算。代价是大促月 S 级占比掉到 19%——冲量在用权威换数量。</p></div></div></div>
+<div class="card" style="margin-bottom:12px"><div class="grid" style="grid-template-columns:42px 1fr;gap:14px;align-items:start"><div style="font-size:22px;font-weight:800;color:#b4536f;line-height:1.3">2</div><div><h4 style="margin:0 0 4px">产出层已具备精细化管理条件，计划层还不具备。</h4><p class="note" style="margin:0">347 条记录、99% 链接、97% 时间，足以支撑媒体 / 月度 / 项目三维分析；但 43 个规划机会没有状态、没有外键，「计划兑现率」这一最关键指标至今算不出来。</p></div></div></div>
+<div class="card" style="margin-bottom:12px"><div class="grid" style="grid-template-columns:42px 1fr;gap:14px;align-items:start"><div style="font-size:22px;font-weight:800;color:#b4536f;line-height:1.3">3</div><div><h4 style="margin:0 0 4px">SOP 写得很完整，数据接不住其中两步。</h4><p class="note" style="margin:0">六步 Pitch SOP 里，「跨项目冲突判断」和「执行 pitch」完全没有数据支撑——因为没有编辑库、没有 pitch 表。这不是执行不力，是缺两张表。</p></div></div></div>
+<div class="card" style="margin-bottom:12px"><div class="grid" style="grid-template-columns:42px 1fr;gap:14px;align-items:start"><div style="font-size:22px;font-weight:800;color:#b4536f;line-height:1.3">4</div><div><h4 style="margin:0 0 4px">媒体的「广度」已经过剩，「深度」才是瓶颈。</h4><p class="note" style="margin:0">149 家媒体里 100 家只出现一次，C 级媒体激活率 0%，Top10 却占 37.5%。下一步不该加媒体，而是把 19 家 S 媒体做到 26 家、把 5 家榜单入选做到 8 家。</p></div></div></div>
+<div class="card" style="margin-bottom:12px"><div class="grid" style="grid-template-columns:42px 1fr;gap:14px;align-items:start"><div style="font-size:22px;font-weight:800;color:#b4536f;line-height:1.3">5</div><div><h4 style="margin:0 0 4px">最该先修的不是分析，是主键。</h4><p class="note" style="margin:0">媒体没有 ID、机会没有 ID、项目是自由文本——所有跨表结论都只能靠模糊匹配。先补 ID，再补事件，最后补成本，飞轮才转得起来。</p></div></div></div>
+</section>
+<section id="app" class="anchor">
+<div class="sec-head"><span class="sec-num">A</span><h2>附录：口径与速查</h2></div>
+<h3>口径与已知偏差</h3>
+<div class="table-scroll compact"><table><thead><tr><th class="">项</th><th class="">说明</th></tr></thead><tbody><tr><td>时间轴</td><td>以 Tracker 发布时间为准；336/347 有日期，11 条无日期不计入月度分布</td></tr><tr><td>媒体去重</td><td>按 媒体Media 字符串去重（149 个），未做大小写与别名归一；实际实体数应略少于 149</td></tr><tr><td>项目聚类</td><td>需求|项目 为自由文本，57 个取值（含未填）；本文按关键词聚类为 6 桶，桶内存在同义重复（奖项 / Award / Awards / 年度榜单获奖）</td></tr><tr><td>产品提及</td><td>按 露出产品 自由文本关键词匹配，一条记录可命中多个产品族；该字段 25% 为空</td></tr><tr><td>评级</td><td>媒体评级 为 lookup 字段，填充率 60%（208/347）；S 级占比分母为「已评级记录」</td></tr><tr><td>媒体库匹配</td><td>库内媒体与 Tracker 媒体按名称模糊匹配（去标点、子串包含），存在少量误配可能；分层激活率用于趋势判断而非精确核算</td></tr><tr><td>付费</td><td>付费表 0 条，所有付费结论仅来自 Tracker 的 类型Cooperation type = Paid</td></tr><tr><td>缺失</td><td>危机 / 声明类活动不在本 7 表内，未纳入分析</td></tr></tbody></table></div>
+<h3>月度产出与合作结构</h3>
+<div class="table-scroll compact"><table><thead><tr><th class="">月份</th><th class="">条数</th><th class="">Earned</th><th class="">Paid</th><th class="">S 级占比</th><th class="">未评级占比</th></tr></thead><tbody><tr><td>2026-01</td><td>24</td><td>16</td><td>6</td><td>12%</td><td>38%</td></tr><tr><td>2026-02</td><td>11</td><td>9</td><td>1</td><td>27%</td><td>27%</td></tr><tr><td>2026-03</td><td>31</td><td>29</td><td>2</td><td>35%</td><td>45%</td></tr><tr><td>2026-04</td><td>26</td><td>25</td><td>0</td><td>31%</td><td>46%</td></tr><tr><td>2026-05</td><td>31</td><td>21</td><td>8</td><td>29%</td><td>58%</td></tr><tr><td>2026-06</td><td>51</td><td>43</td><td>6</td><td>41%</td><td>33%</td></tr><tr><td>2026-07</td><td>36</td><td>23</td><td>0</td><td>47%</td><td>44%</td></tr><tr><td>2026-08</td><td>16</td><td>8</td><td>0</td><td>38%</td><td>62%</td></tr><tr><td>2026-09</td><td>42</td><td>27</td><td>4</td><td>19%</td><td>55%</td></tr><tr><td>2026-10</td><td>68</td><td>55</td><td>12</td><td>19%</td><td>21%</td></tr></tbody><tfoot><tr><td>合计</td><td>336</td><td>267</td><td>39</td><td>48%（已评级）</td><td>40%</td></tr></tfoot></table></div>
+<p class="cap">S 级占比下降与未评级占比上升同时出现在 9 月，说明大促 / 品牌日冲量期既稀释了权威结构，也稀释了数据质量。</p>
+<h3>媒体分层（库内 246 家）</h3>
+<div class="table-scroll compact"><table><thead><tr><th class="">评级</th><th class="">家数</th><th class="">占比</th><th class="">Tracker 激活率</th></tr></thead><tbody><tr><td>S</td><td>35</td><td>14.2%</td><td>71%</td></tr><tr><td>A</td><td>138</td><td>56.1%</td><td>31%</td></tr><tr><td>B</td><td>46</td><td>18.7%</td><td>15%</td></tr><tr><td>C</td><td>23</td><td>9.3%</td><td>0%</td></tr></tbody></table></div>
+<footer>
+报告生成 2026-10-31 ｜ 数据文件 <code>data/pr_all_in_one/_bundle.json</code>（666 条记录）、<code>_profile.json</code> ｜ 分析脚本 <code>_analysis/analyze.py</code>、<code>analyze2.py</code>、<code>analyze3.py</code>
+</footer>
+</section>
+</div></body></html>

@@ -1,0 +1,2068 @@
+{
+  "snapshot": "2026-10-31",
+  "source": "/Users/lute/Project/pr-agent/data/pr_all_in_one/_bundle.json",
+  "table_counts": {
+    "媒体资源库": {
+      "table_id": "tblQeLQMUTJksdpK",
+      "records": 246,
+      "fields": 28,
+      "empty_fields": 20
+    },
+    "媒体报道上线Tracker (2026)": {
+      "table_id": "tblMbzo85JLHoD2D",
+      "records": 347,
+      "fields": 16,
+      "empty_fields": 2
+    },
+    "Pitching Calendar": {
+      "table_id": "tblQWXeJiyaj3iOp",
+      "records": 23,
+      "fields": 6,
+      "empty_fields": 1
+    },
+    "Editorial Opportunities": {
+      "table_id": "tbl7qFl8pHrzQzKE",
+      "records": 20,
+      "fields": 9,
+      "empty_fields": 0
+    },
+    "吸奶器榜单媒体进展跟踪": {
+      "table_id": "tbl28vHwqjoCkeJB",
+      "records": 12,
+      "fields": 15,
+      "empty_fields": 0
+    },
+    "PR资源库": {
+      "table_id": "tblsW0pq7k94kNCI",
+      "records": 18,
+      "fields": 6,
+      "empty_fields": 0
+    },
+    "付费媒体合作数据": {
+      "table_id": "tblKczikcczgTUo2",
+      "records": 0,
+      "fields": 1,
+      "empty_fields": 1
+    }
+  },
+  "total_records": 666,
+  "media_library": {
+    "records": 246,
+    "coverage": {
+      "媒体名称\nMedia name": {
+        "filled": 246,
+        "total": 246,
+        "rate": "100.0%"
+      },
+      "网站链接\nMedia link": {
+        "filled": 246,
+        "total": 246,
+        "rate": "100.0%"
+      },
+      "国家|地区\nCountry": {
+        "filled": 245,
+        "total": 246,
+        "rate": "99.6%"
+      },
+      "媒体类别Media type": {
+        "filled": 227,
+        "total": 246,
+        "rate": "92.3%"
+      },
+      "评级（S|A|B|C）": {
+        "filled": 242,
+        "total": 246,
+        "rate": "98.4%"
+      },
+      "媒体月流量量级\nMedia Tier": {
+        "filled": 243,
+        "total": 246,
+        "rate": "98.8%"
+      },
+      "SEO权重": {
+        "filled": 239,
+        "total": 246,
+        "rate": "97.2%"
+      },
+      "GEO权重": {
+        "filled": 231,
+        "total": 246,
+        "rate": "93.9%"
+      }
+    },
+    "rating": [
+      [
+        "A",
+        138
+      ],
+      [
+        "B",
+        46
+      ],
+      [
+        "S",
+        35
+      ],
+      [
+        "C",
+        23
+      ]
+    ],
+    "tier": [
+      [
+        "Tier 3: <1M",
+        88
+      ],
+      [
+        "Tier 2: 1M-10M",
+        74
+      ],
+      [
+        "Tier 1: 10M-100M",
+        62
+      ],
+      [
+        "Top Tier: ≥100M",
+        19
+      ]
+    ],
+    "category": [
+      [
+        "Mother & Baby",
+        64
+      ],
+      [
+        "Lifestyle",
+        41
+      ],
+      [
+        "News",
+        32
+      ],
+      [
+        "Tech",
+        30
+      ],
+      [
+        "Women",
+        14
+      ],
+      [
+        "Health",
+        12
+      ],
+      [
+        "Entertainment",
+        8
+      ],
+      [
+        "Finance",
+        6
+      ],
+      [
+        "Fashion",
+        5
+      ],
+      [
+        "Home",
+        4
+      ],
+      [
+        "Finance/ Business",
+        3
+      ],
+      [
+        "Review",
+        3
+      ],
+      [
+        "Food&Drink",
+        2
+      ],
+      [
+        "Beauty",
+        1
+      ],
+      [
+        "Outdoor",
+        1
+      ],
+      [
+        "Trend",
+        1
+      ]
+    ],
+    "seo": [
+      [
+        "Very High-极高",
+        132
+      ],
+      [
+        "High-高",
+        94
+      ],
+      [
+        "Medium-High 中高",
+        9
+      ],
+      [
+        "Low-低",
+        3
+      ],
+      [
+        "Medium-中",
+        1
+      ]
+    ],
+    "geo": [
+      [
+        "High-高",
+        84
+      ],
+      [
+        "Medium-High 中高",
+        73
+      ],
+      [
+        "Very High-极高",
+        46
+      ],
+      [
+        "Medium-中",
+        22
+      ],
+      [
+        "Low-低",
+        6
+      ]
+    ],
+    "country": [
+      [
+        "USA",
+        245
+      ]
+    ],
+    "empty_fields": 20
+  },
+  "tracker": {
+    "records": 347,
+    "coverage": {
+      "文章标题\nArticle title": {
+        "filled": 299,
+        "total": 347,
+        "rate": "86.2%"
+      },
+      "发布链接\nArticle link": {
+        "filled": 345,
+        "total": 347,
+        "rate": "99.4%"
+      },
+      "发布时间\nRelease date": {
+        "filled": 336,
+        "total": 347,
+        "rate": "96.8%"
+      },
+      "媒体Media": {
+        "filled": 347,
+        "total": 347,
+        "rate": "100.0%"
+      },
+      "文章类型\nContent type": {
+        "filled": 342,
+        "total": 347,
+        "rate": "98.6%"
+      },
+      "类型Cooperation type": {
+        "filled": 346,
+        "total": 347,
+        "rate": "99.7%"
+      },
+      "需求|项目\nProject": {
+        "filled": 274,
+        "total": 347,
+        "rate": "79.0%"
+      },
+      "露出产品\nProduct": {
+        "filled": 261,
+        "total": 347,
+        "rate": "75.2%"
+      },
+      "媒体评级": {
+        "filled": 208,
+        "total": 347,
+        "rate": "59.9%"
+      },
+      "SEO": {
+        "filled": 206,
+        "total": 347,
+        "rate": "59.4%"
+      },
+      "GEO": {
+        "filled": 208,
+        "total": 347,
+        "rate": "59.9%"
+      },
+      "媒体月流量": {
+        "filled": 231,
+        "total": 347,
+        "rate": "66.6%"
+      },
+      "媒体分类Media Type": {
+        "filled": 344,
+        "total": 347,
+        "rate": "99.1%"
+      },
+      "品线": {
+        "filled": 0,
+        "total": 347,
+        "rate": "0.0%"
+      }
+    },
+    "months": {
+      "2026-01": 24,
+      "2026-02": 11,
+      "2026-03": 31,
+      "2026-04": 26,
+      "2026-05": 31,
+      "2026-06": 51,
+      "2026-07": 36,
+      "2026-08": 16,
+      "2026-09": 42,
+      "2026-10": 68
+    },
+    "media_distinct": 150,
+    "top10_media": [
+      [
+        "BuzzFeed",
+        36
+      ],
+      [
+        "Parents",
+        16
+      ],
+      [
+        "Good Housekeeping",
+        14
+      ],
+      [
+        "The Bump",
+        13
+      ],
+      [
+        "Nappaawards",
+        11
+      ],
+      [
+        "PR Newswire",
+        10
+      ],
+      [
+        "MSN",
+        9
+      ],
+      [
+        "Babylist",
+        7
+      ],
+      [
+        "SheKnows",
+        7
+      ],
+      [
+        "Yahoo! Shopping",
+        7
+      ]
+    ],
+    "top10_share": "37.5%",
+    "top5_share": "25.9%",
+    "cooperation": [
+      [
+        "Earned",
+        267
+      ],
+      [
+        "Paid",
+        39
+      ],
+      [
+        "Awards",
+        18
+      ],
+      [
+        "Press Release",
+        17
+      ],
+      [
+        "Organic",
+        4
+      ],
+      [
+        "调研/白皮书",
+        1
+      ]
+    ],
+    "article_type": [
+      [
+        "Promotion/Deal/Event",
+        117
+      ],
+      [
+        "Product Roundup / Listicle",
+        59
+      ],
+      [
+        "Brand Storytelling",
+        48
+      ],
+      [
+        "Buying Guide/Gift Guide",
+        40
+      ],
+      [
+        "Awards",
+        38
+      ],
+      [
+        "Press Release",
+        17
+      ],
+      [
+        "Product Introduction/Product Review",
+        14
+      ],
+      [
+        "Event promotion",
+        9
+      ]
+    ],
+    "projects": [
+      [
+        "26FPD",
+        59
+      ],
+      [
+        "Prime Day Sale",
+        40
+      ],
+      [
+        "日常推广",
+        26
+      ],
+      [
+        "品牌日2026",
+        22
+      ],
+      [
+        "Breastfeeding Month",
+        19
+      ],
+      [
+        "奖项",
+        11
+      ],
+      [
+        "Award",
+        10
+      ],
+      [
+        "ABC Kids Expo",
+        6
+      ],
+      [
+        "年度榜单获奖",
+        6
+      ],
+      [
+        "IWD Webinar Series",
+        5
+      ],
+      [
+        "Mother’s Day gift guide",
+        5
+      ],
+      [
+        "Awards",
+        5
+      ],
+      [
+        "Wellness 1",
+        3
+      ],
+      [
+        "IWD Campaign / Lauren Smith Brody Partnership",
+        3
+      ],
+      [
+        "Mother's Day Campaign / Abbie Herbert",
+        3
+      ],
+      [
+        "Father's Day / Derek Hough and Hayley Erbert short film",
+        3
+      ],
+      [
+        "Air 1",
+        2
+      ],
+      [
+        "Mother's Day Gift Guide / Shower Steamers",
+        2
+      ],
+      [
+        "Mother's Day Campaign",
+        2
+      ],
+      [
+        "Mother's Day Campaign / Abbie Herbert’s exclusive interview",
+        2
+      ],
+      [
+        "Mother's Day / PSI",
+        2
+      ],
+      [
+        "Prime Day",
+        2
+      ],
+      [
+        "Brand day",
+        2
+      ],
+      [
+        "Grand Opening of Momcozy's Showroom",
+        2
+      ],
+      [
+        "“Mom",
+        1
+      ],
+      [
+        "and More” campaign / Brand Day",
+        1
+      ],
+      [
+        "BW05",
+        1
+      ],
+      [
+        "CES",
+        1
+      ],
+      [
+        "King's Daughters Milk Bank Donation",
+        1
+      ],
+      [
+        "榜单",
+        1
+      ],
+      [
+        "U-Shaped and J-Shaped Maternity Body Pillows",
+        1
+      ],
+      [
+        "Motherhood Toolkit for International Women's Day",
+        1
+      ],
+      [
+        "IWD sale",
+        1
+      ],
+      [
+        "CHKD donation",
+        1
+      ],
+      [
+        "IWD Campaign / Deep Clean",
+        1
+      ],
+      [
+        "Baby Play Mat",
+        1
+      ],
+      [
+        "Shower Steamers",
+        1
+      ],
+      [
+        "U-Shaped Full Body Pillow",
+        1
+      ],
+      [
+        "M5 pump",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / Muslin Swaddle Blankets",
+        1
+      ],
+      [
+        "Nipple Shields",
+        1
+      ],
+      [
+        "and the M5",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / Breastmilk Pitcher",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / Baby Carrier",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / Elephant Hooded Baby Towel",
+        1
+      ],
+      [
+        "Baby Teether Toys",
+        1
+      ],
+      [
+        "U-Shaped Pregnancy Pillow",
+        1
+      ],
+      [
+        "Air-1",
+        1
+      ],
+      [
+        "KleanPal",
+        1
+      ],
+      [
+        "Reusable Nursing Pads",
+        1
+      ],
+      [
+        "Ultra-Thin Disposable Nursing Pads",
+        1
+      ],
+      [
+        "and the Breast Milk Pitcher",
+        1
+      ],
+      [
+        "Amazon’s Big Spring Sale / KleanPal",
+        1
+      ],
+      [
+        "Mother's Day Gift Guide ",
+        1
+      ],
+      [
+        "Mother’s Day Gift Guide",
+        1
+      ],
+      [
+        "Mother’s Day sale",
+        1
+      ],
+      [
+        "Mother's Day Campaign / Abbie TVC Mama Registry",
+        1
+      ],
+      [
+        "Mother's Day Campaign / PSI",
+        1
+      ],
+      [
+        "Electric Baby Nail File",
+        1
+      ],
+      [
+        "Mother's Day / Mama Registry",
+        1
+      ],
+      [
+        "Mother's Day / Abbie",
+        1
+      ],
+      [
+        "Mama Registry",
+        1
+      ],
+      [
+        "Father’s Day Campaign",
+        1
+      ],
+      [
+        "/",
+        1
+      ],
+      [
+        "W1",
+        1
+      ],
+      [
+        "Labor Day Sale",
+        1
+      ]
+    ],
+    "project_distinct": 66,
+    "products": [
+      [
+        "ChangeGo stroller",
+        9
+      ],
+      [
+        "KleanPal",
+        7
+      ],
+      [
+        "Shower Steamers",
+        5
+      ],
+      [
+        "ChangeGo stroller, KleanPal Pro All-in-One Bottle Washer",
+        4
+      ],
+      [
+        "D8",
+        4
+      ],
+      [
+        "Wellness 1",
+        4
+      ],
+      [
+        "RB001",
+        4
+      ],
+      [
+        "Stroller Organizer",
+        4
+      ],
+      [
+        "KleanPal Pro All-in-One Bottle Washer ",
+        3
+      ],
+      [
+        "DeepClean D8",
+        3
+      ],
+      [
+        "KleanPal Pro All-in-One Bottle Washer, Sterilizer & Dryer",
+        3
+      ],
+      [
+        "Momcozy Triple-Seal Diaper Pail",
+        3
+      ],
+      [
+        "M5",
+        3
+      ],
+      [
+        "BS03",
+        3
+      ],
+      [
+        "YB001",
+        3
+      ],
+      [
+        "/",
+        3
+      ],
+      [
+        "Breast pumps, bottle warmers, baby food makers, feeding products, toolkit",
+        3
+      ],
+      [
+        "Sleep sack, sleep bag, pregnancy pillow",
+        3
+      ],
+      [
+        "U-Shaped Pregnancy Pillow",
+        3
+      ],
+      [
+        "Wellness 1 Wearable Breast Pump, DeepClean D8 Bottle Washer ",
+        2
+      ],
+      [
+        "DinerPal",
+        2
+      ],
+      [
+        "BM04",
+        2
+      ],
+      [
+        "Triple-Seal Diaper Pail, Smart Baby Sound Machine, Wellness 1 Wearable Breast Pump, Baby Carrier with Hip Seat",
+        2
+      ],
+      [
+        "Baby Monitor BM04, Wellness 1 Breast Pump, Ultra Soft Seamless Nursing Bra (YN21), DeepClean Baby Bottle Washer (D8), Triple-Seal Odor Lock Diaper Pail, PureHug Baby Carrier (BC001)",
+        2
+      ],
+      [
+        "DeepClean Baby Bottle Washer (D8)",
+        2
+      ],
+      [
+        "KleanPal Pro",
+        2
+      ],
+      [
+        "Portable Sound Machine",
+        2
+      ],
+      [
+        "D8, W1",
+        2
+      ],
+      [
+        "KleanPal ",
+        2
+      ],
+      [
+        "KleanPal Pro All-in-One Bottle Washer",
+        2
+      ],
+      [
+        "2in1 Multi-Use Insulated Baby Bottle Bag/ Breast Pump Bag",
+        2
+      ],
+      [
+        "Dual-mode Smart Baby Monitor with 2 Camera -BM04",
+        2
+      ],
+      [
+        "Momcozy Shower Steamers",
+        2
+      ],
+      [
+        "W1/YG010/ BW05/DP01/AW03/WN02/BN07/BM08/BC01",
+        2
+      ],
+      [
+        "BW05",
+        2
+      ],
+      [
+        "奶袋",
+        2
+      ],
+      [
+        "Air 1",
+        2
+      ],
+      [
+        "BS03, M9",
+        2
+      ],
+      [
+        "DeepClean Baby Bottle Washer/ Vday Sale",
+        2
+      ],
+      [
+        "Portable Milk Warmer",
+        2
+      ],
+      [
+        "Mother's Day Gift Guide / Shower Steamers",
+        2
+      ],
+      [
+        "Amazon Big Spring Sale / Portable Bottle Warmer",
+        2
+      ],
+      [
+        "Amazon Big Spring Sale / KleanPal",
+        2
+      ],
+      [
+        "AW03",
+        2
+      ],
+      [
+        "M5,Air1，bm08,bs03,MW05 Portable Bottle Warmer ,RW002 Stretch Mark Cream  PP101 Pregnancy Pillow",
+        2
+      ],
+      [
+        "Diaper Pail",
+        2
+      ],
+      [
+        "2-in-1 Electric Baby Swing, M5, Retractable Baby Gate",
+        2
+      ],
+      [
+        "W1",
+        2
+      ],
+      [
+        "W1\\D8",
+        2
+      ],
+      [
+        "HC002",
+        2
+      ],
+      [
+        "Wellness 1 Warm-Massage Wearable Breast Pump",
+        2
+      ],
+      [
+        "M9",
+        2
+      ],
+      [
+        "Original F Shaped Pregnancy Pillow",
+        2
+      ],
+      [
+        "Momcozy KleanPal Pro All-in-One Bottle Washer ",
+        2
+      ],
+      [
+        "Momcozy portable breast milk cooler ",
+        2
+      ],
+      [
+        "DeepClean Baby Bottle Washer, M5 Pinky Breast Pump Hands Free, KleanPal Pro Baby Bottle Washer, Portable Breast Milk Cooler",
+        1
+      ],
+      [
+        "BM04, 2-in-1 Electric Baby Swing, Hip Seat Carrier, Universal Stroller Organizer with Insulated Cup Holder, S9 Pro, Air 1, V1 Pro, and Portable Bottle Warmer for Breast Milk",
+        1
+      ],
+      [
+        "Wellness 1 Wearable Breast Pump, DeepClean Baby Bottle Washer (D8), Triple-Seal Odor Lock Diaper Pail, Baby Monitor BM04, PureHug Baby Carrier, Ultra Soft Seamless Nursing Bra",
+        1
+      ],
+      [
+        "Bottle Sterilizer and Dryer",
+        1
+      ],
+      [
+        "All-in-1 Elite Baby Kit",
+        1
+      ],
+      [
+        "Smart Baby Sound Machine",
+        1
+      ],
+      [
+        "ChangeGo stroller, KleanPal Pro",
+        1
+      ],
+      [
+        "KleanPal Pro, ChangeGo stroller, Portable Bottle Warmer, baby electric nail file , aby Wipe Warmer",
+        1
+      ],
+      [
+        "KleanPal Pro, baby electric nail file, Air 1, Baby Wipe Warmer",
+        1
+      ],
+      [
+        "KleanPal Pro, DeepClean Bottle Washer D8",
+        1
+      ],
+      [
+        "Retractable Baby Gate",
+        1
+      ],
+      [
+        "Retractable Baby Gate, DeepClean D8",
+        1
+      ],
+      [
+        "2-in-1 Electric Baby Swing",
+        1
+      ],
+      [
+        "Wellness 1 Warm-Massage Wearable Breast Pump & Nipple Cream Bundle and DeepClean Baby Bottle Washer",
+        1
+      ],
+      [
+        "Wellness 1 Warm-Massage Wearable Breast Pump, DeepClean Baby Bottle Washer (D8), Triple-seal Odor Lock Diaper Pail, Baby Monitor BM04, PureHug Baby Carrier (BC001), Ultra Soft Seamless Nursing Bra (YN21)",
+        1
+      ],
+      [
+        "NightPro bottle warmer",
+        1
+      ],
+      [
+        " Baby Thermometer，baby care kit",
+        1
+      ],
+      [
+        "白噪音，BM04",
+        1
+      ],
+      [
+        "白噪音",
+        1
+      ],
+      [
+        "baby care kit",
+        1
+      ],
+      [
+        " Baby Thermometer，baby care kit，BM04",
+        1
+      ],
+      [
+        "6-in-1 Bottle Warmer",
+        1
+      ],
+      [
+        "Jelly Strip Nursing Bra",
+        1
+      ],
+      [
+        "W1/AW03/YG010/BW05",
+        1
+      ],
+      [
+        "KleanPal, wipe warmer ",
+        1
+      ],
+      [
+        "W1/HC02/AW03/BW05/DP01",
+        1
+      ],
+      [
+        "Baby Nail File",
+        1
+      ],
+      [
+        "Night Pro bottle warmer",
+        1
+      ],
+      [
+        "Momcozy 8000mAh Portable Stroller Fan",
+        1
+      ],
+      [
+        "彩虹白噪音WN05",
+        1
+      ],
+      [
+        "WN07",
+        1
+      ],
+      [
+        "冻奶壶",
+        1
+      ],
+      [
+        "WN05",
+        1
+      ],
+      [
+        "襁褓巾",
+        1
+      ],
+      [
+        "WN06",
+        1
+      ],
+      [
+        "记忆棉哺乳枕",
+        1
+      ],
+      [
+        "电动磨甲器",
+        1
+      ],
+      [
+        "U型孕妇枕\nYB001\nM5\nMomcozy A1Pro Lactation Massager\nMomcozy Seamless Comfort Bra\nMomcozy Postpartum Recovery Essentials Kit",
+        1
+      ],
+      [
+        "背带",
+        1
+      ],
+      [
+        "S9 Pro",
+        1
+      ],
+      [
+        "水晶绒U型双边孕妇枕\nPP101",
+        1
+      ],
+      [
+        "U-Shaped Full Body Pillow",
+        1
+      ],
+      [
+        "Easter / Bath Bombs",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / Muslin Swaddle Blankets, Nipple Shields, and the M5",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / Breastmilk Pitcher",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / Baby Carrier",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / Elephant Hooded Baby Towel, Baby Teether Toys, U-Shaped Pregnancy Pillow, Air-1, KleanPal, Reusable Nursing Pads, Ultra-Thin Disposable Nursing Pads, and the Breast Milk Pitcher",
+        1
+      ],
+      [
+        "Amazon’s Big Spring Sale / KleanPal",
+        1
+      ],
+      [
+        "IWD Campaign/ Air 1",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / KleanPal, Sound Machine, and Portable Breast Milk Cooler",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / KleanPal, Breast Milk Pitcher, and M5",
+        1
+      ],
+      [
+        "AutoMeal Baby Food Maker",
+        1
+      ],
+      [
+        "Amazon Big Spring Sale / Portable Stroller Fan",
+        1
+      ],
+      [
+        "DreamSync Sound Machine",
+        1
+      ],
+      [
+        "Baby Nasal Aspirator, Baby Nail File, and Sound Machine",
+        1
+      ],
+      [
+        "FB061",
+        1
+      ],
+      [
+        "FB063",
+        1
+      ],
+      [
+        "SJ019, BM04",
+        1
+      ],
+      [
+        "Air 1, BW05",
+        1
+      ],
+      [
+        "U Shaped Maternity Pillow",
+        1
+      ],
+      [
+        "Seamless Nursing Bra, CoolFit Nursing Bra, and Low Impact Nursing Sports Bra",
+        1
+      ],
+      [
+        "KleanPal, M6",
+        1
+      ],
+      [
+        "Baby Sleep Sack, Easy Swaddle Wrap, and Pregnancy Pillow",
+        1
+      ],
+      [
+        "U‑Shaped Pregnancy Pillow",
+        1
+      ],
+      [
+        "Ergowrap",
+        1
+      ],
+      [
+        "Pregnancy Pillow and Wearable Breast Pumps",
+        1
+      ],
+      [
+        "V1 Pro, W1, U Shaped Huggable Body Pillow",
+        1
+      ],
+      [
+        "ST01",
+        1
+      ],
+      [
+        "MW06",
+        1
+      ],
+      [
+        "W1 Wearable Breast Pump, BM08 Smart Baby Monitor, Birth Ease Maternity Ball, Nursery Recliner and Rocking ChairRed Light Therapy Device",
+        1
+      ],
+      [
+        "Electric Baby Nail File",
+        1
+      ],
+      [
+        "Pumps, Pregnancy Pillow",
+        1
+      ],
+      [
+        "W1 Wearable Breast Pump",
+        1
+      ],
+      [
+        "ClickGo Lightweight Stroller and 2-in-1 Electric Baby Swing",
+        1
+      ],
+      [
+        "ChangeGo Stroller and the W1 pump",
+        1
+      ],
+      [
+        "Momcozy NightPro Baby Bottle Warmer\nMomcozy KleanPal Pro Baby Bottle Washer \nMomcozy Portable Bottle Warmer\nMomcozy Portable Breast Milk Cooler",
+        1
+      ],
+      [
+        "Bottle Brush Set and Portable Stroller Fan",
+        1
+      ],
+      [
+        "Stroller Organizer, Portable Milk Warmer, and KleanPal",
+        1
+      ],
+      [
+        "M5 and Retractable Baby Gate",
+        1
+      ],
+      [
+        "Belly bands, pregnancy pillows, breast pumps, and baby monitors",
+        1
+      ],
+      [
+        "Wellness 1 Wearable Breast Pump",
+        1
+      ],
+      [
+        "Wellness 1 Wearable Breast Pump, KleanPal, M5",
+        1
+      ],
+      [
+        "YN21 Seamless Ultra Comfort Maternity Bra",
+        1
+      ],
+      [
+        "USB Rechargeable Handheld Cooling Fan",
+        1
+      ],
+      [
+        "Breastmilk storage bags",
+        1
+      ],
+      [
+        "Portable Stroller Fan with Clip, 2-in-1 Electric Baby Swing, Video Baby Monitor, 5.5”, KleanPal, Air-1, W1, Bottle Brush Travel Set, Baby Nail File",
+        1
+      ],
+      [
+        "Bamboo Disposable Nursing Pads and Baby Play Mat for Floor",
+        1
+      ],
+      [
+        "SJ019",
+        1
+      ],
+      [
+        "YG010",
+        1
+      ],
+      [
+        "BN08",
+        1
+      ],
+      [
+        "BN07",
+        1
+      ],
+      [
+        "MW05",
+        1
+      ],
+      [
+        "WN02 WN06",
+        1
+      ],
+      [
+        "Momcozy CocoSway 3D-Motion Electric Baby Swing",
+        1
+      ],
+      [
+        "BM04\nWN06\nWN02\nBN07",
+        1
+      ],
+      [
+        "Smart & Portable Sound Machine Bundle, Water-Fillable Icy Teethers, Portable Stroller Fan, and Portable Breast Milk Warmer",
+        1
+      ],
+      [
+        "2-in-1 Hip Seat Baby Carrier",
+        1
+      ],
+      [
+        "M9 Wearable Breast Pump",
+        1
+      ],
+      [
+        "Portable Stroller Fan",
+        1
+      ],
+      [
+        "HF048",
+        1
+      ],
+      [
+        "BM04,RB001,FB008,PP101,Air1,V1 PRO,GC01",
+        1
+      ],
+      [
+        "FB008",
+        1
+      ],
+      [
+        "PP101",
+        1
+      ],
+      [
+        "Air1， V1 PRO",
+        1
+      ],
+      [
+        "GC01",
+        1
+      ],
+      [
+        "D8, MW06",
+        1
+      ],
+      [
+        "NP007, FB061",
+        1
+      ],
+      [
+        "DinerPal High Chair and 5-Inch Dual-Camera Video Baby Monitor",
+        1
+      ],
+      [
+        "Product placement of M9 pump",
+        1
+      ],
+      [
+        "M9, Triple-Seal Diaper Pail, TuckGo Travel Stroller",
+        1
+      ],
+      [
+        "MaxSupport Nursing Pillow, Cotton Nursing Bra",
+        1
+      ],
+      [
+        "YN46",
+        1
+      ],
+      [
+        "Momcozy DeepClean D8 Bottle Washer, Sterilizer & Dryer",
+        1
+      ],
+      [
+        "Momcozy DeepClean D8 Bottle Washer, Sterilizer & Dryer,",
+        1
+      ],
+      [
+        "Momcozy KleanPal Pro All-in-One Bottle Washer and detergent tablets",
+        1
+      ]
+    ],
+    "product_distinct": 170,
+    "rating": [
+      [
+        "A",
+        103
+      ],
+      [
+        "S",
+        100
+      ],
+      [
+        "B",
+        5
+      ]
+    ],
+    "seo": [
+      [
+        "Very High-极高",
+        187
+      ],
+      [
+        "High-高",
+        15
+      ],
+      [
+        "Medium-High 中高",
+        3
+      ],
+      [
+        "Medium-中",
+        1
+      ]
+    ],
+    "geo": [
+      [
+        "Very High-极高",
+        109
+      ],
+      [
+        "High-高",
+        52
+      ],
+      [
+        "Medium-High 中高",
+        46
+      ],
+      [
+        "Medium-中",
+        1
+      ]
+    ],
+    "media_type": [
+      [
+        "Lifestyle",
+        172
+      ],
+      [
+        "News",
+        130
+      ],
+      [
+        "Mother & Baby",
+        119
+      ],
+      [
+        "Entertainment",
+        68
+      ],
+      [
+        "Health",
+        45
+      ],
+      [
+        "Fashion",
+        32
+      ],
+      [
+        "Women",
+        31
+      ],
+      [
+        "Travel",
+        19
+      ],
+      [
+        "Technology",
+        15
+      ],
+      [
+        "Calendar Listing",
+        12
+      ],
+      [
+        "Tech",
+        11
+      ],
+      [
+        "Press release",
+        6
+      ],
+      [
+        "Promotion/deal",
+        5
+      ],
+      [
+        "Press Release",
+        3
+      ],
+      [
+        "news",
+        2
+      ],
+      [
+        "Report",
+        1
+      ]
+    ],
+    "duplicate_links": 10,
+    "duplicate_rows": 21,
+    "duplicate_extra": 11,
+    "rough_product_line": {
+      "吸奶器": 65,
+      "无产品": 86,
+      "喂养清洁": 65,
+      "睡眠监护": 17,
+      "出行": 20,
+      "未分类": 66,
+      "家居日用": 17,
+      "孕产护理": 11
+    },
+    "multi_line_rows": 45
+  },
+  "media_match": {
+    "matched_rows": 247,
+    "matched_rate": "71.2%",
+    "tier": {
+      "Tier 1: 10M-100M": 94,
+      "Tier 3: <1M": 25,
+      "Tier 2: 1M-10M": 78,
+      "UNMATCHED": 100,
+      "Top Tier: ≥100M": 50
+    },
+    "rating": {
+      "S": 116,
+      "A": 122,
+      "UNMATCHED": 100,
+      "NA": 2,
+      "B": 7
+    },
+    "unmatched_distinct": 61,
+    "unmatched_records": 100,
+    "unmatched_top": [
+      [
+        "Nappaawards",
+        11
+      ],
+      [
+        "PR Newswire",
+        10
+      ],
+      [
+        "Yahoo! Shopping",
+        7
+      ],
+      [
+        "Yahoo Shopping",
+        5
+      ],
+      [
+        "NBC Select",
+        3
+      ],
+      [
+        "Globenewswire",
+        3
+      ],
+      [
+        "Yahoo! Creators",
+        2
+      ],
+      [
+        "[Events.com](http://Events.com)",
+        2
+      ],
+      [
+        "City Guide NYC",
+        2
+      ],
+      [
+        "Yahoo Creators",
+        2
+      ],
+      [
+        "The Guardian",
+        2
+      ],
+      [
+        "theCityMoms",
+        2
+      ],
+      [
+        "PIX 11 Website",
+        1
+      ],
+      [
+        "Shefinds",
+        1
+      ],
+      [
+        "AllEvents",
+        1
+      ],
+      [
+        "NYC for Free",
+        1
+      ],
+      [
+        "My City Scene",
+        1
+      ],
+      [
+        "New York Events",
+        1
+      ],
+      [
+        "[NewYork.com](http://newyork.com/)",
+        1
+      ],
+      [
+        "PIX 11",
+        1
+      ]
+    ],
+    "top_tier1_share_of_matched": "58.3%"
+  },
+  "activation": {
+    "exact": {
+      "total": 65,
+      "rate": "26.4%",
+      "by_rating": {
+        "A": {
+          "activated": 38,
+          "total": 138,
+          "rate": "27.5%"
+        },
+        "B": {
+          "activated": 5,
+          "total": 46,
+          "rate": "10.9%"
+        },
+        "C": {
+          "activated": 0,
+          "total": 23,
+          "rate": "0.0%"
+        },
+        "NA": {
+          "activated": 0,
+          "total": 4,
+          "rate": "0.0%"
+        },
+        "S": {
+          "activated": 22,
+          "total": 35,
+          "rate": "62.9%"
+        }
+      },
+      "by_tier": {
+        "NA": {
+          "activated": 0,
+          "total": 3,
+          "rate": "0.0%"
+        },
+        "Tier 1: 10M-100M": {
+          "activated": 19,
+          "total": 62,
+          "rate": "30.6%"
+        },
+        "Tier 2: 1M-10M": {
+          "activated": 21,
+          "total": 74,
+          "rate": "28.4%"
+        },
+        "Tier 3: <1M": {
+          "activated": 13,
+          "total": 88,
+          "rate": "14.8%"
+        },
+        "Top Tier: ≥100M": {
+          "activated": 12,
+          "total": 19,
+          "rate": "63.2%"
+        }
+      }
+    },
+    "norm": {
+      "total": 65,
+      "rate": "26.4%",
+      "by_rating": {
+        "A": {
+          "activated": 38,
+          "total": 138,
+          "rate": "27.5%"
+        },
+        "B": {
+          "activated": 5,
+          "total": 46,
+          "rate": "10.9%"
+        },
+        "C": {
+          "activated": 0,
+          "total": 23,
+          "rate": "0.0%"
+        },
+        "NA": {
+          "activated": 0,
+          "total": 4,
+          "rate": "0.0%"
+        },
+        "S": {
+          "activated": 22,
+          "total": 35,
+          "rate": "62.9%"
+        }
+      },
+      "by_tier": {
+        "NA": {
+          "activated": 0,
+          "total": 3,
+          "rate": "0.0%"
+        },
+        "Tier 1: 10M-100M": {
+          "activated": 19,
+          "total": 62,
+          "rate": "30.6%"
+        },
+        "Tier 2: 1M-10M": {
+          "activated": 21,
+          "total": 74,
+          "rate": "28.4%"
+        },
+        "Tier 3: <1M": {
+          "activated": 13,
+          "total": 88,
+          "rate": "14.8%"
+        },
+        "Top Tier: ≥100M": {
+          "activated": 12,
+          "total": 19,
+          "rate": "63.2%"
+        }
+      }
+    },
+    "fuzzy": {
+      "total": 77,
+      "rate": "31.3%",
+      "by_rating": {
+        "A": {
+          "activated": 45,
+          "total": 138,
+          "rate": "32.6%"
+        },
+        "B": {
+          "activated": 7,
+          "total": 46,
+          "rate": "15.2%"
+        },
+        "C": {
+          "activated": 0,
+          "total": 23,
+          "rate": "0.0%"
+        },
+        "NA": {
+          "activated": 1,
+          "total": 4,
+          "rate": "25.0%"
+        },
+        "S": {
+          "activated": 24,
+          "total": 35,
+          "rate": "68.6%"
+        }
+      },
+      "by_tier": {
+        "NA": {
+          "activated": 0,
+          "total": 3,
+          "rate": "0.0%"
+        },
+        "Tier 1: 10M-100M": {
+          "activated": 20,
+          "total": 62,
+          "rate": "32.3%"
+        },
+        "Tier 2: 1M-10M": {
+          "activated": 27,
+          "total": 74,
+          "rate": "36.5%"
+        },
+        "Tier 3: <1M": {
+          "activated": 16,
+          "total": 88,
+          "rate": "18.2%"
+        },
+        "Top Tier: ≥100M": {
+          "activated": 14,
+          "total": 19,
+          "rate": "73.7%"
+        }
+      }
+    }
+  },
+  "monthly_rating": {
+    "2026-01": {
+      "rated": 15,
+      "S": 3,
+      "A": 11,
+      "B": 1,
+      "S_share_of_rated": "20.0%"
+    },
+    "2026-02": {
+      "rated": 8,
+      "S": 3,
+      "A": 5,
+      "B": 0,
+      "S_share_of_rated": "37.5%"
+    },
+    "2026-03": {
+      "rated": 17,
+      "S": 11,
+      "A": 3,
+      "B": 3,
+      "S_share_of_rated": "64.7%"
+    },
+    "2026-04": {
+      "rated": 14,
+      "S": 8,
+      "A": 6,
+      "B": 0,
+      "S_share_of_rated": "57.1%"
+    },
+    "2026-05": {
+      "rated": 13,
+      "S": 9,
+      "A": 3,
+      "B": 1,
+      "S_share_of_rated": "69.2%"
+    },
+    "2026-06": {
+      "rated": 34,
+      "S": 21,
+      "A": 13,
+      "B": 0,
+      "S_share_of_rated": "61.8%"
+    },
+    "2026-07": {
+      "rated": 20,
+      "S": 17,
+      "A": 3,
+      "B": 0,
+      "S_share_of_rated": "85.0%"
+    },
+    "2026-08": {
+      "rated": 6,
+      "S": 6,
+      "A": 0,
+      "B": 0,
+      "S_share_of_rated": "100.0%"
+    },
+    "2026-09": {
+      "rated": 19,
+      "S": 8,
+      "A": 11,
+      "B": 0,
+      "S_share_of_rated": "42.1%"
+    },
+    "2026-10": {
+      "rated": 54,
+      "S": 13,
+      "A": 41,
+      "B": 0,
+      "S_share_of_rated": "24.1%"
+    }
+  },
+  "media_freq1": {
+    "count": 100,
+    "distinct": 149,
+    "rate": "67.1%"
+  },
+  "rating_summary": {
+    "S": 100,
+    "A": 103,
+    "B": 5,
+    "rated": 208,
+    "S_share_total": "28.8%",
+    "S_share_rated": "48.1%"
+  },
+  "pitching_calendar": {
+    "records": 23,
+    "type": [
+      [
+        "Brand Campaign",
+        11
+      ],
+      [
+        "Promotion",
+        6
+      ],
+      [
+        "Cultural/Awareness Moment",
+        4
+      ],
+      [
+        "Product Pitching",
+        2
+      ]
+    ],
+    "concrete_product": 11,
+    "slash_product": 9,
+    "tbd_product": 3,
+    "date_anomalies": [
+      {
+        "name": "Broadcast Blitz for BFCM",
+        "start": "2026-10-01",
+        "end": "2027-10-31",
+        "days": 395
+      }
+    ]
+  },
+  "editorial_opportunities": {
+    "records": 20,
+    "type": [
+      [
+        "New Product Launch",
+        11
+      ],
+      [
+        "Cultural/Awareness Moment",
+        6
+      ],
+      [
+        "Brand Campaign",
+        2
+      ],
+      [
+        "Promotion",
+        2
+      ]
+    ],
+    "missing": {
+      "Key Product": 7,
+      "Pitch Angle": 6,
+      "Media Examples": 6,
+      "Pitch Timing": 4
+    }
+  },
+  "ranking": {
+    "records": 12,
+    "inclusion": [
+      [
+        "是",
+        5
+      ],
+      [
+        "否",
+        5
+      ],
+      [
+        "空白",
+        2
+      ]
+    ],
+    "presence": [
+      [
+        "True",
+        11
+      ],
+      [
+        "False",
+        1
+      ]
+    ],
+    "products": [
+      [
+        "S12 Pro",
+        6
+      ],
+      [
+        "M5",
+        5
+      ],
+      [
+        "M9",
+        3
+      ],
+      [
+        "S9 Pro",
+        2
+      ],
+      [
+        "M6",
+        1
+      ],
+      [
+        "Air1",
+        1
+      ],
+      [
+        "V1 Pro",
+        1
+      ],
+      [
+        "Air 1 (W1-best deals)",
+        1
+      ]
+    ],
+    "angles": [
+      [
+        "性价比",
+        4
+      ],
+      [
+        "便携",
+        2
+      ],
+      [
+        "初学者",
+        1
+      ],
+      [
+        "贴合设计",
+        1
+      ],
+      [
+        "app",
+        1
+      ],
+      [
+        "Air1: Best Discreet Wearable Breast Pump\nV1 PRO: Overall Best Hands-Free Breast Pump",
+        1
+      ]
+    ]
+  },
+  "pr_resources": {
+    "records": 18,
+    "coverage": {
+      "文档名称": {
+        "filled": 17,
+        "total": 18,
+        "rate": "94.4%"
+      },
+      "文档类型": {
+        "filled": 12,
+        "total": 18,
+        "rate": "66.7%"
+      },
+      "文档附件": {
+        "filled": 15,
+        "total": 18,
+        "rate": "83.3%"
+      },
+      "Owner": {
+        "filled": 13,
+        "total": 18,
+        "rate": "72.2%"
+      },
+      "Note": {
+        "filled": 2,
+        "total": 18,
+        "rate": "11.1%"
+      },
+      "Parent items": {
+        "filled": 8,
+        "total": 18,
+        "rate": "44.4%"
+      }
+    }
+  },
+  "paid_media": {
+    "records": 0,
+    "fields": 1
+  }
+}

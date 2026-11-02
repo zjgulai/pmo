@@ -1,0 +1,449 @@
+{
+  "manifest_version": "v1",
+  "format": "ndjson",
+  "base_token": "I17db5Qr4aNHf8syN2WcKMFpnfC",
+  "table_id": "tblJOvNqI2ryZnMN",
+  "rev": 12031,
+  "timezone": "Asia/Shanghai",
+  "query_context": {
+    "field_scope": "all_fields",
+    "record_scope": "all_records"
+  },
+  "requested_limit": 2000,
+  "records_count": 671,
+  "page_count": 2,
+  "has_more": false,
+  "record_file": "/Users/lute/Project/SI-Agent/tmp_ogsm_analysis/data/schedule.ndjson",
+  "record_file_size_bytes": 1179484,
+  "manifest_file": "/Users/lute/Project/SI-Agent/tmp_ogsm_analysis/data/schedule.manifest.json",
+  "columns": {
+    "Caption Draft": {
+      "field_id": "fld7ZX7E9H",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 215,
+        "max_length": 3880
+      },
+      "example": "/"
+    },
+    "Content Brief": {
+      "field_id": "fldUjB1RS4",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 11,
+        "max_length": 362
+      },
+      "example": "​"
+    },
+    "Content Pillar-IG": {
+      "field_id": "fldeYV9ah8",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 499,
+        "max_length": 1,
+        "avg_length": 0.2563338301043219
+      },
+      "example": [
+        "Others"
+      ]
+    },
+    "FB是否发布": {
+      "field_id": "fldf7MJdH9",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 450,
+        "max_length": 1,
+        "avg_length": 0.3293591654247392
+      },
+      "example": [
+        "是"
+      ]
+    },
+    "IG是否发布": {
+      "field_id": "fldqJYfF6P",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 545,
+        "max_length": 1,
+        "avg_length": 0.18777943368107303
+      },
+      "example": [
+        "是"
+      ]
+    },
+    "PIN是否发布": {
+      "field_id": "fldI6786k6",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 502,
+        "max_length": 1,
+        "avg_length": 0.2518628912071535
+      },
+      "example": [
+        "是"
+      ]
+    },
+    "Parent items": {
+      "field_id": "fldxnsEAoD",
+      "field_type": "link",
+      "physical_type": "array<struct<id string>>",
+      "stats": {
+        "empty_count": 671,
+        "max_length": 0,
+        "avg_length": 0
+      },
+      "hint": "All values are empty; type inference may be ambiguous. Avoid analyzing this column unless required."
+    },
+    "Parent items 4": {
+      "field_id": "fldXensDAV",
+      "field_type": "link",
+      "physical_type": "array<struct<id string>>",
+      "stats": {
+        "empty_count": 671,
+        "max_length": 0,
+        "avg_length": 0
+      },
+      "hint": "All values are empty; type inference may be ambiguous. Avoid analyzing this column unless required."
+    },
+    "Post caption (By Aly)": {
+      "field_id": "fldnuJE04K",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 671,
+        "max_length": 0
+      },
+      "hint": "All values are empty; type inference may be ambiguous. Avoid analyzing this column unless required."
+    },
+    "TK是否发布": {
+      "field_id": "fldm9Na3Zs",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 533,
+        "max_length": 1,
+        "avg_length": 0.20566318926974664
+      },
+      "example": [
+        "是"
+      ]
+    },
+    "YT发布链接": {
+      "field_id": "fldPbXcQ9p",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 552,
+        "max_length": 164
+      },
+      "example": "[https://youtu.be/gFLmQ3oFS7Y](https://youtu.be/gFLmQ3oFS7Y)"
+    },
+    "YT是否发布": {
+      "field_id": "fldp40Av67",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 516,
+        "max_length": 1,
+        "avg_length": 0.23099850968703428
+      },
+      "example": [
+        "是"
+      ]
+    },
+    "record_id": {
+      "physical_type": "string",
+      "stats": {
+        "max_length": 16
+      },
+      "example": "rec27xtbDcoAqx"
+    },
+    "story是否发送": {
+      "field_id": "fldJoX9tte",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 523,
+        "max_length": 1,
+        "avg_length": 0.22056631892697467
+      },
+      "example": [
+        "是"
+      ]
+    },
+    "具体产品": {
+      "field_id": "fld0oUxPsN",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 529,
+        "max_length": 1,
+        "avg_length": 0.21162444113263784
+      },
+      "example": [
+        "V3"
+      ]
+    },
+    "内容支柱-FB": {
+      "field_id": "fld0gsDiIz",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 553,
+        "max_length": 1,
+        "avg_length": 0.17585692995529062
+      },
+      "example": [
+        "FB-其他"
+      ]
+    },
+    "内容支柱-PIN": {
+      "field_id": "flddeIzH41",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 576,
+        "max_length": 1,
+        "avg_length": 0.14157973174366617
+      },
+      "example": [
+        "PIN-品牌内容"
+      ]
+    },
+    "内容支柱-TT": {
+      "field_id": "fldDGNUXZ7",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 587,
+        "max_length": 1,
+        "avg_length": 0.12518628912071536
+      },
+      "example": [
+        "TT-Trending"
+      ]
+    },
+    "内容支柱-YT": {
+      "field_id": "fldg3TsfZi",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 553,
+        "max_length": 1,
+        "avg_length": 0.17585692995529062
+      },
+      "example": [
+        "YT-Posts"
+      ]
+    },
+    "内容状态": {
+      "field_id": "fldDFDcsVu",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 360,
+        "max_length": 1,
+        "avg_length": 0.46348733233979134
+      },
+      "example": [
+        "可发布"
+      ]
+    },
+    "内容细分": {
+      "field_id": "fldnhgdK0B",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 500,
+        "max_length": 3,
+        "avg_length": 0.2697466467958271
+      },
+      "example": [
+        "GEO"
+      ]
+    },
+    "发布周": {
+      "field_id": "fldlOCGHyB",
+      "field_type": "formula",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 0,
+        "max_length": 11
+      },
+      "example": "-5-12/31"
+    },
+    "发帖日期": {
+      "field_id": "fldmpHEy2S",
+      "field_type": "datetime",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 53,
+        "min": "2026-06-06T00:00:00.000+08:00",
+        "max": "2027-03-07T00:00:00.000+08:00"
+      },
+      "example": "2026-06-10T00:00:00.000+08:00"
+    },
+    "品线": {
+      "field_id": "fldRYqtm4T",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 530,
+        "max_length": 1,
+        "avg_length": 0.21013412816691504
+      },
+      "example": [
+        "TT团队"
+      ]
+    },
+    "品线Co-post": {
+      "field_id": "fldoW6Po6P",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 653,
+        "max_length": 1,
+        "avg_length": 0.026825633383010434
+      },
+      "example": [
+        "家居品线"
+      ]
+    },
+    "品线提需": {
+      "field_id": "fldzt9om8S",
+      "field_type": "link",
+      "physical_type": "array<struct<id string>>",
+      "stats": {
+        "empty_count": 618,
+        "max_length": 1,
+        "avg_length": 0.07898658718330849
+      },
+      "example": [
+        {
+          "id": "recvueTzVisA0q"
+        }
+      ]
+    },
+    "活动/项目": {
+      "field_id": "fldg8frTvb",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 311,
+        "max_length": 1,
+        "avg_length": 0.5365126676602087
+      },
+      "example": [
+        "MCP栏目"
+      ]
+    },
+    "父记录 2": {
+      "field_id": "fldmA00COt",
+      "field_type": "link",
+      "physical_type": "array<struct<id string>>",
+      "stats": {
+        "empty_count": 671,
+        "max_length": 0,
+        "avg_length": 0
+      },
+      "hint": "All values are empty; type inference may be ambiguous. Avoid analyzing this column unless required."
+    },
+    "父记录 5": {
+      "field_id": "fldj8L659I",
+      "field_type": "link",
+      "physical_type": "array<struct<id string>>",
+      "stats": {
+        "empty_count": 670,
+        "max_length": 1,
+        "avg_length": 0.0014903129657228018
+      },
+      "example": [
+        {
+          "id": "recvuTEPPPxdSK"
+        }
+      ]
+    },
+    "社媒平台": {
+      "field_id": "fldp9a0gim",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 19,
+        "max_length": 7,
+        "avg_length": 2.2131147540983607
+      },
+      "example": [
+        "IG"
+      ]
+    },
+    "简单描述内容": {
+      "field_id": "fldRKp8bcO",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 99,
+        "max_length": 451
+      },
+      "example": "OOTD"
+    },
+    "素材截图 (Asset Screenshot)": {
+      "field_id": "fldw5BatHJ",
+      "field_type": "attachment",
+      "physical_type": "array<struct<file_token string, size number, name string>>",
+      "stats": {
+        "empty_count": 287,
+        "max_length": 6,
+        "avg_length": 0.65424739195231
+      },
+      "example": [
+        {
+          "file_token": "FWqLb2n6jodvksx8vDsczYdonBf",
+          "name": "FB.jpg",
+          "size": 969670
+        }
+      ]
+    },
+    "素材类型&来源": {
+      "field_id": "fldkaSYik6",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 498,
+        "max_length": 1,
+        "avg_length": 0.2578241430700447
+      },
+      "example": [
+        "长视频"
+      ]
+    },
+    "素材路径(Asset Link)": {
+      "field_id": "fldi8aAL9J",
+      "field_type": "text",
+      "physical_type": "string|null",
+      "stats": {
+        "null_count": 242,
+        "max_length": 329
+      },
+      "example": "未知"
+    },
+    "负责人": {
+      "field_id": "fld6ybVDEI",
+      "field_type": "select",
+      "physical_type": "array<string>",
+      "stats": {
+        "empty_count": 86,
+        "max_length": 1,
+        "avg_length": 0.8718330849478391
+      },
+      "example": [
+        "Emma"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ name }} · ABI OGSM{% endblock %}
+{% block body %}
+
+<p style="font-size:13px"><a href="/docs" class="muted">← 治理索引</a></p>
+<h1 style="font-family:var(--mono);font-size:16px;font-weight:600">{{ name }}</h1>
+<pre class="doc">{{ text }}</pre>
+
+{% endblock %}

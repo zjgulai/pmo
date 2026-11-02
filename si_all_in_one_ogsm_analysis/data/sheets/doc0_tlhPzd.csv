@@ -1,0 +1,90 @@
+[row=1] 社媒平台,平台角色定位,"平台业务目标
+（现阶段）",平台核心指标（KPI）,Content Pillar 内容支柱,,,,
+[row=2] ,,,,内容分类,内容占比,发帖数,主导漏斗层,重点KPI
+[row=3] TikTok,破圈引擎,"跑出爆款
+&获取新用户","1. 自然流观看数
+2. 月度涨粉数（&CPF）
+3. 自然互动率
+
+每月25-30篇 (5-7篇/周)",Trending,50%,13-15,L1 曝光,Org Views
+[row=4] ,,,,,,,,Avg. Org views (作为对比基线)
+[row=5] ,,,,情感共鸣,40%-50%,10-15,"L1 曝光
+L2 互动",Org Views
+[row=6] ,,,,,,,,Oganic Total Engagement Rate (share rate/comment rate)
+[row=7] ,,,,品牌内容（campaign相关）,0-10%,0-3,L1 曝光,总曝光（包含org+paid）
+[row=8] ,,,,,,,,CPM
+[row=9] ,,,,产品内容（使用体验/Tips/教育科普/红人测评等）,/,/,L2 互动 （Save）,总互动率：Org & Paid
+[row=10] ,,,,,,,,Save rate：Org & Paid
+[row=11] ,,,,,,,L3 意图,Avg.watch time
+[row=12] IG,"心智桥梁
+（共鸣→ 互动 → 心智沉淀 → 购买前准备）",提升互动+承接用户兴趣&深化品牌认知+引导转化,"1. 月度涨粉数（&CPV, CPF）
+2. 月度自然流观看数
+3. 主页访问数 (月度账号数据，All)
+4. 外部链接点击次数 (月度账号数据，All)/ Session (GA4)
+
+每月25-30篇 (5-7篇/周)",品牌内容（Campaign相关）,10%-20%,2-3/5-6,L1曝光（重）,Avg.organic views
+[row=13] ,,,,,,,,广告CPM
+[row=14] ,,,,"情感共鸣
+视频占比80%+图片20%",40%,10-12,L1 曝光（重）,Organic Views
+[row=15] ,,,,,,,L2 互动 （重）,Organic Engagement Rate
+[row=16] ,,,,,,,,Share & Repost Rate
+[row=17] ,,,,,,,,"Profile activity Rate (Profile Visit, Follow)"
+[row=18] ,,,,,,,,CPV（Cost per visit）- 看涨粉效率
+[row=19] ,,,,,,,,CPF（Cost per followers）- 看涨粉效率
+[row=20] ,,,,"专家教育/知识科普
+图片为主",20%,5-6,L2互动,Save rate (Organic & Paid)
+[row=21] ,,,,,,,L3意图过渡（重）,Profile Visit Rate (Organic & Paid)
+[row=22] ,,,,,,,,Organic External Link Taps Rate (Linktree新增Link -专家栏目/Blog/YT)
+[row=23] ,,,,"产品内容
+视频占比80%+图片20%",20%-30%,5-6/8-9,L3意图,Profile Visit Rate (Organic & Paid)
+[row=24] ,,,,,,,L4转化,Organic External Link Taps Rate
+[row=25] Facebook,转化阵地,广告获新&社群经营,"1. 月度涨粉数 (CPF)
+2. 主页访问数(All)
+3. Link CTR (All)
+
+每月32-40篇
+（Cross post IG内容，额外预留7-10篇坑位给到来自渠道/品线需求）",品牌内容（Campaign相关）,10%,3-4,L1曝光（重）,Avg.organic views
+[row=26] ,,,,,,,,广告CPM
+[row=27] ,,,,专家教育/知识科普,20%,6-8,L2 互动 ,自然互动率（reactions+comment+share）
+[row=28] ,,,,Webinar/社群导流,5%,1-2,L2 互动,Link CTR （Organic）
+[row=29] ,,,,情感共鸣,20%,6-8,L2 互动,Organic Engagement Rate (reactions+comments+share)
+[row=30] ,,,,,,,,广告CPF
+[row=31] ,,,,"产品内容
+（按需求灵活新增）",45%,14-18,L4 转化,Link CTR (Organic)
+[row=32] YouTube,品牌信任阵地,截取长尾流量&沉淀品牌心智,"1. 平台整体：
+（1）Impression CTR （长视频）
+（2）涨粉数 & CPF
+（3）Avg watch duration (观看深度)
+
+2. SEO：
+（1）Viewers from External-Google Search （长视频&短视频）
+（2）Viewer from Youtube Search
+（长视频&短视频）
+
+每月20-25篇Shorts",品牌内容,/,/,L1曝光+SEO,总impression (Org+Paid)
+[row=33] ,,,,,,,,广告CPM
+[row=34] ,,,,"Shorts
+（Cross-post）",/,15-20,L1 曝光,Organic Views
+[row=35] ,,,,,,,L2 互动,Org subscribes growth
+[row=36] ,,,,,,,,广告CPF (Cost per follower)
+[row=37] ,,,,,,,,广告CPV (Cost per view)
+[row=38] ,,,,产品内容,/,/,L3 意图 +SEO,搜索相关关键词后内容推荐排名(手动数)
+[row=39] ,,,,"专家教育/知识科普
+（Emma团队主导策划）",/,2,SEO+GEO,文案优化：标题做SEO优化，描述是否遵循GEO语义逻辑
+[row=40] ,,,,,,,,选题优化：是否覆盖GEO query
+[row=41] Pinterest,妈妈的功课本,抢占长尾搜索 & 获取决策流量,"1. 自然流曝光
+2. 自然互动数(Click & Saves)
+3. 自然收藏数
+4. 外链点击数(Outbound Clicks)
+
+每月20- 25篇
+（部分产品强相关类型内容开放给品线）",专家教育/知识科普,35%,7-9,L2互动,1. Save (Org): 判断是否有收藏价值
+[row=42] ,,,,,,,,2. Pin Click CTR (Org)
+[row=43] ,,,,"产品内容-Checklist/Guide Pins
+（开放给品线）",15%,3-4,L2 互动,1. Save (Org): 判断是否有收藏价值
+[row=44] ,,,,,,,,2. Pin Click CTR (Org)
+[row=45] ,,,,"产品内容-Comparison / Decision Pins
+（开放给品线）",15%,3-4,L4 转化,Outbound CTR（Org）
+[row=46] ,,,,红人测评/UGC,25%,5-6,L3 意图,Outbound CTR （Org）
+[row=47] ,,,,,,,,Pin Clicks CTR （Org）
+[row=48] ,,,,品牌内容,10%,2-3,L1 曝光,CPM

@@ -1,0 +1,33 @@
+{
+  "actual_range": "A1:G12",
+  "annotated_csv": "[row=1] Brand Awareness平台拆解,,,,,,\n[row=2] 用户旅程,指标拆解,Instagram,TikTok,Facebook,Youtube,Pinterest\n[row=3] 看见,Organic Views 自然流触达,1,1,,,1\n[row=4] ,Viewers from External Google Search \u0026 YouTube Search 观看来源,,,,1,\n[row=5] 产生互动,Engagement - Likes,,,,,\n[row=6] ,Engagement - Save,1,,,,1\n[row=7] ,Engament - Share,,1,,,\n[row=8] ,Engagement - Repost,1,,,,\n[row=9] ,Engagement - Comment,,1,,,\n[row=10] \"进一步了解\n和关注\",Average Watch Duration 观看深度,,,,1,\n[row=11] ,Profile Activity - Visit Profile 访问主页,1,1,1,,\n[row=12] ,Follower Growth 平台粉丝数量,1,1,1,,",
+  "col_count": 7,
+  "col_indices": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G"
+  ],
+  "current_region": "A1:G12",
+  "has_more": false,
+  "revision": 972,
+  "row_count": 12,
+  "row_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "warning_message": "①定位行号：必须直接读取 annotated_csv 中每行开头的 [row=N] 前缀（N 即为实际表格行号），不要自己数行，不要用\"序号/ID/编号\"列的值推导（这些列可能跳号或从非 1 开始，会全盘错位）；②定位列字母：必须用 col_indices[j]，不要手数。"
+}

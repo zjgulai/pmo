@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emily 项目成果总结报告（20261031）</title>
+<style>
+  :root { color-scheme: light; }
+  .page {
+    --surface-1: #fcfcfb; --plane: #f9f9f7;
+    --ink-1: #0b0b0b; --ink-2: #52514e; --ink-3: #898781;
+    --grid: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10);
+    --series-1: #2a78d6;
+    --ord-1: #104281; --ord-2: #2a78d6; --ord-3: #86b6ef;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .page {
+      color-scheme: dark;
+      --surface-1: #1a1a19; --plane: #0d0d0d;
+      --ink-1: #ffffff; --ink-2: #c3c2b7; --ink-3: #898781;
+      --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+      --series-1: #3987e5;
+      --ord-1: #86b6ef; --ord-2: #3987e5; --ord-3: #184f95;
+    }
+  }
+  :root[data-theme="dark"] .page {
+    color-scheme: dark;
+    --surface-1: #1a1a19; --plane: #0d0d0d;
+    --ink-1: #ffffff; --ink-2: #c3c2b7; --ink-3: #898781;
+    --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+    --series-1: #3987e5;
+    --ord-1: #86b6ef; --ord-2: #3987e5; --ord-3: #184f95;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--plane); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .page { max-width: 1080px; margin: 0 auto; padding: 32px 24px 64px; color: var(--ink-1); }
+  .toolbar { display: flex; justify-content: flex-end; margin-bottom: 4px; }
+  .toolbar button { font: inherit; font-size: 13px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--ring); background: var(--surface-1); color: var(--ink-2); cursor: pointer; }
+  h1 { font-size: 26px; margin: 0 0 8px; }
+  .meta { color: var(--ink-2); font-size: 14px; line-height: 1.7; margin: 0 0 12px; }
+  h2 { font-size: 19px; margin: 40px 0 12px; padding-top: 16px; border-top: 1px solid var(--grid); }
+  p, li { font-size: 14px; line-height: 1.75; color: var(--ink-2); }
+  strong { color: var(--ink-1); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; background: var(--surface-1); border: 1px solid var(--ring); border-radius: 4px; padding: 1px 5px; color: var(--ink-1); }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 8px; }
+  @media (max-width: 860px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+  .tile { background: var(--surface-1); border: 1px solid var(--ring); border-radius: 10px; padding: 14px 16px; }
+  .tile .label { font-size: 12.5px; color: var(--ink-3); margin-bottom: 6px; }
+  .tile .value { font-size: 30px; font-weight: 600; color: var(--ink-1); line-height: 1.1; }
+  .tile .sub { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+  table.data { border-collapse: collapse; width: 100%; margin: 12px 0 4px; font-size: 13.5px; background: var(--surface-1); border: 1px solid var(--ring); border-radius: 10px; overflow: hidden; }
+  table.data th { text-align: left; font-weight: 600; color: var(--ink-1); background: var(--surface-1); border-bottom: 1px solid var(--axis); padding: 8px 12px; }
+  table.data td { border-bottom: 1px solid var(--grid); padding: 7px 12px; color: var(--ink-2); vertical-align: top; }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data td.num, table.data th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  figure.chart { margin: 18px 0; background: var(--surface-1); border: 1px solid var(--ring); border-radius: 10px; padding: 16px 16px 10px; position: relative; }
+  figure.chart figcaption { font-size: 12.5px; color: var(--ink-3); margin-top: 6px; }
+  .fig-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .fig-head .title { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+  .fig-head .toggle { font: inherit; font-size: 12px; color: var(--ink-2); background: none; border: 1px solid var(--ring); border-radius: 6px; padding: 2px 10px; cursor: pointer; white-space: nowrap; }
+  .tv-wrap { position: relative; }
+  .tv-wrap > svg { display: block; }
+  .tv-table { display: none; padding: 8px 0 4px; }
+  .tv-wrap.show-table .tv-table { display: block; }
+  .tv-wrap.show-table > svg { display: none; }
+  svg text { font-family: inherit; }
+  .bar { transition: opacity .12s; }
+  .bar:hover, .bar:focus { opacity: .82; outline: none; }
+  .empty { color: var(--ink-3); font-size: 13px; padding: 18px 0; }
+  .tooltip { position: absolute; pointer-events: none; display: none; z-index: 10; background: var(--surface-1); border: 1px solid var(--axis); border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,.14); padding: 8px 10px; font-size: 12.5px; min-width: 120px; }
+  .tooltip .tv { font-size: 15px; font-weight: 600; color: var(--ink-1); }
+  .tooltip .tl { color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+  .tooltip .key { display: inline-block; width: 10px; height: 3px; border-radius: 2px; background: var(--series-1); }
+  .snap { border-left: 3px solid var(--series-1); padding: 8px 14px; margin: 14px 0; background: var(--surface-1); border-radius: 0 8px 8px 0; font-size: 13px; color: var(--ink-2); }
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--grid); color: var(--ink-3); font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="toolbar"><button id="themeBtn" type="button">切换深/浅色</button></div>
+  <h1>Emily 项目成果总结报告</h1>
+  <p class="meta"><strong>报告日期</strong>：20261031 · <strong>生成</strong>：<code>tools/social/daily_report.py</code>（launchd <code>com.momcozy.si-dailyreport</code>，每日 21:07）<br>
+  <strong>口径</strong>：<code>tools/shared/facts.py collect()</code> + 能力注册表 + taskctl 看板 + git，现场重取。</p>
+  <div class="kpis" id="kpis"></div>
+  <h2>能力状态分布</h2>
+  <figure class="chart" id="fig-cap">
+    <div class="fig-head"><span class="title">能力注册表状态分布</span><button class="toggle" type="button" data-target="fig-cap">表格视图</button></div>
+    <div class="tv-wrap"><svg role="img"></svg><div class="tv-table"></div></div>
+    <div class="empty" hidden></div>
+    <figcaption>真源：<code>tools/social/collect/capability_registry.json</code>。</figcaption>
+    <div class="tooltip" role="status"></div>
+  </figure>
+  <h2>看板状态分布</h2>
+  <figure class="chart" id="fig-board">
+    <div class="fig-head"><span class="title">看板工作项状态分布</span><button class="toggle" type="button" data-target="fig-board">表格视图</button></div>
+    <div class="tv-wrap"><svg role="img"></svg><div class="tv-table"></div></div>
+    <div class="empty" hidden></div>
+    <figcaption>真源：taskctl <code>PR_SI_Agent</code>（运行时实时）。</figcaption>
+    <div class="tooltip" role="status"></div>
+  </figure>
+  <h2>近 7 天完成票主题</h2>
+  <figure class="chart" id="fig-done">
+    <div class="fig-head"><span class="title">近 7 天完成票</span><button class="toggle" type="button" data-target="fig-done">表格视图</button></div>
+    <div class="tv-wrap"><svg role="img"></svg><div class="tv-table"></div></div>
+    <div class="empty" hidden></div>
+    <figcaption>口径：CST 近 7 天 <code>updatedAt</code> 为 done 的票。</figcaption>
+    <div class="tooltip" role="status"></div>
+  </figure>
+  <h2>月度提交数</h2>
+  <figure class="chart" id="fig-commits">
+    <div class="fig-head"><span class="title">最近两个月提交数</span><button class="toggle" type="button" data-target="fig-commits">表格视图</button></div>
+    <div class="tv-wrap"><svg role="img"></svg><div class="tv-table"></div></div>
+    <div class="empty" hidden></div>
+    <figcaption>真源：<code>git log</code>（按月计数）。</figcaption>
+    <div class="tooltip" role="status"></div>
+  </figure>
+  <h2>治理机制（2026-10-31 快照）</h2>
+  <div class="snap">以下为 2026-10-31 快照（来源：reports/Emily-项目成果总结-20261031.md）；数字以当日 KPI 表为准。</div>
+  <div id="gov"></div>
+  <footer>产物为派生快照（reports/ 已 gitignore），真源是 <code>tools/social/daily_report.py</code> 与其数据源。同目录 .md 为 Markdown 版。</footer>
+</div>
+<script>
+var REPORT_DATA = {"kpis": [{"label": "ADR 决策档案", "value": "126", "sub": "最大 126"}, {"label": "能力注册表", "value": "41", "sub": "limited 8 / live 28 / not_built 5"}, {"label": "看板工作项", "value": "109", "sub": "backlog 15 / done 93 / todo 1"}, {"label": "定时作业", "value": "34", "sub": ""}, {"label": "测试文件", "value": "270", "sub": ""}, {"label": "docs 文档", "value": "295", "sub": ""}, {"label": "git 提交（当日）", "value": "0", "sub": ""}, {"label": "报告生成", "value": "每日 21:07", "sub": "launchd si-dailyreport"}], "cap_chart": [["limited", 8], ["live", 28], ["not_built", 5]], "board_chart": [["backlog", 15], ["done", 93], ["todo", 1]], "done_chart": [["2026-10-24", 1], ["2026-10-27", 4], ["2026-10-30", 35]], "commit_chart": [["10-30", 10]], "governance": [["真源分家 + 派生块", "ADR-0108", "`tools/shared/facts.py`", "会变的数字由脚本派生，手改判红退出 1"], ["关票单一入口", "ADR-0114", "`tools/shared/board.py`", "门禁 PASS 才关票；证据 SHA 只认 origin/* 可达"], ["Eval 门禁与风险分级", "ADR-0110", "—", "eval 作 spec；风险 L0–L4；门禁自身必须能被弄红"], ["部署检查 fail-closed", "ADR-0116", "`skills/deploy-preflight`", "修复假绿门禁；生产 SHA 血缘"], ["早报降级发送", "ADR-0112", "—", "取证失败 ≠ 内容不可用；降级发送 + 四层留痕"], ["发布幂等", "ADR-0073", "`card_publish.py`", "卡键三元组 no-op，覆盖须 force"], ["巡检维度单一真源", "ADR-0020", "`inspection.py`", "维度计数字面量，测试 AST 复算断言"], ["视觉令牌", "ADR-0119", "`tests/test_ui_tokens.py`", "颜色/字阶/描边/文案唯一规格"]]};
+</script>
+<script>
+(function () {
+  'use strict';
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  var themeBtn = document.getElementById('themeBtn');
+  themeBtn.addEventListener('click', function () {
+    var root = document.documentElement, cur = root.getAttribute('data-theme');
+    var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    root.setAttribute('data-theme', cur === 'dark' ? 'light' : cur === 'light' ? 'dark' : (dark ? 'light' : 'dark'));
+  });
+  function cssVar(n) { return getComputedStyle(document.querySelector('.page')).getPropertyValue(n).trim(); }
+  function elNS(t, a) { var n = document.createElementNS('http://www.w3.org/2000/svg', t); for (var k in a) n.setAttribute(k, a[k]); return n; }
+  function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+  /* KPI tiles */
+  var kpis = document.getElementById('kpis');
+  REPORT_DATA.kpis.forEach(function (k) {
+    var d = document.createElement('div'); d.className = 'tile';
+    d.innerHTML = '<div class="label"></div><div class="value"></div><div class="sub"></div>';
+    d.querySelector('.label').textContent = k.label;
+    d.querySelector('.value').textContent = k.value;
+    d.querySelector('.sub').textContent = k.sub || '';
+    kpis.appendChild(d);
+  });
+
+  /* governance snapshot table (textContent, not innerHTML for cell data) */
+  var gov = document.getElementById('gov');
+  var gt = document.createElement('table'); gt.className = 'data';
+  var ghr = document.createElement('tr');
+  ['机制', '决策', '代码落点', '作用'].forEach(function (h) {
+    var th = document.createElement('th'); th.textContent = h; ghr.appendChild(th);
+  });
+  gt.appendChild(ghr);
+  REPORT_DATA.governance.forEach(function (r) {
+    var tr = document.createElement('tr');
+    r.forEach(function (c) { var td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
+    gt.appendChild(tr);
+  });
+  gov.appendChild(gt);
+
+  /* charts */
+  function columnChart(figId, data, ord) {
+    var fig = document.getElementById(figId);
+    var empty = fig.querySelector('.empty');
+    if (!data || !data.length) { empty.hidden = false; empty.textContent = '数据源不可用，本图今日缺数据（不编 0）。'; return; }
+    var svg = fig.querySelector('svg'), tip = fig.querySelector('.tooltip');
+    var W = 640, H = 240, padL = 44, padR = 12, padT = 14, padB = 30;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var max = Math.max.apply(null, data.map(function (d) { return d[1]; })) || 1;
+    var step = plotW / data.length, barW = Math.min(24, step * 0.5);
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', '100%'); svg.style.maxWidth = W + 'px';
+    for (var g = 0; g <= 4; g++) {
+      var v = Math.round(max * g / 4 / 5) * 5; if (g === 0) v = 0;
+      var y = padT + plotH - (max ? (v / max) * plotH : 0);
+      svg.appendChild(elNS('line', { x1: padL, x2: W - padR, y1: y, y2: y, stroke: cssVar('--grid'), 'stroke-width': 1 }));
+      var t = elNS('text', { x: padL - 8, y: y + 4, 'text-anchor': 'end', 'font-size': 11, fill: cssVar('--ink-3') });
+      t.textContent = fmt(v); svg.appendChild(t);
+    }
+    svg.appendChild(elNS('line', { x1: padL, x2: W - padR, y1: padT + plotH, y2: padT + plotH, stroke: cssVar('--axis'), 'stroke-width': 1 }));
+    data.forEach(function (d, i) {
+      var h = (d[1] / max) * plotH, x = padL + step * i + (step - barW) / 2, yb = padT + plotH - h;
+      var fill = ord ? cssVar(ord[i]) : cssVar('--series-1');
+      var r = Math.min(4, h);
+      var path = 'M' + x + ',' + (yb + r) + ' a' + r + ',' + r + ' 0 0 1 ' + r + ',' + (-r) + ' h' + (barW - 2 * r) +
+        ' a' + r + ',' + r + ' 0 0 1 ' + r + ',' + r + ' v' + (h - r) + ' h' + (-barW) + ' Z';
+      var bar = elNS('path', { d: path, fill: fill, 'class': 'bar', tabindex: 0 });
+      bar.dataset.label = d[0]; bar.dataset.value = fmt(d[1]); bar.dataset.color = fill;
+      svg.appendChild(bar);
+      var lbl = elNS('text', { x: x + barW / 2, y: padT + plotH + 16, 'text-anchor': 'middle', 'font-size': 11.5, fill: cssVar('--ink-2') });
+      lbl.textContent = d[0]; svg.appendChild(lbl);
+      var val = elNS('text', { x: x + barW / 2, y: yb - 6, 'text-anchor': 'middle', 'font-size': 11.5, fill: cssVar('--ink-1') });
+      val.textContent = fmt(d[1]); svg.appendChild(val);
+    });
+    bindTip(fig, svg, tip); buildTable(fig, data);
+  }
+  function bindTip(fig, svg, tip) {
+    function show(t, cx, cy) {
+      tip.innerHTML = '';
+      var v = document.createElement('div'); v.className = 'tv'; v.textContent = t.dataset.value;
+      var l = document.createElement('div'); l.className = 'tl';
+      var k = document.createElement('span'); k.className = 'key'; k.style.background = t.dataset.color; l.appendChild(k);
+      var nm = document.createElement('span'); nm.textContent = t.dataset.label; l.appendChild(nm);
+      tip.appendChild(v); tip.appendChild(l); tip.style.display = 'block';
+      var rect = fig.getBoundingClientRect();
+      var x = cx - rect.left + 14, y = cy - rect.top - 10;
+      if (x + 140 > rect.width) x = cx - rect.left - 150;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    }
+    svg.addEventListener('pointermove', function (e) {
+      if (e.target.classList && e.target.classList.contains('bar')) show(e.target, e.clientX, e.clientY);
+      else tip.style.display = 'none';
+    });
+    svg.addEventListener('pointerleave', function () { tip.style.display = 'none'; });
+    svg.addEventListener('focusin', function (e) {
+      if (e.target.classList && e.target.classList.contains('bar')) {
+        var r = e.target.getBoundingClientRect();
+        show(e.target, r.left + r.width / 2, r.top);
+      }
+    });
+    svg.addEventListener('focusout', function () { tip.style.display = 'none'; });
+  }
+  function buildTable(fig, data) {
+    var wrap = fig.querySelector('.tv-wrap'), tbl = fig.querySelector('.tv-table');
+    var t = document.createElement('table'); t.className = 'data';
+    var hr = document.createElement('tr');
+    var th1 = document.createElement('th'); th1.textContent = '类别';
+    var th2 = document.createElement('th'); th2.className = 'num'; th2.textContent = '数量';
+    hr.appendChild(th1); hr.appendChild(th2); t.appendChild(hr);
+    data.forEach(function (d) {
+      var tr = document.createElement('tr');
+      var td1 = document.createElement('td'); td1.textContent = d[0];
+      var td2 = document.createElement('td'); td2.className = 'num'; td2.textContent = fmt(d[1]);
+      tr.appendChild(td1); tr.appendChild(td2); t.appendChild(tr);
+    });
+    tbl.appendChild(t);
+    var btn = fig.querySelector('.toggle');
+    btn.addEventListener('click', function () {
+      var on = wrap.classList.toggle('show-table');
+      btn.textContent = on ? '图表视图' : '表格视图';
+    });
+  }
+  columnChart('fig-cap', REPORT_DATA.cap_chart, ['--ord-1', '--ord-2', '--ord-3']);
+  columnChart('fig-board', REPORT_DATA.board_chart, ['--ord-1', '--ord-2', '--ord-3']);
+  columnChart('fig-done', REPORT_DATA.done_chart, null);
+  columnChart('fig-commits', REPORT_DATA.commit_chart, null);
+})();
+</script>
+</body>
+</html>

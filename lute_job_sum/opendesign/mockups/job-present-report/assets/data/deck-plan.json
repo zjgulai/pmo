@@ -1,0 +1,293 @@
+{
+  "generated_at": "2026-07-01T05:58:43.093Z",
+  "title": "Lute 述职汇报 v2 · 数据变钱",
+  "slide_count": 51,
+  "source_docs": [
+    "述职叙事骨架.md",
+    "ABI_Agent.md",
+    "platform-shopify-product-value-report-20260630.md",
+    "voc-cross-border-ecommerce-business-value-analysis-draft-20260630.md",
+    "scm-business-value-and-investment-case-draft-20260630.md",
+    "scrapy-analysis-data-intelligence-hub-cross-border-ecommerce-value-report-draft-20260630.md",
+    "voa-cross-border-ecommerce-value-analysis-20260630.md",
+    "brand_lute-starlink-cross-border-growth-os-value-analysis-20260630.md",
+    "项目汇报/asset_BrandOS 项目产品汇报.md",
+    "项目汇报/process_路特数字化中心_跨境出海价值汇报稿_2026-06-30.md"
+  ],
+  "screenshots": [
+    "lute-product-matrix-full",
+    "systems-hub",
+    "datapilot",
+    "shopify-audit",
+    "voc-report",
+    "brandos",
+    "abi-shopify-kb",
+    "starlink-brand",
+    "paper2skills",
+    "scm-governance",
+    "data-intelligence-hub",
+    "voa-market-insight",
+    "ai-video",
+    "plugin-hub",
+    "product-selection",
+    "business-insight",
+    "knowledge-garden"
+  ],
+  "slides": [
+    {
+      "index": 1,
+      "section": "自我介绍",
+      "title": "数据科学家述职：用产品把数据变成钱"
+    },
+    {
+      "index": 2,
+      "section": "自我介绍",
+      "title": "8 年跨 6 域，只做一件事：把技术变成可验证结果"
+    },
+    {
+      "index": 3,
+      "section": "自我介绍",
+      "title": "岗位职责不是 JD 条款，而是产品矩阵的能力来源"
+    },
+    {
+      "index": 4,
+      "section": "自我介绍",
+      "title": "叙事弧线：从赌 AI 窗口，到权钱责杠杆"
+    },
+    {
+      "index": 5,
+      "section": "Part 1",
+      "title": "我为什么来：数字化不是报表，是把数据变成钱"
+    },
+    {
+      "index": 6,
+      "section": "Part 1",
+      "title": "我来 Lute 赌的是 AI 进入真钱场景的窗口"
+    },
+    {
+      "index": 7,
+      "section": "Part 1",
+      "title": "大多数人看到“术”，我押注“道”"
+    },
+    {
+      "index": 8,
+      "section": "Part 2",
+      "title": "我做了什么：三层 37 子产品，四根支柱"
+    },
+    {
+      "index": 9,
+      "section": "Part 2",
+      "title": "ABI Agent 不是一组零散页面，是一套“把数据变钱”的产品矩阵"
+    },
+    {
+      "index": 10,
+      "section": "Part 2",
+      "title": "24 个系统从外部信号到 AI 知识沉淀，形成经营闭环"
+    },
+    {
+      "index": 11,
+      "section": "Part 2",
+      "title": "止血让问题见光，造血让产品替人，机制让能力复制"
+    },
+    {
+      "index": 12,
+      "section": "Part 2",
+      "title": "四个季度专题：洞察发现机会，闭环驱动动作，产品矩阵支撑落地"
+    },
+    {
+      "index": 13,
+      "section": "Part 2",
+      "title": "试用期 A 绩效的核心不是“做了很多”，而是每项都指向经营结果"
+    },
+    {
+      "index": 14,
+      "section": "Part 2 · 支柱一",
+      "title": "止血：内外双透明，把亏钱的口子暴露出来"
+    },
+    {
+      "index": 15,
+      "section": "支柱一",
+      "title": "对外止血：Momcozy 独立站 8 个系统性问题审计"
+    },
+    {
+      "index": 16,
+      "section": "支柱一",
+      "title": "止血价值不是发现问题，而是把每个问题绑定动作、金额和优先级"
+    },
+    {
+      "index": 17,
+      "section": "支柱一",
+      "title": "对内止血：1,194 条周报 × 16 周 × 127 人全量审计"
+    },
+    {
+      "index": 18,
+      "section": "支柱一",
+      "title": "对内止血 + 造血：122 万行全渠道数据穿透经营真相"
+    },
+    {
+      "index": 19,
+      "section": "支柱一",
+      "title": "数字化最大价值不是建系统，是让藏污纳垢的地方见光"
+    },
+    {
+      "index": 20,
+      "section": "Part 2 · 支柱二",
+      "title": "造血·守：700 万 VOC 变成增长决策资产"
+    },
+    {
+      "index": 21,
+      "section": "支柱二",
+      "title": "把跨平台消费者声音，统一成可追溯、可打标、可消费的决策资产"
+    },
+    {
+      "index": 22,
+      "section": "支柱二",
+      "title": "700 万条 VOC 不再是负担，是护城河"
+    },
+    {
+      "index": 23,
+      "section": "支柱二",
+      "title": "品牌资产智能中台：10 品牌 × 315 SKU × 68 维 × 8-Agent"
+    },
+    {
+      "index": 24,
+      "section": "Part 2 · 支柱三",
+      "title": "造血·攻：ABI 智能化独立站"
+    },
+    {
+      "index": 25,
+      "section": "支柱三",
+      "title": "不是 Shopify 知识库，而是 AI 经营操作系统"
+    },
+    {
+      "index": 26,
+      "section": "支柱三",
+      "title": "ABI 直接回答：今天怎么做、怎么管得住、怎么复制"
+    },
+    {
+      "index": 27,
+      "section": "支柱三",
+      "title": "从“知识产品”进入“可验证执行产品”"
+    },
+    {
+      "index": 28,
+      "section": "Part 2 · 支柱四",
+      "title": "建机制：我走了之后，Lute 的 AI 能力不降反升"
+    },
+    {
+      "index": 29,
+      "section": "支柱四",
+      "title": "业务问题直接进入可执行链路"
+    },
+    {
+      "index": 30,
+      "section": "支柱四",
+      "title": "顶会论文不是知识收藏，是 1054 个可执行跨境决策技能"
+    },
+    {
+      "index": 31,
+      "section": "支柱四",
+      "title": "锁死所有数字化产品的交付底线：三道关不过，不算完"
+    },
+    {
+      "index": 32,
+      "section": "Part 2",
+      "title": "按三层矩阵重组：风险审计、营收增长、效率工具、部门进阶"
+    },
+    {
+      "index": 33,
+      "section": "Part 3",
+      "title": "业务理解：数字化中心要从 L3 走向 L4/L5"
+    },
+    {
+      "index": 34,
+      "section": "Part 3",
+      "title": "Lute 不缺数字化投入规模，缺的是平台化能力和 AI 工程深度"
+    },
+    {
+      "index": 35,
+      "section": "Part 3",
+      "title": "部门要从支持型数字化，升级为经营型数字化"
+    },
+    {
+      "index": 36,
+      "section": "Part 3",
+      "title": "代替是过渡态，替代才是终局"
+    },
+    {
+      "index": 37,
+      "section": "Part 3",
+      "title": "两条公式定义产品矩阵底层架构"
+    },
+    {
+      "index": 38,
+      "section": "Part 4",
+      "title": "后期规划：对内 5 条，对外 3 条"
+    },
+    {
+      "index": 39,
+      "section": "Part 4",
+      "title": "继续执行，但把方向收敛到经营闭环与组织复制"
+    },
+    {
+      "index": 40,
+      "section": "Part 4",
+      "title": "AIP、课程、标准、工作坊：让产品从一次性交付变持续经营资产"
+    },
+    {
+      "index": 41,
+      "section": "Part 4",
+      "title": "把供应链专家经验从 Excel 和脑子里，结构化为可认证语义层"
+    },
+    {
+      "index": 42,
+      "section": "Part 4",
+      "title": "把已完成 0→1 的产品，推向真实商业闭环"
+    },
+    {
+      "index": 43,
+      "section": "Part 4",
+      "title": "外部市场情报不是爬虫，是授权、证据链、Dataset 和漂移监控"
+    },
+    {
+      "index": 44,
+      "section": "Part 4",
+      "title": "从五类 Voice 到 StoreOps：信号、证据、判断、审计、执行、回写"
+    },
+    {
+      "index": 45,
+      "section": "Part 5",
+      "title": "权钱责：我需要什么，让数据变钱速度翻倍"
+    },
+    {
+      "index": 46,
+      "section": "Part 5",
+      "title": "每一项投入都对应一个可验证产出"
+    },
+    {
+      "index": 47,
+      "section": "Part 5",
+      "title": "资源不是成本，是把个人 0→1 放大成组织 1→10"
+    },
+    {
+      "index": 48,
+      "section": "结尾",
+      "title": "下一轮述职，不汇报做了多少项目，只汇报数据变成了多少钱"
+    },
+    {
+      "index": 49,
+      "section": "附录",
+      "title": "主附件内容已放入 deck 的位置"
+    },
+    {
+      "index": 50,
+      "section": "附录",
+      "title": "线上产品截图已本地化为演示资产"
+    },
+    {
+      "index": 51,
+      "section": "附录",
+      "title": "事实、推断、不确定项分层，避免把未验证说成已完成"
+    }
+  ]
+}

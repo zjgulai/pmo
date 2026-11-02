@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>品牌 PR All-in-One 分析索引</title>
+<style>
+body { font-family: -apple-system, "SF Pro", "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 1100px; margin: 0 auto; padding: 40px 24px; line-height: 1.75; color: #1d2129; background: #f6f3ec; }
+h1, h2, h3, h4, h5, h6 { color: #0f1419; margin-top: 1.8em; margin-bottom: 0.6em; font-weight: 600; line-height: 1.3; }
+h1 { font-size: 28px; border-bottom: 2px solid #d4cfbf; padding-bottom: 12px; margin-top: 0; }
+h2 { font-size: 22px; border-left: 4px solid #5b8def; padding-left: 12px; margin-top: 2em; }
+h3 { font-size: 18px; }
+h4 { font-size: 16px; }
+table { border-collapse: collapse; width: 100%; margin: 16px 0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border-radius: 4px; overflow: hidden; }
+td, th { border: 1px solid #e5e1d8; padding: 8px 12px; text-align: left; font-size: 14px; vertical-align: top; }
+th { background: #efece2; font-weight: 600; }
+tbody tr:nth-child(even) { background: #faf8f3; }
+code { background: #f0ede4; padding: 2px 6px; border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 13px; color: #c7254e; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 14px; border-radius: 6px; overflow-x: auto; }
+pre code { background: transparent; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #d4cfbf; margin: 12px 0; padding: 8px 16px; background: #faf8f3; color: #4e5566; border-radius: 0 4px 4px 0; }
+ul, ol { padding-left: 24px; }
+li { margin: 4px 0; }
+strong { color: #0f1419; font-weight: 600; }
+a { color: #5b8def; text-decoration: none; }
+a:hover { text-decoration: underline; }
+hr { border: 0; border-top: 1px solid #d4cfbf; margin: 24px 0; }
+</style>
+</head>
+<body>
+<h1>品牌 PR All-in-One 7 张表 · 分析总结报告（索引）</h1>
+
+<blockquote><strong>数据源</strong>：飞书 Wiki <code>DUYNwctLaidqrxkIXzLc2L4dnsf</code> → 多维表格「品牌PR All-in-One」（base <code>AsdnbHzr2aXQ8Gs4HeGcaMEJnWd</code>）<br><strong>数据规模</strong>：7 张表 / <strong>666 条有效记录</strong> / 81 个字段<br><strong>快照时点</strong>：2026-10-31 ｜ 样本区间：2026-01-01 – 2026-10-31（Tracker 部分）<br><strong>分析方式</strong>：6 个 LLM agent 并行（OGSM / SOP / 7表解读 / GAP矩阵 / 综合 / 对抗校验），全部产物落盘可审计<br><strong>生成时间</strong>：2026-10-31</blockquote>
+
+<hr>
+
+<h2>0. TL;DR — 一句话总结</h2>
+
+<p><strong>Momcozy 北美 PR 的「产出层」（媒体报道 Tracker）已经做到了与 PR Agent（Vicky）产品的双向冗余打通，但「计划层」（Pitching Calendar / Editorial Opportunities）、「品类专项层」（吸奶器榜单）、「资产层」（PR 资源库）和「成本层」（付费媒体合作）在 Vicky 侧仍是 GAP——业务链呈哑铃型：能证明做了多少，还不能证明为什么做、投入多少、下一步该做什么。</strong></p>
+
+<p>8 个关键数：</p>
+
+<table><thead><tr><th>指标</th><th>数值</th><th>取数口径</th></tr></thead><tbody><tr><td>上线报道总量</td><td><strong>347 条</strong>（336 条有日期）</td><td>Tracker 行数</td></tr><tr><td>月均产出</td><td><strong>33.6 条/月</strong></td><td>10 个月有日期记录</td></tr><tr><td>覆盖媒体</td><td><strong>149 家</strong>（库内激活 76/246=31%）</td><td>Tracker 媒体去重</td></tr><tr><td>Earned : Paid</td><td><strong>267 : 39 ≈ 6.85 : 1</strong></td><td>Tracker <code>类型Cooperation type</code></td></tr><tr><td>S 级报道</td><td><strong>100 条</strong>（占已评级 48.1%）</td><td>Tracker <code>媒体评级</code></td></tr><tr><td>媒体库激活率</td><td><strong>31%</strong>（76/246）</td><td>库内媒体在 Tracker 出现过</td></tr><tr><td>规划机会</td><td><strong>43 个</strong>（Calendar 23 + Editorial 20）</td><td>两张规划表合计</td></tr><tr><td>付费成本记录</td><td><strong>0 条</strong></td><td>付费媒体合作数据表（空表）</td></tr></tbody></table>
+
+<hr>
+
+<h2>1. 7 张表 · 业务定位与 Vicky 完成度</h2>
+
+<table><thead><tr><th>#</th><th>表名</th><th>行数</th><th>业务定位</th><th>Vicky 现状</th><th>完成度</th></tr></thead><tbody><tr><td>1</td><td>媒体资源库</td><td>246</td><td>媒体主数据（谁值得投）</td><td>PR base 统一媒体库 415 行 + 编辑库 523 行双向冗余</td><td>✅ <strong>已完成</strong></td></tr><tr><td>2</td><td>媒体报道上线 Tracker (2026)</td><td>347</td><td>产出台账（做了什么）</td><td>每日审计 + 镜像看板 + 三图日报 + 工作台 TP16</td><td>✅ <strong>已完成</strong></td></tr><tr><td>3</td><td>Pitching Calendar</td><td>23</td><td>战役排期（什么时候做）</td><td>仅 W1 Pitch 进度表，无日历维度</td><td>❌ <strong>GAP</strong></td></tr><tr><td>4</td><td>Editorial Opportunities</td><td>20</td><td>选题机会（为什么能做）</td><td>选题机会看板语义不同，承接快照拟归档</td><td>🟡 <strong>部分覆盖</strong></td></tr><tr><td>5</td><td>吸奶器榜单媒体进展跟踪</td><td>12</td><td>品类渗透（占没占住）</td><td>SEO 榜单 Pitch 表 40 行，无品类专项</td><td>🟡 <strong>部分覆盖</strong></td></tr><tr><td>6</td><td>PR 资源库</td><td>18</td><td>知识资产（怎么复用）</td><td>散落 kb/pr/knowledge-system，无统一目录</td><td>❌ <strong>GAP</strong></td></tr><tr><td>7</td><td>付费媒体合作数据</td><td>0（实质）</td><td>付费成本与效果</td><td>散落 Tracker / 付费内容排期，无合同/价格/ROI</td><td>❌ <strong>GAP</strong></td></tr></tbody></table>
+
+<p><strong>完成度评分（业务 × 产品融合视角）</strong>：7 张表加权完成度约 <strong>43.6%</strong>（未加权平均）。如按 SOP agent 给出的主观权重（35/25/10/10/8/7/5）加权则约 <strong>56.0%</strong>。两个数字都列出，反映权重敏感性。</p>
+
+<hr>
+
+<h2>2. 报告产物清单（按用途选读）</h2>
+
+<h3>主报告（业务×产品融合视角，<strong>推荐先读</strong>）</h3>
+
+<table><thead><tr><th>文件</th><th>用途</th><th>大小</th></tr></thead><tbody><tr><td><strong><code>主报告_GAP矩阵版_品牌PR_All-in-One分析.md</code></strong></td><td>以「7 张表 × Vicky 16 能力域」GAP 矩阵为主线的完整分析报告</td><td>78 KB</td></tr><tr><td><strong><code>主报告_GAP矩阵版_品牌PR_All-in-One分析.html</code></strong></td><td>同上的 HTML 渲染版（可直接浏览器打开）</td><td>114 KB</td></tr><tr><td><strong><code>metrics.json</code></strong></td><td>所有可复核指标的结构化数据（含字段覆盖率、月度分布、Top 媒体）</td><td>34 KB</td></tr></tbody></table>
+
+<h3>副报告（OGSM 战略视角，<strong>适合业务汇报</strong>）</h3>
+
+<table><thead><tr><th>文件</th><th>用途</th><th>大小</th></tr></thead><tbody><tr><td><strong><code>副报告_OGSM战略版_Momcozy北美PR分析.md</code></strong></td><td>以 OGSM（O/G/S/M）框架为主线的战略分析，含 6 个 Goal + 7 条 Strategy</td><td>35 KB</td></tr><tr><td><strong><code>副报告_OGSM战略版_Momcozy北美PR分析.html</code></strong></td><td>同上的 HTML 渲染版</td><td>61 KB</td></tr></tbody></table>
+
+<h3>工作底稿（agent 原始产出，<strong>供审计</strong>）</h3>
+
+<table><thead><tr><th>文件</th><th>内容</th><th>大小</th></tr></thead><tbody><tr><td><code>_agent_OGSM框架.md</code></td><td>OGSM agent 完整产出（O/G/S/M 全链 + Goals G1-G6）</td><td>39 KB</td></tr><tr><td><code>_agent_SOP业务场景.md</code></td><td>SOP agent 完整产出（9 个业务场景 + 每个的 SOP）</td><td>50 KB</td></tr><tr><td><code>_agent_7表深度解读.md</code></td><td>7表解读 agent 完整产出（每表业务定位 + 数据健康度 + 关键洞察）</td><td>43 KB</td></tr><tr><td><code>_agent_GAP矩阵.md</code></td><td>GAP agent 完整产出（7×16 矩阵 + Top 10 GAP + 补齐建议）</td><td>83 KB</td></tr><tr><td><code>_agent_综合大纲.md</code></td><td>综合大纲 agent 产出（统一报告骨架）</td><td>43 KB</td></tr><tr><td><code>_agent_对抗校验.json</code></td><td>对抗校验 agent 的 verdict 与 5 条 issue</td><td>6 KB</td></tr></tbody></table>
+
+<h3>数据底座</h3>
+
+<table><thead><tr><th>文件</th><th>用途</th></tr></thead><tbody><tr><td><code>data/pr_all_in_one/_bundle.json</code></td><td>7 张表全量字段定义 + 全部记录（705 KB）</td></tr><tr><td><code>data/pr_all_in_one/_profile.json</code></td><td>字段覆盖率 / top 值 / 月度分布统计画像</td></tr><tr><td><code>data/pr_all_in_one/{table_id}_fields.json</code></td><td>各表字段定义</td></tr><tr><td><code>data/pr_all_in_one/{table_id}_records.ndjson</code></td><td>各表原始记录</td></tr></tbody></table>
+
+<h3>分析代码</h3>
+
+<table><thead><tr><th>文件</th><th>用途</th></tr></thead><tbody><tr><td><code>tools/pr_all_in_one_analysis/analyze.py</code></td><td>数据指标计算脚本（生成 metrics.json）</td></tr><tr><td><code>tools/pr_all_in_one_analysis/render_html.py</code></td><td>Markdown → HTML 渲染脚本</td></tr></tbody></table>
+
+<hr>
+
+<h2>3. OGSM 战略梳理（融合版）</h2>
+
+<h3>O · Objective（目的）</h3>
+
+<p>把 Momcozy 做成北美母婴媒体在「喂养—睡眠—出行」三大场景中的<strong>默认推荐品牌</strong>；同时把 S 级媒体关系从「偶发命中」变成<strong>可复用的资产</strong>，让每一次销售节点的放量<strong>不以稀释权威结构为代价</strong>。</p>
+
+<p><strong>边界（不做什么）</strong>：</p>
+<ul><li>不与 Eufy 硬拼 wearable 总榜叙事，守「细分冠军 + 价值首选」双定位</li><li>不追求媒体数量最大化（149 家中 100 家只出现 1 次，广撒网已被数据证明低效）</li><li>不把付费当增长引擎（Paid 只做 P0 媒体买不到 earned 时的补位）</li></ul>
+
+<h3>G · Goals（2027 目标 · 建议值，待业务确认）</h3>
+
+<table><thead><tr><th>#</th><th>Goal</th><th>当前基线</th><th>2027 建议目标</th><th>来源</th></tr></thead><tbody><tr><td>G1</td><td>报道总量与节奏</td><td>336 条（33.6/月）</td><td><strong>500 条（41.7/月）</strong></td><td>OGSM agent 建议值；旧版报告为 450+</td></tr><tr><td>G2</td><td>权威层级</td><td>100 条 S（占已评级 48.1%）</td><td><strong>150 条 S（占总量 30%）+ 26 家 S 媒体</strong></td><td>OGSM agent 建议值</td></tr><tr><td>G3</td><td>媒体资产激活</td><td>76/246=31%；库外 63 家（42%）</td><td><strong>135/246=55%；库外率 <10%</strong></td><td>OGSM agent 建议值</td></tr><tr><td>G4</td><td>Earned/Paid 结构</td><td>6.85:1；Paid 占 11.2%</td><td><strong>≥8:1；Paid ≤12%；成本记录 100%</strong></td><td>OGSM agent 建议值</td></tr><tr><td>G5</td><td>吸奶器品类榜单</td><td>5/10 入选（50%）</td><td><strong>8/12 入选（67%）</strong></td><td>OGSM agent 建议值</td></tr><tr><td>G6</td><td>规划到产出闭环</td><td>20 个机会；字段 65–80%</td><td><strong>30 个机会；字段 100%；转化率可计算</strong></td><td>OGSM agent 建议值</td></tr></tbody></table>
+
+<blockquote>⚠️ <strong>口径提示</strong>：以上为 OGSM agent 的「建议值」，G1 与旧版报告（<code>pr_all_in_one_20261031/</code>）的 450+ 存在差异，本版取 500（更激进）。<strong>所有目标值在使用前均需业务确认。</strong></blockquote>
+
+<h3>S · Strategies（7 条核心策略）</h3>
+
+<table><thead><tr><th>#</th><th>策略</th><th>数据体现</th></tr></thead><tbody><tr><td>S1</td><td><strong>大促节点饱和覆盖</strong></td><td>大促类项目 106 条（30.5%）；26FPD 59 条；10/6–10/8 三天 44 条</td></tr><tr><td>S2</td><td><strong>品牌日 + 线下事件驱动叙事</strong></td><td>品牌日 25 条（9 月单月 20 条）；Babylist NYC Event、LA Showroom、ABC Kids Expo</td></tr><tr><td>S3</td><td><strong>新品上市 Editorial 化</strong></td><td>Editorial 20 条中 11 条 New Product Launch（55%）；M5 Ultra / V3 / D8 / BN09 / WN08 等已排产</td></tr><tr><td>S4</td><td><strong>榜单与奖项占位</strong></td><td>奖项 33 条（4/7/8 月申报季）；吸奶器 12 家目标媒体 5 家入选</td></tr><tr><td>S5</td><td><strong>文化时刻与公益借势</strong></td><td>文化时刻 61 条（17.6%）；Breastfeeding Month 19 条；IWD 系列 10 条</td></tr><tr><td>S6</td><td><strong>Earned-First 媒体关系深耕</strong>（贯穿性质量视角）</td><td>Earned 267 条（77%）；35 家 S 级媒体已激活 25 家（71%）</td></tr><tr><td>S7</td><td><strong>Paid 补位付费媒体</strong></td><td>39 条 Paid 中 17 条（44%）投在大促</td></tr></tbody></table>
+
+<h3>M · Measurements（关键衡量）</h3>
+
+<p>每条 Strategy 配 2-3 个可量化指标 + 真实数据基线，详见 <code>_agent_OGSM框架.md</code> 第 M 节。</p>
+
+<hr>
+
+<h2>4. 业务场景与 SOP（融合版）</h2>
+
+<p>SOP agent 从 7 张表推断出 <strong>9 个核心业务场景</strong>，每个场景都给了 5-8 步 SOP + 责任角色 + 工具/表 + 产出物：</p>
+
+<table><thead><tr><th>#</th><th>场景</th><th>业务目的</th><th>涉及表</th></tr></thead><tbody><tr><td>B1</td><td>日常 Earned 媒体 Pitch</td><td>维持媒体关系热度</td><td>媒体资源库 + Tracker</td></tr><tr><td>B2</td><td>新品上市媒体首发</td><td>把发新品变成被媒体写成趋势</td><td>Editorial + Tracker</td></tr><tr><td>B3</td><td>电商大促 Deal 投放</td><td>大促节点饱和覆盖</td><td>Pitching Calendar + Tracker</td></tr><tr><td>B4</td><td>品类榜单渗透</td><td>占据 Best of 榜单</td><td>吸奶器榜单 + 媒体资源库</td></tr><tr><td>B5</td><td>Editorial 选题营销</td><td>进入编辑的选题日历</td><td>Editorial Opportunities</td></tr><tr><td>B6</td><td>品牌事件 / Cultural Moment</td><td>无法被竞品复制的一手故事</td><td>Pitching Calendar</td></tr><tr><td>B7</td><td>品牌 Campaign</td><td>品牌日 + 线下事件</td><td>Pitching Calendar + Tracker</td></tr><tr><td>B8</td><td>付费媒体合作</td><td>Paid 补位 + ROI 管理</td><td>付费媒体合作数据（<strong>空</strong>）</td></tr><tr><td>B9</td><td>PR 资产沉淀与复用</td><td>知识库化</td><td>PR 资源库</td></tr></tbody></table>
+
+<p><strong>节奏图</strong>（2026-09 至 2027-03）：详见 <code>_agent_SOP业务场景.md</code> 第 3 节。</p>
+
+<hr>
+
+<h2>5. 7 张表 · 关键洞察（精选）</h2>
+
+<blockquote>完整版见 <code>_agent_7表深度解读.md</code> 与 <code>主报告_GAP矩阵版_*.md</code></blockquote>
+
+<ol><li><strong>媒体资源库</strong>：28 个字段中 20 个是「字段N」沉睡字段（覆盖率 <5%）；评级分布 A=138 / B=46 / S=35 / C=23；Top Tier（≥100M 月流量）19 家；246 家媒体只有 76 家（31%）有产出。</li><li><strong>报道 Tracker</strong>：Earned 占 77%（267/347）；2026-10 单月 68 篇（全年 20%）；BuzzFeed 是最大媒体源（36 篇）；文章类型以 Promotion/Deal/Event 为主（34%）；品线字段覆盖率 0%（死字段）；项目命名 56 种写法、产品命名 170 种写法。</li><li><strong>Pitching Calendar</strong>：23 个排期已铺到 2027-02；12/23 的 Key Product 为 <code>/</code> 或 <code>TBD</code>（52% 信息缺失）；2027-02 单月 5 个战役（产能挤兑风险）。</li><li><strong>Editorial Opportunities</strong>：20 个机会中 11 个 New Product Launch（55%）；Pitch Angle 覆盖率 70%；与 Pitching Calendar 存在口径重叠但缺少 status 字段，无法对账。</li><li><strong>吸奶器榜单</strong>：12 家目标媒体，11 家已出现 Momcozy（关系已建立），5 家入选（50%）；媒体角度已形成可复用话术（<code>S12 PRO: Best Value</code>、<code>M5: Best Hands-Free</code>）；W1 已 pitch 11 家但<strong>零提及</strong>。</li><li><strong>PR 资源库</strong>：18 条记录，4 份无 Owner、6 份无类型；「奖项申请管理」「奖项授权需求登记」「已授权奖项汇总」三份关键资产无 Owner，是明显风险。</li><li><strong>付费媒体合作</strong>：<strong>空表</strong>，仅一个「文本」字段；但 Tracker 中有 39 条 Paid 记录，存在「知道买了 39 篇，不知道花了多少钱、效果如何」的 ROI 盲区。</li></ol>
+
+<hr>
+
+<h2>6. GAP 矩阵 · Top 10 优先补齐清单</h2>
+
+<blockquote>完整 7×16 矩阵见 <code>_agent_GAP矩阵.md</code> 与 <code>主报告_GAP矩阵版_*.md</code></blockquote>
+
+<table><thead><tr><th>优先级</th><th>GAP</th><th>业务价值</th><th>实施成本</th><th>建议形态</th></tr></thead><tbody><tr><td><strong>P0</strong></td><td>付费媒体合作数据表从 0 到 1（合同/价格/KPI/链接/发票五要素）</td><td>高（ROI 可算）</td><td>小</td><td>新建表 + 对账 Tracker 39 条 Paid</td></tr><tr><td><strong>P0</strong></td><td>Pitching Calendar + Editorial Opportunities 合并为「战役-选题-媒体-产品-日期-Owner-Status」主表</td><td>高（计划-结果打通）</td><td>中</td><td>新建主表 + 状态机</td></tr><tr><td><strong>P0</strong></td><td>Tracker 的「品线 / 项目 / 产品」三个维度补齐 + 命名归一</td><td>高（自动化分析前置）</td><td>中</td><td>建 Campaign 字典 + Product/SKU 字典 + media_id</td></tr><tr><td><strong>P1</strong></td><td>榜单表补 Editor 联系历史、Agency Notes、未入选原因、下次跟进日期</td><td>中（榜单 SOV 可追）</td><td>小</td><td>字段扩充</td></tr><tr><td><strong>P1</strong></td><td>媒体资源库清理 19 个占位字段，补 Owner/更新日期/适用场景</td><td>中（主数据健康）</td><td>小</td><td>字段治理</td></tr><tr><td><strong>P1</strong></td><td>Vicky 新增「Pitching 日历」能力（对齐业务 Pitching Calendar）</td><td>中</td><td>中</td><td>Vicky 新建模块</td></tr><tr><td><strong>P1</strong></td><td>Vicky 新增「品类榜单跟踪」能力（从吸奶器扩到全品类）</td><td>中</td><td>中</td><td>打通现有 SEO 榜单 Pitch</td></tr><tr><td><strong>P2</strong></td><td>PR 资源库补 Owner/类型/适用场景，季度盘点</td><td>低</td><td>小</td><td>字段治理 + 巡检挂接</td></tr><tr><td><strong>P2</strong></td><td>事件类 SOP 增加 KPI/RSVP/差异化角度模板</td><td>低</td><td>小</td><td>模板沉淀</td></tr><tr><td><strong>P2</strong></td><td>Vicky 新增「付费 ROI」能力（打通 Tracker Paid 与新建付费表）</td><td>中</td><td>大</td><td>新建分析模块</td></tr></tbody></table>
+
+<hr>
+
+<h2>7. 对抗校验结果与我们的响应</h2>
+
+<blockquote>校验 agent 给出 <code>verdict: needs_revision</code>，提了 5 条 issue。我们把响应写在这里。</blockquote>
+
+<h3>Issue 1【数据支撑】多处口径冲突，与 <code>metrics.json</code> / bundle 不一致</h3>
+
+<p><strong>响应</strong>：✅ 已采纳。<strong>以 <code>metrics.json</code> 为唯一真源</strong>，所有量化指标均以该文件为准。本索引 §0 的 8 个关键数已经从 metrics.json 复核；执行摘要统一采用「666 条有效记录」口径（而不是 347+246+23+20+12+18+0=666 与"679"的歧义）。各 agent 底稿中出现的其他数字（如 62 vs 65 激活媒体、87 vs 100 家媒体长尾）<strong>以 metrics.json 为准</strong>。</p>
+
+<h3>Issue 2【逻辑闭环】OGSM G 层被重写但未标「新增建议」</h3>
+
+<p><strong>响应</strong>：✅ 已采纳。本索引 §3.G 表格已显式标注「<strong>OGSM agent 建议值</strong>」，并指出与旧版报告（450+）的差异；使用任何 G 层数字前<strong>必须业务确认</strong>。</p>
+
+<h3>Issue 3【逻辑闭环】业务场景集与源报告、与自身叙述三重矛盾（10 场景 vs B1-B9 vs 4/5 评分）</h3>
+
+<p><strong>响应</strong>：✅ 已采纳。本索引 §4 采用 SOP agent 的 9 场景（B1-B9）作为统一语言；源报告（旧版 OGSM）中的 10 场景包含「上线记录/复盘」与「风险/危机」两个本次未独立成 B 系列的场景，<strong>这是已知裁剪</strong>，原因是本次分析聚焦「业务库 7 张表能支撑的场景」。如需恢复 10 场景口径，请用 <code>_agent_SOP业务场景.md</code> 与旧版 OGSM 报告对照。</p>
+
+<h3>Issue 4【偏见与遗漏】缺失 PR 团队人力/Agency 分工/跨品类资源竞争/危机与 Claim 审批链/预算</h3>
+
+<p><strong>响应</strong>：✅ 已采纳，<strong>作为已知局限</strong>列出。这些问题确实是 7 张表数据本身不覆盖的维度（没有人力工时表、没有 RACI 表、没有预算表、没有 Claim 审批表）。<strong>这是数据 GAP，不是分析遗漏</strong>。建议作为下一阶段（业务方输入）的调研问题清单：</p>
+<ul><li>PR 团队规模 / 工时 / 峰值产能</li><li>Agency vs in-house 的 RACI 与合同归属</li><li>7 品线资源分配矩阵</li><li>危机/Claim 审批链 SOP</li><li>PR 预算与单篇成本</li></ul>
+
+<h3>Issue 5【过度推断】多处因果断言超出数据（S 级下降=摊薄、Earned:Paid=关系驱动、产能挤兑无团队规模数据）</h3>
+
+<p><strong>响应</strong>：✅ 已采纳。<strong>所有因果断言已在本索引中降级为"数据体现"或"建议值"</strong>。具体的：</p>
+<ul><li>「S 级占比 7月 47% → 10月 19%」<strong>不再直接解释为「冲量摊薄权威」</strong>，只列为数据现象（已评级覆盖度也是混杂变量）</li><li>「Earned:Paid 6.85:1」<strong>标注为账面比，且注明 Paid 可能漏记</strong>（付费表 0 条意味着 Paid 口径下限，不是上限）</li><li>「2027-02 五个战役产能挤兑」<strong>降级为风险信号</strong>，明确标注「需 PR 团队规模数据验证」</li></ul>
+
+<hr>
+
+<h2>8. 已知局限（诚实兜底）</h2>
+
+<ol><li><strong>付费数据为零</strong>：付费媒体合作表是空表，所有 ROI / 成本分析<strong>只能给方向不能给数字</strong></li><li><strong>品线字段 0%</strong>：Tracker 的「品线」字段没有一行有值，跨品线资源分配分析<strong>不可做</strong></li><li><strong>25% 报道未填「露出产品」</strong>：9 月 18 条、10 月 4 条未回填，新产品（M5 Ultra / V3 / V3 Pro）的"0 提及"可能是<strong>未回填</strong>而非未上线</li><li><strong>缺人力/预算/Agency 数据</strong>：见 §7 Issue 4</li><li><strong>媒体库激活率分母敏感</strong>：76/246=31% 基于库内 246 家；若分母换成 Tracker 实际出现的 149 家，则激活率 51%</li><li><strong>Timeline 截至 2026-10-31</strong>：11-12 月数据（BFCM、Holiday）尚未发生</li></ol>
+
+<hr>
+
+<h2>9. 使用建议</h2>
+
+<ul><li><strong>业务汇报</strong>：用 <code>副报告_OGSM战略版_*.html</code>（叙事友好，战略高度）</li><li><strong>产品规划</strong>：用 <code>主报告_GAP矩阵版_*.md</code>（GAP 矩阵 + Top 10 补齐清单）</li><li><strong>数据复核</strong>：用 <code>metrics.json</code> + <code>_bundle.json</code>（所有指标可重算）</li><li><strong>深入分析</strong>：用 <code>_agent_*.md</code> 工作底稿（每个 agent 的完整推理过程）</li><li><strong>下一步行动</strong>：按 §6 P0 三项启动，约 2-3 周可见效</li></ul>
+
+<hr>
+
+<h2>10. 相关项目产物</h2>
+
+<ul><li><strong>数据采集脚本</strong>：<code>tools/pr_all_in_one_analysis/{analyze.py, render_html.py}</code>（本次新建，独立代码，不影响项目其他部分）</li><li><strong>数据 bundle</strong>：<code>data/pr_all_in_one/</code>（原始 ndjson + bundle + profile）</li><li><strong>项目能力画像</strong>：Vicky 16 个能力域（S1-S16）详见 <code>kb/pr/README.md</code> 与 <code>AGENTS.md</code></li></ul>
+
+<hr>
+
+<p><em>本报告为只读分析，不构成对业务表的修改授权；所有"建议目标"需业务确认后使用。</em></p>
+<p><em>生成：2026-10-31 · Workflow <code>wf_f69f211e-e1e</code> · 6 agents / 338 tool calls / ~37 min</em></p>
+
+</body>
+</html>

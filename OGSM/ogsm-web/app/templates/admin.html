@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}PMO 后台 · ABI OGSM{% endblock %}
+{% block body %}
+
+<h1>PMO 后台</h1>
+<p class="muted">唯一写入口。所有改动落 Postgres，前台立即生效。结构校验在每次渲染时重跑。</p>
+
+<h2>G 基线锁定</h2>
+<table>
+  <thead><tr><th style="width:56px">G</th><th>名称</th><th style="width:280px">G-A / 基线</th></tr></thead>
+  <tbody>
+  {% for g in goals %}
+    <tr>
+      <td><code>{{ g.code }}</code></td>
+      <td>{{ g.name }} · <code>{{ g.main_metric_id }}</code></td>
+      <td>
+        <form class="inline" method="post" action="/admin/goal/{{ g.id }}">
+          <input name="ga" value="{{ g.ga }}" style="width:110px" placeholder="G-A">
+          <label style="font-size:12.5px;display:flex;align-items:center;gap:5px">
+            <input type="checkbox" name="baseline_locked" {% if g.baseline_locked %}checked{% endif %}>
+            基线已锁定
+          </label>
+          <button class="ghost">保存</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>产线台账</h2>
+<table>
+  <thead><tr><th style="width:170px">产线</th><th>编辑</th></tr></thead>
+  <tbody>
+  {% for ln in lines %}
+    <tr {% if ln.status == 'out' %}style="opacity:.55"{% endif %}>
+      <td><strong>{{ ln.name }}</strong><div class="muted" style="font-size:11.5px">{{ ln.layer }} · {{ ln.kind }}</div></td>
+      <td>
+        <form class="inline" method="post" action="/admin/line/{{ ln.id }}">
+          <select name="maturity" style="width:78px">
+            {% for m in ['M0','M1','M2','M3','M4'] %}
+              <option value="{{ m }}" {% if ln.maturity == m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+          </select>
+          <input name="seg_a" value="{{ ln.seg_a or '' }}" placeholder="段 A" style="width:110px">
+          <input name="consumer" value="{{ ln.consumer or '' }}" placeholder="消费方（逗号分隔）" style="width:200px">
+          <select name="status" style="width:96px">
+            {% for st in ['active','watch','retire','out'] %}
+              <option value="{{ st }}" {% if ln.status == st %}selected{% endif %}>{{ st }}</option>
+            {% endfor %}
+          </select>
+          <button class="ghost">保存</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>交付台账</h2>
+<table>
+  <thead><tr><th style="width:150px">产线</th><th>交付物</th><th>更新</th></tr></thead>
+  <tbody>
+  {% for wi in items %}
+    <tr>
+      <td>{{ wi.line_name }}</td>
+      <td>{{ wi.title }}</td>
+      <td>
+        <form class="inline" method="post" action="/admin/workitem/{{ wi.id }}">
+          <select name="status" style="width:92px">
+            {% for st in ['方案中','进行中','已完成'] %}
+              <option value="{{ st }}" {% if wi.status == st %}selected{% endif %}>{{ st }}</option>
+            {% endfor %}
+          </select>
+          <input name="evidence" value="{{ wi.evidence }}" placeholder="验收证据" style="width:170px">
+          <input name="blocker" value="{{ wi.blocker }}" placeholder="blocker" style="width:200px">
+          <button class="ghost">保存</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>录入结算快照</h2>
+<form class="card inline" method="post" action="/admin/snapshot">
+  <input name="line_name" placeholder="产线名" required style="width:170px">
+  <input name="metric_id" placeholder="m-l1-cac@2" required style="width:150px">
+  <input name="period" placeholder="2027Q1" required style="width:96px">
+  <input name="baseline" placeholder="基线" style="width:96px">
+  <input name="target" placeholder="目标数值" style="width:110px">
+  <input name="actual" placeholder="实际数值" style="width:110px">
+  <input name="note" placeholder="备注" style="width:150px">
+  <button>写入</button>
+</form>
+
+<h2>当前校验状态</h2>
+<div class="card">
+  <p><strong>{{ checks.summary() }}</strong></p>
+  <ul style="font-size:13px;margin:8px 0 0;padding-left:20px">
+  {% for f in checks.findings %}<li class="{{ 'err' if f.level == 'error' else 'warn' }}"><code>{{ f.code }}</code> {{ f.message }}</li>{% endfor %}
+  {% if not checks.findings %}<li class="muted">无</li>{% endif %}
+  </ul>
+</div>
+
+{% endblock %}

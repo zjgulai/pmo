@@ -1,0 +1,96 @@
+[
+  {
+    "skeleton": "塔尖 · 一句话主张",
+    "slides": [
+      1,
+      4,
+      48
+    ],
+    "status": "covered"
+  },
+  {
+    "skeleton": "Part 1 — 我是谁，为什么来",
+    "slides": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      7
+    ],
+    "status": "covered"
+  },
+  {
+    "skeleton": "Part 2 — ABI Agent 产品矩阵、年度规划、Q1产出、四根支柱、个人商业化成果",
+    "slides": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "status": "covered"
+  },
+  {
+    "skeleton": "Part 3 — 业务理解",
+    "slides": [
+      33,
+      34,
+      35,
+      36,
+      37
+    ],
+    "status": "covered"
+  },
+  {
+    "skeleton": "Part 4 — 后期规划",
+    "slides": [
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44
+    ],
+    "status": "covered"
+  },
+  {
+    "skeleton": "Part 5 — 权钱责",
+    "slides": [
+      45,
+      46,
+      47
+    ],
+    "status": "covered"
+  },
+  {
+    "skeleton": "事实边界与截图索引",
+    "slides": [
+      49,
+      50,
+      51
+    ],
+    "status": "added_for_review"
+  }
+]

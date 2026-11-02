@@ -1,0 +1,73 @@
+# ABI OGSM 生产部署
+#
+# 隔离原则（2026-11-02 与业务确认）：
+# 1. 独立 docker network `pmo_net`，不与任何既有 network 共享
+# 2. 数据库不发布宿主机端口，只在本 network 内可见
+# 3. 应用只发布到 172.20.0.1:18960（仅回环网桥），由边缘 nginx 反代
+# 4. 独立 compose project name `pmo`，容器名带前缀，不会被 `docker compose down` 误删
+#
+# 端口约定沿用服务器现有形态：172.20.0.1:18xxx -> 容器端口
+# 已占用：18000 18300 18340 18520 18888 18890 18930；本服务用 18960
+
+name: pmo
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pmo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ogsm
+      POSTGRES_USER: ogsm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD 必须设置}
+      # 中文排序与大小写比较需要正确 locale
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - pmo_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ogsm -d ogsm"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    # 不发布端口：只在 pmo_net 内可达
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  web:
+    build:
+      context: ../../..
+      dockerfile: OGSM/ogsm-web/Dockerfile
+    image: pmo-web:${IMAGE_TAG:-local}
+    container_name: pmo-web
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://ogsm:${POSTGRES_PASSWORD}@db:5432/ogsm
+      OGSM_PMO_PASSWORD: ${OGSM_PMO_PASSWORD:?OGSM_PMO_PASSWORD 必须设置}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY 必须设置}
+      OGSM_DOCS_DIR: /docs
+    volumes:
+      # 治理索引读取的 md 文档：只读挂载，更新文档不需重建镜像
+      - ../../..:/docs:ro
+    ports:
+      - "172.20.0.1:18960:8000"
+    networks:
+      - pmo_net
+    depends_on:
+      db:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+networks:
+  pmo_net:
+    name: pmo_net
+    driver: bridge
+
+volumes:
+  pgdata:
+    name: pmo_pgdata
