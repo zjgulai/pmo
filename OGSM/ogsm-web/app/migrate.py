@@ -13,6 +13,7 @@ STEPS = [
     ("0004_s06", "app.migrate_0004_s06_and_exclusions"),     # S0.6 知识生产 + 范围排除
     ("0005_order_sku", "app.migrate_0005_order_sku_priority"),  # order_id/sku_id 提级
     ("0006_baselines", "app.migrate_0006_baselines"),        # 基线台账
+    ("0007_paid_media_steward", "app.migrate_0007_paid_media_steward"),  # G2-A/S5-A 拆开 + steward
 ]
 
 
