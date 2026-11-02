@@ -55,7 +55,7 @@ fi
 hdr "4. 14 大产品项目与工作台完整性"
 body=$(curl -s -m 10 "$BASE/" 2>/dev/null)
 for probe in 'Emily' 'Clone' 'Vicky' 'GEO' 'Radar' 'Echo' 'Market' 'Source' 'Signal' '守衡' 'Daisy' 'Main' 'Shopify' 'PMO'; do
-  if echo "$body" | grep -qF "$probe"; then ok "含产品项目：$probe"; else bad "缺产品项目：$probe"; fi
+  if grep -qF "$probe" <<< "$body"; then ok "含产品项目：$probe"; else bad "缺产品项目：$probe"; fi
 done
 
 hdr "5. /reports 实测报告在线直读"
