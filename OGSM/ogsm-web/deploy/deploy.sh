@@ -34,8 +34,11 @@ $COMPOSE up -d --remove-orphans
 
 echo
 echo "▶ 等待健康检查（最多 90s）"
+# 注意：端口绑在 172.20.0.1（docker 网桥），不是 127.0.0.1。
+# 用 127.0.0.1 会一直连不上，导致误判部署失败。
+HEALTH_URL="http://172.20.0.1:18960/health"
 for i in $(seq 1 45); do
-  if curl -fsS -m 2 http://127.0.0.1:18960/health >/dev/null 2>&1; then
+  if curl -fsS -m 2 "$HEALTH_URL" >/dev/null 2>&1; then
     echo "  容器健康"
     break
   fi
