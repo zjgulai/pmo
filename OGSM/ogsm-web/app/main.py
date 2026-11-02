@@ -731,7 +731,7 @@ def generate_weekly_brief(s: Session = Depends(get_session)):
         lines.append("- 当前尚无历史基准快照。点击弹窗左下角「保存当前为基准快照」即可记录基线。")
         lines.append("")
 
-    lines.append("## 三、 近 4 周即将到期的关键里程碑（💎 Milestone）")
+    lines.append("## 三、 近 4 周即将到期的关键里程碑 (Milestone)")
     if data["radar_focus"]["upcoming_milestones"]:
         for m in data["radar_focus"]["upcoming_milestones"]:
             c = m["cap"]

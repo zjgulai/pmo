@@ -23,8 +23,8 @@ for p in / /projects /roadmap /sites /present /docs /login /api/export.csv /api/
   [ "$c" = "200" ] && ok "$p 200" || bad "$p 期望 200，实际 $c"
 done
 
-hdr "2. 静态资源与原版 SVG 导图"
-for asset in /static/style.css /static/ogsm-mindmap.svg; do
+hdr "2. 静态资源、架构全景图与原版 SVG 导图"
+for asset in /static/style.css /static/ogsm-mindmap.svg /static/abi-arch-diagram.html; do
   ac=$(code "$BASE$asset")
   if [ "$ac" = "200" ]; then
     ok "$asset 200"

@@ -4,13 +4,10 @@
 
 <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:20px">
   <div>
-    <h1 style="margin:0;font-size:23px">⚙️ PMO 项目与能力进度更新台</h1>
-    <p class="muted" style="margin:4px 0 0">
-      围绕 14 个产品项目直接修改工作台地址、项目状态、实测成果摘要，或更新细分能力点的进度（已完成 / 进行中 / 方案中）。保存后前台立即生效。
-    </p>
+    <h1 style="margin:0;font-size:22px;color:var(--brand-900)">PMO 项目与能力进度更新台</h1>
   </div>
   <form method="post" action="/admin/reset-seed" onsubmit="return confirm('确认将全部 14 个项目与能力重置为思维导图与 /reports 的标准初始数据吗？')">
-    <button class="ghost" type="submit">🔄 恢复标准初始数据</button>
+    <button class="ghost" type="submit">恢复标准初始数据</button>
   </form>
 </div>
 
@@ -20,8 +17,8 @@
   <form method="post" action="/admin/project/{{ p.id }}">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span class="badge badge-{{ p.goal_code | lower }}">{{ p.goal_code }} · {{ p.strategy_code }}</span>
-        <strong style="font-size:17px">{{ p.expert_name }}</strong>
+        <span class="badge badge-g1">{{ p.goal_code }} · {{ p.strategy_code }}</span>
+        <strong style="font-size:17px;color:var(--brand-900)">{{ p.expert_name }}</strong>
         <input name="product_name" value="{{ p.product_name }}" style="width:210px;font-weight:600" placeholder="产品构成名称">
         <input name="workbench_url" value="{{ p.workbench_url }}" style="width:240px;font-family:var(--mono)" placeholder="https://...">
         <select name="status_summary">
@@ -31,7 +28,7 @@
         </select>
         <input name="owner" value="{{ p.owner }}" style="width:130px" placeholder="负责团队">
       </div>
-      <button type="submit">💾 保存项目信息</button>
+      <button type="submit">保存项目信息</button>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
@@ -42,13 +39,12 @@
         <textarea name="pending_gaps" rows="3" style="width:100%">{{ p.pending_gaps }}</textarea>
       </div>
       <div>
-        <div class="section-label">实测成果总结（/reports 提炼，遵循去 AI 味规范）</div>
+        <div class="section-label">实测成果总结（/reports 提炼）</div>
         <textarea name="verified_summary" rows="6" style="width:100%">{{ p.verified_summary }}</textarea>
       </div>
     </div>
   </form>
 
-  <!-- 能力图谱行级编辑 -->
   <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line-strong)">
     <div class="section-label">细分能力图谱与进度（共 {{ pv.caps | length }} 项）</div>
     <table>
@@ -98,7 +94,6 @@
       </tbody>
     </table>
 
-    <!-- 新增能力项 -->
     <form method="post" action="/admin/capability-add" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px">
       <input type="hidden" name="project_slug" value="{{ p.slug }}">
       <input name="scenario_line" placeholder="所属场景线（选填）" style="width:180px">

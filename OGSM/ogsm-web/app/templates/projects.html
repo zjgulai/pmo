@@ -1,17 +1,14 @@
 {% extends "base.html" %}
-{% block title %}2. 场景装配流水线 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block title %}产品与场景装配 · ABI 品牌 & 营销 Agent{% endblock %}
 {% block body %}
 
 <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:16px">
   <div>
-    <h1 style="margin:0;font-size:23px">14 大产品项目 &amp; 业务场景能力装配矩阵</h1>
-    <p class="muted" style="margin:4px 0 0">
-      以 <strong>Agent 及其工作台</strong> 为产品形态，将每条业务场景拆解为横向<strong>工位卡槽（Step 1 → Step 2...）</strong>，直观呈现能力图谱如何组装解决业务问题。
-    </p>
+    <h1 style="margin:0;font-size:22px;color:var(--brand-900)">14 大产品项目 &amp; 业务场景能力装配矩阵</h1>
   </div>
   <div style="display:flex;gap:8px">
-    <a href="/" class="btn-chip">← 返回紧凑全景导图</a>
-    <a href="/roadmap" class="btn-chip">📅 甘特图与看板 →</a>
+    <a href="/" class="btn-chip">返回战略全景导图</a>
+    <a href="/roadmap" class="btn-chip">甘特图与看板</a>
   </div>
 </div>
 
@@ -27,19 +24,19 @@
   <div class="toolbar-group">
     <span class="toolbar-label">项目状态：</span>
     <button class="btn-chip active" onclick="filterProjects(null, 'ALL', this)">全部状态</button>
-    <button class="btn-chip" onclick="filterProjects(null, '已上线', this)">🟢 已上线 ({{ stats.project_live }})</button>
-    <button class="btn-chip" onclick="filterProjects(null, '进行中', this)">🔵 进行中 ({{ stats.project_doing }})</button>
-    <button class="btn-chip" onclick="filterProjects(null, '方案中', this)">⚪ 方案中 ({{ stats.project_plan }})</button>
+    <button class="btn-chip" onclick="filterProjects(null, '已上线', this)"><span class="dot dot-done"></span> 已上线 ({{ stats.project_live }})</button>
+    <button class="btn-chip" onclick="filterProjects(null, '进行中', this)"><span class="dot dot-doing"></span> 进行中 ({{ stats.project_doing }})</button>
+    <button class="btn-chip" onclick="filterProjects(null, '方案中', this)"><span class="dot dot-plan"></span> 方案中 ({{ stats.project_plan }})</button>
   </div>
 </div>
 
 {% for gnode in goal_tree %}
 {% set g = gnode.goal %}
-<div class="goal-group-block" data-goal="{{ g.code }}" style="margin-bottom:32px">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line-strong)">
+<div class="goal-group-block" data-goal="{{ g.code }}" style="margin-bottom:36px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 14px;padding-bottom:8px;border-bottom:1.5px solid var(--line-strong)">
     <div>
-      <span class="badge badge-{{ g.code | lower }}" style="font-size:13px;padding:3px 10px">{{ g.code }}</span>
-      <strong style="font-size:18px;margin-left:6px">{{ g.title }}</strong>
+      <span class="badge badge-g1">{{ g.code }}</span>
+      <strong style="font-size:18px;margin-left:8px;color:var(--brand-900)">{{ g.title }}</strong>
       <span class="muted" style="font-size:13px;margin-left:10px">{{ g.subtitle }}</span>
     </div>
   </div>
@@ -52,7 +49,7 @@
       <div class="proj-card-head">
         <div>
           <div class="proj-title-row">
-            <span class="badge badge-{{ p.goal_code | lower }}">{{ p.goal_code }} · {{ p.strategy_code }}</span>
+            <span class="badge badge-g1">{{ p.goal_code }} · {{ p.strategy_code }}</span>
             <span class="proj-expert">{{ p.expert_name }}</span>
             <span class="proj-name">· {{ p.product_name }}</span>
             <span class="badge {{ 'badge-done' if p.status_summary == '已上线' else ('badge-doing' if p.status_summary == '进行中' else 'badge-plan') }}">
@@ -65,22 +62,22 @@
         </div>
         <div style="display:flex;gap:6px;align-items:center">
           {% if p.workbench_url %}
-          <a class="wb-link" href="{{ p.workbench_url }}" target="_blank" rel="noopener" style="font-size:12.5px;padding:5px 11px">
-            <span class="wb-dot"></span> 打开工作台 ↗
+          <a class="wb-link" href="{{ p.workbench_url }}" target="_blank" rel="noopener">
+            <span class="wb-dot"></span> 打开工作台
           </a>
           {% endif %}
-          <button class="btn-chip" onclick="openProjectDrawer('{{ p.slug }}')" style="padding:5px 10px">抽屉编辑 ▸</button>
+          <button class="btn-chip" onclick="openProjectDrawer('{{ p.slug }}')">编辑详情</button>
         </div>
       </div>
 
       <!-- 关联子站点入口 -->
       {% if pv.extra_sites %}
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        <span class="muted" style="font-size:12px">待整合/子平台：</span>
+        <span class="muted" style="font-size:12px">关联平台：</span>
         {% for es in pv.extra_sites %}
-        <a class="wb-link" href="{{ es[1] }}" target="_blank" rel="noopener" style="background:#f8fafc;border-color:#cbd5e1;color:#1e293b">
+        <a class="wb-link" href="{{ es[1] }}" target="_blank" rel="noopener">
           <span class="wb-dot {{ 'internal' if es[2] == 'internal' else '' }}"></span>
-          {{ es[0] }} ↗
+          {{ es[0] }}
         </a>
         {% endfor %}
       </div>
@@ -95,51 +92,51 @@
           <div class="progress-doing" style="width:{{ (pv.doing_n / pv.total_n * 100) | round(1) }}%"></div>
           {% endif %}
         </div>
-        <strong>{{ pv.pct }}%</strong>
+        <strong style="color:var(--brand-900)">{{ pv.pct }}%</strong>
       </div>
 
-      <!-- 3. 核心实测指标卡片 -->
+      <!-- 3. 核心实测指标栏（Hairline 分割，无套娃卡片） -->
       {% if pv.metrics_list %}
       <div class="metrics-grid">
         {% for m in pv.metrics_list %}
         <div class="metric-tile">
           <div class="metric-tile-label">{{ m[0] }}</div>
           <div class="metric-tile-val">{{ m[1] }}</div>
-          <div class="metric-tile-src">出处：{{ m[2] }}</div>
+          <div class="metric-tile-src">{{ m[2] }}</div>
         </div>
         {% endfor %}
       </div>
       {% endif %}
 
-      <!-- 4. 核心升级：业务场景-能力图谱可视化装配工位图 -->
+      <!-- 4. 业务场景自动化工位 & 能力图谱装配图 -->
       <div>
-        <div class="section-label">🔧 业务场景自动化工位 &amp; 能力图谱装配图（绿=已跑通 · 蓝=施工中 · 灰=待建）</div>
+        <div class="section-label">业务场景自动化工位与能力装配</div>
         <div style="display:flex;flex-direction:column;gap:12px">
           {% for scen_line, sgrp in pv.scen_groups.items() %}
-          <div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 12px">
-            <div style="font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:4px">⛓️ 场景链路：{{ scen_line }}</div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px">场景链路：{{ scen_line }}</div>
             <div class="assembly-track">
               {% for st_slot in sgrp.stations %}
               <div class="station-slot st-{{ st_slot.state }}">
                 <div class="station-head">
-                  <span><span class="station-step-num">{{ loop.index }}</span> {{ st_slot.step_name }}</span>
-                  <span style="font-size:11px;color:{{ '#15803d' if st_slot.state=='done' else ('#1d4ed8' if st_slot.state=='doing' else '#64748b') }}">
-                    {{ '🟢已通' if st_slot.state=='done' else ('🔵施工' if st_slot.state=='doing' else '⚪待建') }}
+                  <span><span class="station-step-num">0{{ loop.index }}</span> {{ st_slot.step_name }}</span>
+                  <span style="font-size:12px;color:{{ '#14532d' if st_slot.state=='done' else ('#0f766e' if st_slot.state=='doing' else '#52665b') }}">
+                    {{ '已通' if st_slot.state=='done' else ('施工' if st_slot.state=='doing' else '待建') }}
                   </span>
                 </div>
                 {% if st_slot.caps %}
                   {% for cv in st_slot.caps %}
                   {% set c = cv.cap %}
                   <div class="station-cap-chip" onclick="openProjectDrawer('{{ p.slug }}', {{ c.id }})">
-                    <div style="display:flex;justify-content:space-between;font-weight:650">
-                      <span>{% if c.is_milestone %}💎{% endif %}{{ c.name }}</span>
+                    <div style="display:flex;justify-content:space-between;font-weight:600;color:var(--ink)">
+                      <span>{% if c.is_milestone %}<span class="diamond-mark"></span>{% endif %}{{ c.name }}</span>
                       <span style="color:var(--primary)">{{ c.progress_pct }}%</span>
                     </div>
-                    <div class="muted" style="font-size:10.5px;margin-top:2px;line-height:1.35">{{ c.description }}</div>
+                    <div class="muted" style="font-size:12px;margin-top:2px;line-height:1.4">{{ c.description }}</div>
                   </div>
                   {% endfor %}
                 {% else %}
-                  <div class="muted" style="font-size:11px;padding:4px 0">共用当前链路底座 ({{ st_slot.pct }}%)</div>
+                  <div class="muted" style="font-size:12px;padding:4px 0">共用当前链路底座 ({{ st_slot.pct }}%)</div>
                 {% endif %}
               </div>
               {% endfor %}
@@ -170,12 +167,12 @@
       {% endif %}
 
       <!-- 7. 页内同屏预览实测报告 & 支撑补充抽屉 -->
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)">
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:10px;border-top:1px solid var(--line)">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
           {% if pv.reports_list %}
             {% for rep in pv.reports_list %}
-            <button class="btn-chip" onclick="openReportPreview('{{ p.expert_name }} · {{ rep[0] }}', '{{ rep[1] }}')" style="font-size:12px;border-color:#2563eb;color:#2563eb;background:#eff6ff">
-              📄 页内同屏预览：{{ rep[0] }}
+            <button class="btn-chip" onclick="openReportPreview('{{ p.expert_name }} · {{ rep[0] }}', '{{ rep[1] }}')">
+              页内预览报告：{{ rep[0] }}
             </button>
             {% endfor %}
           {% else %}

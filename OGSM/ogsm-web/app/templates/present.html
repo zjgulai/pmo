@@ -1,17 +1,15 @@
 {% extends "base.html" %}
-{% block title %}部门汇报模式 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block title %}里程碑汇报 · ABI 品牌 & 营销 Agent{% endblock %}
 {% block body %}
 
 <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:20px">
   <div>
-    <h1 style="margin:0;font-size:23px">ABI 应用与算法组 · 品牌 &amp; 营销 Agent 部门项目汇报</h1>
-    <p class="muted" style="margin:4px 0 0">
-      依据《部门项目汇报 PPT 执行方案 v2》编排：关键信息先行、已完成与已验证分开表述、所有数字可溯源至 <code>/reports</code> 实测材料。可直接全屏投屏汇报。
-    </p>
+    <h1 style="margin:0;font-size:22px;color:var(--brand-900)">ABI 应用与算法组 · 品牌 &amp; 营销 Agent 部门项目汇报</h1>
   </div>
   <div style="display:flex;gap:8px">
-    <a href="/static/ogsm-mindmap.svg" target="_blank" class="btn-chip">🖼️ 打开原版 SVG 思维导图 ↗</a>
-    <a href="/docs/PPT汇报方案v2-部门项目汇报.md" class="btn-chip">📄 查看 PPT 汇报规范 v2</a>
+    <button class="btn-chip active" onclick="openWeeklyBriefModal()">生成本周 Markdown 汇报简报</button>
+    <button class="btn-chip" onclick="openReportPreview('ABI 14大产品系统架构全景图', '/static/abi-arch-diagram.html')">系统架构全景图</button>
+    <a href="/static/ogsm-mindmap.svg" target="_blank" class="btn-chip">原版 SVG 思维导图</a>
   </div>
 </div>
 
@@ -19,10 +17,9 @@
 
   <!-- Slide 1: 部门定位与总体目标 -->
   <section class="slide">
-    <div class="slide-num">Page 01 / 06 · 部门定位与总体进展仪表盘</div>
     <h2>{{ objective }}</h2>
-    <p style="font-size:15px;color:var(--ink2);margin:0 0 18px">
-      围绕「声量增长（G1）、敏捷响应（G2）、数据资产数字化运营（G3）」三大目标，布局 6 条专家融合策略、<strong>14 个品牌 Agent 产品项目</strong>。目前 14 个主工作台与 6 个关联子站已在线运行。
+    <p style="font-size:15px;color:var(--ink2);margin:0 0 18px;max-width:75ch">
+      围绕「声量增长（G1）、敏捷响应（G2）、数据资产数字化运营（G3）」三大目标，布局 6 条专家融合策略、14 个品牌 Agent 产品项目。目前 14 个主工作台与 9 个关联子站已在线运行。
     </p>
     <div class="kpi-strip" style="margin-bottom:0">
       <div class="kpi-card">
@@ -32,11 +29,11 @@
       </div>
       <div class="kpi-card">
         <div class="kpi-label">能力图谱建设</div>
-        <div class="kpi-val">{{ stats.cap_done }}<small>/ {{ stats.cap_total }} 项已完成</small></div>
+        <div class="kpi-val">{{ stats.overall_pct }}%<small>({{ stats.cap_done }}/{{ stats.cap_total }} 已完成)</small></div>
         <div class="kpi-sub">进行中 {{ stats.cap_doing }} 项 · 方案中 {{ stats.cap_plan }} 项</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">生产实测验证（ste-zh 口径）</div>
+        <div class="kpi-label">生产实测验证 (ste-zh 口径)</div>
         <div class="kpi-val">{{ stats.cap_verified }}<small>项已验证</small></div>
         <div class="kpi-sub">9 个专家目录 12 份实测报告支撑</div>
       </div>
@@ -52,15 +49,14 @@
   {% for gnode in goal_tree %}
   {% set g = gnode.goal %}
   <section class="slide">
-    <div class="slide-num">Page 0{{ loop.index + 1 }} / 06 · 产品群汇报 · {{ g.code }}</div>
-    <h2>{{ g.title }}</h2>
+    <h2>{{ g.title }}（综合进度 {{ gnode.pct }}%）</h2>
     <p class="muted" style="margin:0 0 16px">{{ g.subtitle }}</p>
 
     <table>
       <thead>
         <tr>
-          <th style="width:165px">产品项目 (专家)</th>
-          <th style="width:175px">验收工作台</th>
+          <th style="width:170px">产品项目 (专家)</th>
+          <th style="width:180px">验收工作台</th>
           <th style="width:240px">业务场景与能力进度</th>
           <th>生产实测成果与核心数据 (溯源 /reports)</th>
           <th style="width:220px">待补齐项</th>
@@ -71,47 +67,47 @@
         {% set p = pv.proj %}
         <tr>
           <td>
-            <strong style="font-size:15px">{{ p.expert_name }}</strong>
-            <div style="font-size:12.5px;color:var(--ink2);font-weight:600">{{ p.product_name }}</div>
+            <strong style="font-size:15px;color:var(--brand-900)">{{ p.expert_name }}</strong>
+            <div style="font-size:13px;color:var(--ink2);font-weight:600">{{ p.product_name }}</div>
             <div style="margin-top:4px">
               <span class="badge {{ 'badge-done' if p.status_summary == '已上线' else ('badge-doing' if p.status_summary == '进行中' else 'badge-plan') }}">
-                {{ p.status_summary }}
+                {{ p.status_summary }} ({{ pv.pct }}%)
               </span>
             </div>
           </td>
           <td>
             {% if p.workbench_url %}
             <a class="wb-link" href="{{ p.workbench_url }}" target="_blank" rel="noopener">
-              <span class="wb-dot"></span> {{ p.workbench_url | replace('https://', '') | replace('/', '') }} ↗
+              <span class="wb-dot"></span> {{ p.workbench_url | replace('https://', '') | replace('/', '') }}
             </a>
             {% endif %}
             {% for es in pv.extra_sites %}
             <div style="margin-top:4px">
-              <a class="wb-link" href="{{ es[1] }}" target="_blank" rel="noopener" style="background:#f8fafc;border-color:#cbd5e1;color:#334155;font-size:11px">
-                <span class="wb-dot {{ 'internal' if es[2] == 'internal' else '' }}"></span> {{ es[0] }} ↗
+              <a class="wb-link" href="{{ es[1] }}" target="_blank" rel="noopener">
+                <span class="wb-dot {{ 'internal' if es[2] == 'internal' else '' }}"></span> {{ es[0] }}
               </a>
             </div>
             {% endfor %}
           </td>
-          <td style="font-size:12.5px">
+          <td style="font-size:13px">
             <div style="font-weight:600;color:var(--ink2);margin-bottom:4px">{{ p.scenarios | replace('\n', ' / ') }}</div>
             <div class="muted">
               已完成 {{ pv.done_n }} · 进行中 {{ pv.doing_n }} · 方案中 {{ pv.plan_n }}
             </div>
           </td>
-          <td style="font-size:13px;line-height:1.55">
+          <td style="font-size:13px;line-height:1.6">
             {{ p.verified_summary }}
             {% if pv.metrics_list %}
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
               {% for m in pv.metrics_list %}
-              <span style="background:#f1f5f9;padding:2px 8px;border-radius:5px;font-size:11.5px">
+              <span style="background:var(--surface-subtle);padding:2px 8px;border-radius:4px;font-size:12px">
                 {{ m[0] }}：<strong>{{ m[1] }}</strong>
               </span>
               {% endfor %}
             </div>
             {% endif %}
           </td>
-          <td style="font-size:12px;color:#78350f">
+          <td style="font-size:12px;color:var(--warn)">
             {% if pv.gaps_list %}
               {% for gap in pv.gaps_list[:2] %}
               <div style="margin-bottom:4px">• {{ gap }}</div>
@@ -127,57 +123,18 @@
   </section>
   {% endfor %}
 
-  <!-- Slide 5: 重点项目硬核实测亮点汇总 -->
+  <!-- Slide 5: 2026Q4 关键里程碑达成与排期表 -->
   <section class="slide">
-    <div class="slide-num">Page 05 / 06 · 重点产品实测数据对标（已验证事实）</div>
-    <h2>七个已投产专家系统的关键实测读数</h2>
-    <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr); gap: 14px;">
-      <div class="metric-tile" style="padding:14px 16px">
-        <div class="metric-tile-label">Source · 多平台数据采集中台</div>
-        <div class="metric-tile-val" style="font-size:18px">70 平台 / 284 端点</div>
-        <div class="metric-tile-src">200 个端点已实测返回真实数据；注册 39 个 MCP 工具，2,807 个测试通过</div>
-      </div>
-      <div class="metric-tile" style="padding:14px 16px">
-        <div class="metric-tile-label">Echo · 消费者之声 (VOC) 情报系统</div>
-        <div class="metric-tile-val" style="font-size:18px">26,154 帖 / 102,182 评</div>
-        <div class="metric-tile-src">早 7:05 无人值守 10 步全绿日更；重算耗时从 1,324 秒压至 10.29 秒（86 倍）</div>
-      </div>
-      <div class="metric-tile" style="padding:14px 16px">
-        <div class="metric-tile-label">Emily · 社媒 Agent &amp; 工作台</div>
-        <div class="metric-tile-val" style="font-size:18px">28 / 41 项能力已上线</div>
-        <div class="metric-tile-src">飞书社媒 Base 4 表 888 行实时镜像；每周五早 9:30 自动推送 6 维周报</div>
-      </div>
-      <div class="metric-tile" style="padding:14px 16px">
-        <div class="metric-tile-label">Vicky · 品牌 PR Agent &amp; 工作台</div>
-        <div class="metric-tile-val" style="font-size:18px">246 家媒体 / 347 条报道</div>
-        <div class="metric-tile-src">自然报道（Earned）占 77.2%，S 级权威报道 100 条；核心两表承接度 70%</div>
-      </div>
-      <div class="metric-tile" style="padding:14px 16px">
-        <div class="metric-tile-label">守衡 · 内容合规审查工作台</div>
-        <div class="metric-tile-val" style="font-size:18px">227 / 227 引擎契约通过</div>
-        <div class="metric-tile-src">14 页审核台在线，36 条规则词典、24 个控制点投产；文档/图片OCR/结构化已跑通</div>
-      </div>
-      <div class="metric-tile" style="padding:14px 16px">
-        <div class="metric-tile-label">Shopify + Daisy (Know) + Main</div>
-        <div class="metric-tile-val" style="font-size:18px">178 篇独立站文档 / 17 项技能</div>
-        <div class="metric-tile-src">Shopify 5 岗位 Agent + 84 条母婴合规预检；Know 1,089 条带引文知识对象；Main 150 评测全过</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Slide 6: 2026Q4 关键里程碑时间轴与下一阶段路线图 -->
-  <section class="slide">
-    <div class="slide-num">Page 06 / 06 · 2026Q4 关键里程碑节点与下一阶段推进重点</div>
-    <h2>💎 关键里程碑达成与排期表（共 {{ milestones | length }} 项）</h2>
-    <table style="margin-bottom:22px">
+    <h2>2026Q4 关键里程碑节点达成与排期表（共 {{ milestones | length }} 项）</h2>
+    <table>
       <thead>
         <tr>
           <th style="width:120px">目标截止日</th>
-          <th style="width:110px">所属目标</th>
+          <th style="width:95px">所属目标</th>
           <th style="width:150px">产品项目 (Agent)</th>
           <th>关键里程碑能力点</th>
-          <th style="width:110px">负责团队</th>
-          <th style="width:140px">当前状态与进度</th>
+          <th style="width:115px">负责团队</th>
+          <th style="width:150px">当前状态与进度</th>
         </tr>
       </thead>
       <tbody>
@@ -185,45 +142,24 @@
         {% set c = mv.cap %}
         <tr>
           <td><strong>{{ c.end_date or '待排期' }}</strong></td>
-          <td><span class="badge badge-{{ mv.goal_code | lower }}">{{ mv.goal_code }}</span></td>
-          <td><strong>{{ mv.proj_expert }}</strong></td>
+          <td><span class="badge badge-g1">{{ mv.goal_code }}</span></td>
+          <td><strong style="color:var(--brand-900)">{{ mv.proj_expert }}</strong></td>
           <td>
-            <strong>💎 {{ c.name }}</strong>
-            <span class="muted" style="font-size:12px;margin-left:6px">{{ c.description }}</span>
+            <span class="diamond-mark"></span>
+            <strong>{{ c.name }}</strong>
+            <span class="muted" style="font-size:13px;margin-left:6px">{{ c.description }}</span>
           </td>
           <td class="muted">{{ c.owner }}</td>
           <td>
             <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">
               {{ c.status }} {{ c.progress_pct }}%
             </span>
-            {% if c.verify_state == '已验证' %}<span class="badge badge-verify">✓ 已验证</span>{% endif %}
+            {% if c.verify_state == '已验证' %}<span class="badge badge-verify">已验证</span>{% endif %}
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-
-    <h2>2026Q4（11–12 月）三大推进重点</h2>
-    <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:16px">
-      <div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:16px">
-        <strong style="font-size:15px;color:var(--g1)">1. 推进方案中项目落地（GEO / Radar / Signal）</strong>
-        <p style="font-size:13px;color:var(--ink2);margin:8px 0 0">
-          GEO 按 6 步链路在 11–12 月完成问句库、采集探针与可见度报告交付；Signal 基于 Source 采集底座完成品牌热度日趋势与异动归因上线；Radar 建立 IP 合作计划与动态监测。
-        </p>
-      </div>
-      <div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:16px">
-        <strong style="font-size:15px;color:var(--g2)">2. 打通跨项目产品主数据与品线关联</strong>
-        <p style="font-size:13px;color:var(--ink2);margin:8px 0 0">
-          解决当前 Vicky 报道表「品线字段 0% 覆盖」与 Echo 帖子「产品型号绑定率低（2/56）」的共性问题，由 Source 统一提供标准产品型号（SPU/SKU）字典供各 Agent 引用。
-        </p>
-      </div>
-      <div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:16px">
-        <strong style="font-size:15px;color:var(--g3)">3. 补齐视频语音审查与多智能体统一入口</strong>
-        <p style="font-size:13px;color:var(--ink2);margin:8px 0 0">
-          守衡按序完成视频抽帧与语音转文字（ASR）接入，解除视频「未审查」状态；Daisy 推进 9 个专家 Agent 的适配层接入与对话式 CLI 统一交互入口。
-        </p>
-      </div>
-    </div>
   </section>
 
 </div>

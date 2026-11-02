@@ -1,27 +1,23 @@
 {% extends "base.html" %}
-{% block title %}3. 甘特图与看板 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block title %}甘特图与看板 · ABI 品牌 & 营销 Agent{% endblock %}
 {% block body %}
 
 <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:16px">
   <div>
-    <h1 style="margin:0;font-size:23px">2026Q4 跨项目排期甘特图 &amp; 四列敏捷看板</h1>
-    <p class="muted" style="margin:4px 0 0">
-      以 <strong>49 项产品能力图谱</strong> 为最小管理单元。同一份数据联动驱动「两级折叠甘特图」与「四列流转看板」。
-      {% if is_pmo %}<strong style="color:var(--done)">（当前为 PMO 登录态：可直接在行内或卡片上修改状态、进度%、起止日期与负责人，自动即时保存）</strong>{% endif %}
-    </p>
+    <h1 style="margin:0;font-size:22px;color:var(--brand-900)">2026Q4 跨项目排期甘特图与四列敏捷看板</h1>
   </div>
   <div style="display:flex;gap:8px;align-items:center">
     <button id="tab-btn-gantt" class="btn-chip {{ 'active' if current_view != 'kanban' else '' }}" onclick="switchView('gantt')">
-      📅 跨项目甘特图 (Gantt)
+      跨项目甘特图 (Gantt)
     </button>
     <button id="tab-btn-kanban" class="btn-chip {{ 'active' if current_view == 'kanban' else '' }}" onclick="switchView('kanban')">
-      📋 四列敏捷看板 (Kanban)
+      四列敏捷看板 (Kanban)
     </button>
-    <a href="/api/export.csv" class="btn-chip">⬇️ 导出 CSV</a>
+    <a href="/api/export.csv" class="btn-chip">导出 CSV</a>
   </div>
 </div>
 
-<!-- 顶部排期与看板概览卡 -->
+<!-- 顶部排期与看板概览 -->
 <div class="kpi-strip">
   <div class="kpi-card">
     <div class="kpi-label">总体排期覆盖度</div>
@@ -31,22 +27,22 @@
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">关键里程碑（💎 Milestone）</div>
+    <div class="kpi-label">关键里程碑 (Milestone)</div>
     <div class="kpi-val">{{ stats.milestone_count }}<small>个核心节点</small></div>
     <div class="kpi-sub">
       <span class="badge badge-done">总体加权进度 {{ stats.overall_pct }}%</span>
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">看板四列分布（ste-zh 口径）</div>
+    <div class="kpi-label">看板四列分布 (ste-zh 口径)</div>
     <div class="kpi-val">{{ stats.kanban_counts.verified }}<small>项已实测验证</small></div>
     <div class="kpi-sub">
-      <span>待验证 {{ stats.kanban_counts.pending_verify }} · 进行中 {{ stats.kanban_counts.doing }} · 方案 {{ stats.kanban_counts.plan }}</span>
+      <span>联调收口 {{ stats.kanban_counts.pending_verify }} · 进行中 {{ stats.kanban_counts.doing }} · 方案 {{ stats.kanban_counts.plan }}</span>
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">逾期风险监控（基准 {{ today }}）</div>
-    <div class="kpi-val" style="color:{{ '#dc2626' if stats.overdue_count > 0 else '#16a34a' }}">
+    <div class="kpi-label">逾期风险监控 (基准 {{ today }})</div>
+    <div class="kpi-val" style="color:{{ '#991b1b' if stats.overdue_count > 0 else 'var(--done)' }}">
       {{ stats.overdue_count }}<small>项逾期未完</small>
     </div>
     <div class="kpi-sub">
@@ -65,35 +61,33 @@
     <button class="btn-chip" onclick="filterRoadmapGoal('G3', this)">G3 数字化运营 (5项目)</button>
   </div>
   <div class="toolbar-group" id="gantt-fold-controls">
-    <button class="btn-chip" onclick="toggleAllProjects(true)">➕ 展开全部能力行 (49)</button>
-    <button class="btn-chip" onclick="toggleAllProjects(false)">➖ 折叠为 14 个产品项目</button>
+    <button class="btn-chip" onclick="toggleAllProjects(true)">展开全部能力行 (49)</button>
+    <button class="btn-chip" onclick="toggleAllProjects(false)">折叠为 14 个产品项目</button>
   </div>
 </div>
 
-<!-- ═══════════════════ 视图 A：两级可折叠甘特图 ═══════════════════ -->
+<!-- 视图 A：两级可折叠甘特图 -->
 <div id="view-gantt" style="display:{{ 'none' if current_view == 'kanban' else 'block' }}">
   <div class="gantt-wrap">
     <div class="gantt-table">
-      <!-- 表头 -->
       <div class="gantt-header">
-        <div>产品项目 / 能力图谱节点 (点击项目行可折叠)</div>
-        <div style="text-align:center">状态 / 验证</div>
+        <div>产品项目 / 能力图谱节点 (点击项目行折叠)</div>
+        <div style="text-align:center">状态</div>
         <div style="text-align:center">进度%</div>
         <div class="gantt-months-bar">
           {% for m in gantt_months %}
           <div class="gantt-month-cell" style="width:{{ m.width_pct }}%">
             <div>{{ m.label }}</div>
-            <div style="font-size:10.5px;font-weight:400;color:var(--muted)">{{ m.sub }}</div>
+            <div style="font-size:12px;font-weight:400;color:var(--muted)">{{ m.sub }}</div>
           </div>
           {% endfor %}
         </div>
       </div>
 
-      <!-- 按 G1 / G2 / G3 循环渲染项目汇总行 + 子能力甘特行 -->
       {% for gnode in goal_tree %}
       {% set g = gnode.goal %}
       <div class="gantt-goal-block" id="gantt-goal-{{ g.code }}" data-goal="{{ g.code }}">
-        <div style="background:linear-gradient(90deg, #e2e8f0 0%, #f8fafc 100%);padding:7px 14px;font-weight:750;font-size:13px;border-bottom:1px solid var(--line-strong);display:flex;justify-content:space-between">
+        <div style="background:var(--surface-tint);padding:8px 14px;font-weight:700;font-size:13px;color:var(--brand-900);border-bottom:1px solid var(--line-strong);display:flex;justify-content:space-between">
           <span>{{ g.title }}（{{ gnode.proj_count }} 个产品项目 / {{ gnode.cap_total }} 项能力）</span>
           <span>目标综合进度：{{ gnode.pct }}%</span>
         </div>
@@ -101,14 +95,13 @@
         {% for pv in gnode.projects %}
         {% set p = pv.proj %}
         {% set pg = pv.proj_gbar %}
-        <!-- 一级行：产品项目汇总行 -->
         <div class="gantt-row gantt-row-proj" onclick="toggleProjCaps('{{ p.slug }}')">
           <div class="gantt-cell-title">
-            <span id="icon-{{ p.slug }}" style="font-family:var(--mono);font-size:12px;width:14px;display:inline-block">▼</span>
-            <span class="badge badge-{{ p.goal_code | lower }}">{{ p.expert_name }}</span>
-            <span style="font-size:13px">{{ p.product_name }}</span>
+            <span id="icon-{{ p.slug }}" style="font-family:var(--mono);font-size:12px;width:14px;display:inline-block">-</span>
+            <span class="badge badge-g1">{{ p.expert_name }}</span>
+            <span style="font-size:13px;color:var(--brand-900)">{{ p.product_name }}</span>
             {% if p.workbench_url %}
-            <a href="{{ p.workbench_url }}" target="_blank" onclick="event.stopPropagation()" title="打开线上工作台" style="margin-left:auto;font-size:11.5px">🔗工作台↗</a>
+            <a href="{{ p.workbench_url }}" target="_blank" onclick="event.stopPropagation()" style="margin-left:auto;font-size:12px">工作台</a>
             {% endif %}
           </div>
           <div class="gantt-cell-meta">
@@ -124,33 +117,32 @@
             {% endif %}
             {% if pg.has_schedule %}
             <div class="gantt-bar-outer bar-proj" style="left:{{ pg.left_pct }}%;width:{{ pg.width_pct }}%">
-              <div class="gantt-bar-fill fill-进行中" style="width:{{ pv.pct }}%"></div>
+              <div class="gantt-bar-fill fill-已完成" style="width:{{ pv.pct }}%"></div>
               <div class="gantt-bar-label">
-                <span>{{ p.expert_name }} 总周期 ({{ pg.start_short }}–{{ pg.end_short }})</span>
+                <span>{{ p.expert_name }} ({{ pg.start_short }}–{{ pg.end_short }})</span>
                 <span>{{ pv.done_n }}/{{ pv.total_n }}完成</span>
               </div>
             </div>
             {% else %}
-            <div style="padding:10px 14px;font-size:11.5px;color:var(--muted)">⚪ 暂未排定具体起止日期（飞书表待排期项）</div>
+            <div style="padding:10px 14px;font-size:12px;color:var(--muted)">暂未排定具体起止日期（待排期项）</div>
             {% endif %}
           </div>
         </div>
 
-        <!-- 二级行：该项目下的细分能力点 -->
         {% for cv in pv.cap_views %}
         {% set c = cv.cap %}
         {% set cb = cv.gbar %}
         <div class="gantt-row gantt-row-cap cap-of-{{ p.slug }}" id="gantt-cap-{{ c.id }}">
-          <div class="gantt-cell-title" style="padding-left:30px">
-            {% if c.is_milestone %}<span title="关键里程碑">💎</span>{% else %}<span style="color:#94a3b8">•</span>{% endif %}
+          <div class="gantt-cell-title" style="padding-left:28px" onclick="openProjectDrawer('{{ p.slug }}', {{ c.id }})">
+            {% if c.is_milestone %}<span class="diamond-mark" title="关键里程碑"></span>{% else %}<span class="dot dot-plan"></span>{% endif %}
             <div>
-              <div style="font-weight:600;color:var(--ink)">{{ c.name }}</div>
-              <div style="font-size:11px;color:var(--muted)">{{ c.owner or p.owner }}</div>
+              <div style="font-weight:600;color:var(--ink);cursor:pointer">{{ c.name }}</div>
+              <div style="font-size:12px;color:var(--muted)">{{ c.owner or p.owner }}</div>
             </div>
           </div>
           <div class="gantt-cell-meta">
             {% if is_pmo %}
-            <select onchange="inlineSave({{ c.id }}, {status: this.value})" style="font-size:11px;padding:1px 4px">
+            <select onchange="inlineSave({{ c.id }}, {status: this.value})" style="font-size:12px;padding:2px 4px">
               {% for st in ['已完成', '进行中', '方案中'] %}
               <option value="{{ st }}" {{ 'selected' if c.status == st else '' }}>{{ st }}</option>
               {% endfor %}
@@ -165,29 +157,29 @@
             {% if is_pmo %}
             <input type="number" min="0" max="100" step="5" value="{{ c.progress_pct }}"
                    onchange="inlineSave({{ c.id }}, {progress_pct: this.value})"
-                   style="width:52px;font-size:11.5px;padding:2px 4px;text-align:center">
+                   style="width:54px;font-size:12px;padding:2px 4px;text-align:center">
             {% else %}
-            <span id="pct-txt-{{ c.id }}">{{ c.progress_pct }}%</span>
+            <span>{{ c.progress_pct }}%</span>
             {% endif %}
           </div>
           <div class="gantt-timeline-cell">
             <div class="gantt-today-line" style="left:{{ today_pct }}%"></div>
             {% if cb.has_schedule %}
-            <div class="gantt-bar-outer" style="left:{{ cb.left_pct }}%;width:{{ cb.width_pct }}%;{{ 'border-color:#dc2626' if cb.is_overdue else '' }}"
+            <div class="gantt-bar-outer" style="left:{{ cb.left_pct }}%;width:{{ cb.width_pct }}%"
                  title="{{ c.name }}：{{ c.start_date }} 至 {{ c.end_date }}（进度 {{ c.progress_pct }}%）">
               <div class="gantt-bar-fill fill-{{ c.status }}" style="width:{{ c.progress_pct }}%"></div>
               <div class="gantt-bar-label">
-                <span>{% if c.is_milestone %}💎 {% endif %}{{ cb.start_short }}–{{ cb.end_short }}</span>
-                <span>{{ c.progress_pct }}%{% if cb.is_overdue %} ⚠️逾期{% endif %}</span>
+                <span>{{ cb.start_short }}–{{ cb.end_short }}</span>
+                <span>{{ c.progress_pct }}%</span>
               </div>
             </div>
             {% else %}
-            <div style="padding:10px 14px;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:8px">
+            <div style="padding:8px 14px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px">
               <span>待排期</span>
               {% if is_pmo %}
-              <input type="date" value="{{ c.start_date }}" onchange="inlineSave({{ c.id }}, {start_date: this.value})" style="font-size:11px;padding:1px 4px">
-              <span>→</span>
-              <input type="date" value="{{ c.end_date }}" onchange="inlineSave({{ c.id }}, {end_date: this.value})" style="font-size:11px;padding:1px 4px">
+              <input type="date" value="{{ c.start_date }}" onchange="inlineSave({{ c.id }}, {start_date: this.value})" style="font-size:12px;padding:2px 4px">
+              <span>至</span>
+              <input type="date" value="{{ c.end_date }}" onchange="inlineSave({{ c.id }}, {end_date: this.value})" style="font-size:12px;padding:2px 4px">
               {% endif %}
             </div>
             {% endif %}
@@ -201,13 +193,13 @@
   </div>
 </div>
 
-<!-- ═══════════════════ 视图 B：四列流转敏捷看板 ═══════════════════ -->
+<!-- 视图 B：四列流转敏捷看板 -->
 <div id="view-kanban" style="display:{{ 'block' if current_view == 'kanban' else 'none' }}">
   {% set col_defs = [
-    ('plan', '⚪ 1. 方案中 (需求与架构设计)', 'badge-plan'),
-    ('doing', '🔵 2. 进行中 (研发与管线实现)', 'badge-doing'),
-    ('pending_verify', '🟣 3. 联调收口 · 待最终验收 (≥80%)', 'badge-doing'),
-    ('verified', '🟢 4. 已验证 · 生产实测通过', 'badge-done')
+    ('plan', '1. 方案中 (需求与架构设计)', 'badge-plan'),
+    ('doing', '2. 进行中 (研发与管线实现)', 'badge-doing'),
+    ('pending_verify', '3. 联调收口 · 待最终验收 (≥80%)', 'badge-doing'),
+    ('verified', '4. 已验证 · 生产实测通过', 'badge-done')
   ] %}
   <div class="kanban-board">
     {% for col_key, col_title, badge_cls in col_defs %}
@@ -220,39 +212,41 @@
 
       {% for cv in items %}
       {% set c = cv.cap %}
-      <div class="kanban-card {{ 'ms-card' if c.is_milestone else '' }}" data-goal="{{ cv.goal_code }}" id="kb-card-{{ c.id }}">
+      <div class="kanban-card" data-goal="{{ cv.goal_code }}" id="kb-card-{{ c.id }}">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
-          <span class="badge badge-{{ cv.goal_code | lower }}">{{ cv.goal_code }} · {{ cv.proj_expert }}</span>
+          <span class="badge badge-g1">{{ cv.goal_code }} · {{ cv.proj_expert }}</span>
           <div style="display:flex;gap:4px;align-items:center">
-            {% if c.is_milestone %}<span class="badge" style="background:#fef3c7;color:#b45309">💎 里程碑</span>{% endif %}
+            {% if c.is_milestone %}<span class="badge badge-ms">里程碑</span>{% endif %}
             <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">{{ c.progress_pct }}%</span>
           </div>
         </div>
 
-        <div style="font-weight:700;font-size:13.5px;color:var(--ink)">{{ c.name }}</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.45">{{ c.description }}</div>
+        <div style="font-weight:700;font-size:14px;color:var(--brand-900);cursor:pointer" onclick="openProjectDrawer('{{ c.project_slug }}', {{ c.id }})">
+          {{ c.name }}
+        </div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.5">{{ c.description }}</div>
 
         <div class="stacked-bar" style="height:5px">
           <div class="sb-done" style="width:{{ c.progress_pct }}%"></div>
         </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted)">
-          <span>👤 {{ c.owner or '待定' }}</span>
-          <span>📅 {{ c.end_date if c.end_date else '待排期' }}</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted)">
+          <span>负责：{{ c.owner or '待定' }}</span>
+          <span>截止：{{ c.end_date if c.end_date else '待排期' }}</span>
         </div>
 
         {% if is_pmo %}
         <div class="inline-edit-bar">
-          <select onchange="inlineMoveKanban({{ c.id }}, this.value)" title="流转到看板列">
-            <option value="plan" {{ 'selected' if col_key == 'plan' else '' }}>→ 方案中</option>
-            <option value="doing" {{ 'selected' if col_key == 'doing' else '' }}>→ 进行中</option>
-            <option value="pending_verify" {{ 'selected' if col_key == 'pending_verify' else '' }}>→ 待验证</option>
-            <option value="verified" {{ 'selected' if col_key == 'verified' else '' }}>→ 已验证</option>
+          <select onchange="inlineMoveKanban({{ c.id }}, this.value)">
+            <option value="plan" {{ 'selected' if col_key == 'plan' else '' }}>流转至：方案中</option>
+            <option value="doing" {{ 'selected' if col_key == 'doing' else '' }}>流转至：进行中</option>
+            <option value="pending_verify" {{ 'selected' if col_key == 'pending_verify' else '' }}>流转至：联调收口</option>
+            <option value="verified" {{ 'selected' if col_key == 'verified' else '' }}>流转至：已验证</option>
           </select>
           <input type="number" min="0" max="100" step="5" value="{{ c.progress_pct }}"
-                 onchange="inlineSave({{ c.id }}, {progress_pct: this.value})" style="width:52px" title="进度%">
+                 onchange="inlineSave({{ c.id }}, {progress_pct: this.value})" style="width:56px">
           <input type="date" value="{{ c.end_date }}"
-                 onchange="inlineSave({{ c.id }}, {end_date: this.value})" style="width:118px" title="截止日期">
+                 onchange="inlineSave({{ c.id }}, {end_date: this.value})" style="width:124px">
         </div>
         {% endif %}
       </div>
@@ -262,9 +256,8 @@
   </div>
 </div>
 
-<!-- 保存成功轻提示 -->
-<div id="save-toast" style="display:none;position:fixed;bottom:24px;right:24px;background:#0f172a;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;z-index:300;box-shadow:0 4px 12px rgba(0,0,0,0.2)">
-  ✓ 已实时保存，刷新页面后同步全部图表
+<div id="save-toast" style="display:none;position:fixed;bottom:24px;right:24px;background:var(--brand-900);color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;z-index:300">
+  已实时保存
 </div>
 
 <script>
@@ -280,11 +273,11 @@ function toggleProjCaps(slug) {
   const icon = document.getElementById('icon-' + slug);
   const hiding = rows.length > 0 && rows[0].style.display !== 'none';
   rows.forEach(r => r.style.display = hiding ? 'none' : 'grid');
-  if (icon) icon.innerText = hiding ? '▶' : '▼';
+  if (icon) icon.innerText = hiding ? '+' : '-';
 }
 function toggleAllProjects(expand) {
   document.querySelectorAll('.gantt-row-cap').forEach(r => r.style.display = expand ? 'grid' : 'none');
-  document.querySelectorAll('[id^="icon-"]').forEach(ic => ic.innerText = expand ? '▼' : '▶');
+  document.querySelectorAll('[id^="icon-"]').forEach(ic => ic.innerText = expand ? '-' : '+');
 }
 function filterRoadmapGoal(goal, btn) {
   btn.parentElement.querySelectorAll('.btn-chip').forEach(b => b.classList.remove('active'));
@@ -310,14 +303,14 @@ async function inlineSave(capId, payload) {
     }
     const toast = document.getElementById('save-toast');
     toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 2200);
+    setTimeout(() => { toast.style.display = 'none'; }, 2000);
   } catch (e) {
     alert('网络请求失败');
   }
 }
 async function inlineMoveKanban(capId, kcol) {
   await inlineSave(capId, {kcol: kcol});
-  setTimeout(() => location.reload(), 350);
+  setTimeout(() => location.reload(), 300);
 }
 </script>
 

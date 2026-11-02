@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% block title %}实测报告与资料库 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block title %}实测报告库 · ABI 品牌 & 营销 Agent{% endblock %}
 {% block body %}
 
 <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:20px">
   <div>
-    <h1 style="margin:0;font-size:23px">专家实测成果报告 (<code>/reports</code>) 与项目资料库</h1>
-    <p class="muted" style="margin:4px 0 0">
-      汇集各专家项目生成的实测 HTML 报告与 OGSM 补充分析文档。点击即可直接在浏览器内打开阅读。
-    </p>
+    <h1 style="margin:0;font-size:22px;color:var(--brand-900)">专家实测成果报告 (<code>/reports</code>) 与项目资料库</h1>
   </div>
-  <a href="/static/ogsm-mindmap.svg" target="_blank" class="btn-chip active">🖼️ 查看原版《ABIOGSM-品牌Agent》SVG 思维导图 ↗</a>
+  <div style="display:flex;gap:8px">
+    <button class="btn-chip active" onclick="openReportPreview('ABI 14大产品系统架构全景图', '/static/abi-arch-diagram.html')">查看系统架构全景图</button>
+    <a href="/static/ogsm-mindmap.svg" target="_blank" class="btn-chip">查看原版 SVG 思维导图</a>
+  </div>
 </div>
 
 <div class="card">
-  <h2 style="margin:0 0 12px;font-size:17px">📊 各专家项目实测成果报告（<code>/reports</code> 目录直读）</h2>
+  <h2 style="margin:0 0 12px;font-size:17px;color:var(--brand-900)">各专家项目实测成果报告（<code>/reports</code> 目录直读）</h2>
   <table>
     <thead>
       <tr>
@@ -21,26 +21,26 @@
         <th>报告文件名称</th>
         <th style="width:110px">文件大小</th>
         <th style="width:160px">更新时间</th>
-        <th style="width:110px">操作</th>
+        <th style="width:160px">操作</th>
       </tr>
     </thead>
     <tbody>
       {% for rf in report_files %}
       <tr>
-        <td><span class="badge badge-doing">{{ rf.expert }}</span></td>
+        <td><span class="badge badge-g1">{{ rf.expert }}</span></td>
         <td>
-          <a href="javascript:void(0)" onclick="openReportPreview('{{ rf.expert }} · {{ rf.name }}', '{{ rf.url }}')" style="font-weight:650;color:var(--ink)">
+          <a href="javascript:void(0)" onclick="openReportPreview('{{ rf.expert }} · {{ rf.name }}', '{{ rf.url }}')" style="font-weight:600;color:var(--ink)">
             {{ rf.filename }}
           </a>
         </td>
         <td class="muted">{{ rf.size_kb }} KB</td>
         <td class="muted">{{ rf.mtime }}</td>
         <td style="display:flex;gap:6px">
-          <button class="btn-chip" onclick="openReportPreview('{{ rf.expert }} · {{ rf.name }}', '{{ rf.url }}')" style="padding:3px 10px;font-size:12px;border-color:#2563eb;color:#2563eb;background:#eff6ff">
-            📄 页内预览
+          <button class="btn-chip" onclick="openReportPreview('{{ rf.expert }} · {{ rf.name }}', '{{ rf.url }}')" style="padding:3px 10px;font-size:12px">
+            页内预览
           </button>
           <a href="{{ rf.url }}" target="_blank" class="btn-chip" style="padding:3px 10px;font-size:12px">
-            新窗口 ↗
+            新窗口
           </a>
         </td>
       </tr>
@@ -53,7 +53,7 @@
 </div>
 
 <div class="card" style="margin-top:22px">
-  <h2 style="margin:0 0 12px;font-size:17px">📁 OGSM 框架与支撑补充文档（<code>/OGSM</code> 目录）</h2>
+  <h2 style="margin:0 0 12px;font-size:17px;color:var(--brand-900)">OGSM 框架与支撑补充文档（<code>/OGSM</code> 目录）</h2>
   <table>
     <thead>
       <tr>
@@ -69,7 +69,7 @@
         <td><a href="/docs/{{ f.name }}" style="font-weight:600;color:var(--ink)">{{ f.name }}</a></td>
         <td class="muted">{{ f.size_kb }} KB</td>
         <td class="muted">{{ f.mtime }}</td>
-        <td><a href="/docs/{{ f.name }}" class="btn-chip" style="padding:3px 10px;font-size:12px">在线阅读 →</a></td>
+        <td><a href="/docs/{{ f.name }}" class="btn-chip" style="padding:3px 10px;font-size:12px">在线阅读</a></td>
       </tr>
       {% endfor %}
     </tbody>
