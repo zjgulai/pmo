@@ -26,6 +26,7 @@
   <div class="nav-right">
     <button class="btn-chip" onclick="openWeeklyBriefModal()">周报与飞书推送</button>
     <button class="btn-chip" onclick="document.getElementById('csv-sync-modal').style.display='flex'">飞书表双向同步</button>
+    <a href="/api/export.pptx" class="btn-chip">导出汇报 PPTX</a>
     {% if is_pmo %}
       <span class="badge badge-done">PMO 已登录</span>
       <a href="/admin" class="btn-chip">后台</a>
@@ -107,29 +108,43 @@
       <strong style="font-size:16px">飞书 OGSM 总览表双向同步 &amp; 实测报告自动采集</strong>
       <button class="btn-chip" onclick="document.getElementById('csv-sync-modal').style.display='none'">关闭</button>
     </div>
-    <div style="padding:18px 20px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surface-subtle);border-radius:8px">
+    <div style="padding:18px 20px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--primary-soft);border:1px solid var(--line-strong);border-radius:8px">
         <div>
-          <strong style="font-size:14px;color:var(--brand-900)">1. 导出当前 49 项能力排期至飞书表格</strong>
-          <div class="muted" style="font-size:12px">生成与飞书 ABI OGSM 总览表列结构严格对齐的 UTF-8 CSV 文件</div>
+          <strong style="font-size:14px;color:var(--brand-900)">1. 飞书在线表 OpenAPI 一键双向同步 (FHQ0soq8ghbMQUtZOfYcWetUnIh)</strong>
+          <div class="muted" style="font-size:12px">从 5UK051 拉取真实负责人与排期，并将网站 49 项能力最新状态与进度%写回 XhJUya 总览表</div>
         </div>
-        <a href="/api/export.csv" class="btn">下载标准 CSV 台账</a>
+        <button class="btn" onclick="syncFeishuOnlineSheet(this)">立即双向同步飞书表</button>
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surface-subtle);border-radius:8px">
         <div>
-          <strong style="font-size:14px;color:var(--brand-900)">2. 扫描服务器 /reports 目录自动挂载最新日报</strong>
-          <div class="muted" style="font-size:12px">支持各专家定时任务通过 POST /api/ingest/report 上报或直接落盘 HTML 后一键同步</div>
+          <strong style="font-size:14px;color:var(--brand-900)">2. 生产服务数据采集 &amp; 里程碑到期群催办</strong>
+          <div class="muted" style="font-size:12px">自动采集各工作台实时状态 + 扫描 /reports 日报 + 将近 14 天到期里程碑推送到飞书群</div>
         </div>
-        <button class="btn-chip active" onclick="syncServerReports(this)">立即扫描同步报告</button>
+        <div style="display:flex;gap:6px">
+          <button class="btn-chip active" onclick="syncServerReports(this)">采集生产数据</button>
+          <button class="btn-chip" onclick="triggerPatrolReminder(this)">推送群催办卡</button>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surface-subtle);border-radius:8px">
+        <div>
+          <strong style="font-size:14px;color:var(--brand-900)">3. 导出离线文件（CSV 台账 / 10 页可编辑汇报 PPTX）</strong>
+          <div class="muted" style="font-size:12px">支持下载 UTF-8 CSV 表格或原生可编辑的深林绿母版部门汇报 PPTX</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <a href="/api/export.csv" class="btn-chip">下载 CSV</a>
+          <a href="/api/export.pptx" class="btn-chip active">下载 10页 PPTX</a>
+        </div>
       </div>
 
       <div>
-        <div class="section-label">3. 从飞书表格 CSV 导入并批量更新排期与进度（需 PMO 登录态）</div>
+        <div class="section-label">4. 从离线 CSV 文本批量导入更新（需 PMO 登录态）</div>
         <input type="file" accept=".csv" onchange="loadCsvFile(this)" style="margin-bottom:8px;width:100%">
-        <textarea id="csv-import-box" rows="7" placeholder="选择上方 .csv 文件，或直接将飞书表格导出的 CSV 文本粘贴至此处（含表头：专家代号,能力图谱名称,开发状态,验证状态,进度%,开始日期,截止日期,负责团队）..." style="width:100%;font-family:var(--mono);font-size:12px"></textarea>
+        <textarea id="csv-import-box" rows="5" placeholder="选择上方 .csv 文件，或直接将 CSV 文本粘贴至此处..." style="width:100%;font-family:var(--mono);font-size:12px"></textarea>
         <div style="margin-top:8px;display:flex;justify-content:flex-end">
-          <button class="btn" onclick="submitCsvImport(this)">执行 CSV 双向同步入库</button>
+          <button class="btn-chip" onclick="submitCsvImport(this)">执行 CSV 批量入库</button>
         </div>
       </div>
     </div>
@@ -336,16 +351,66 @@ async function pushWeeklyToFeishu(btn) {
 async function syncServerReports(btn) {
   const orig = btn.innerText;
   btn.disabled = true;
-  btn.innerText = '扫描中...';
+  btn.innerText = '采集中...';
   try {
-    const res = await fetch('/api/sync-reports', {method: 'POST'});
+    const res = await fetch('/api/auto/collect-metrics', {method: 'POST'});
     const data = await res.json();
-    btn.innerText = `已扫描 ${data.scanned_total} 份报告 (新绑定 ${data.newly_bound} 份)`;
+    btn.innerText = `在线 ${data.workbenches_online}/${data.workbenches_total} · 扫描 ${data.reports_scanned} 份`;
   } catch (e) {
-    alert('扫描失败');
+    alert('采集失败');
     btn.innerText = orig;
   } finally {
     setTimeout(() => { btn.disabled = false; }, 2000);
+  }
+}
+
+async function syncFeishuOnlineSheet(btn) {
+  const orig = btn.innerText;
+  btn.disabled = true;
+  btn.innerText = '正在同步飞书在线表...';
+  try {
+    const res = await fetch('/api/feishu/sheet-sync', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({direction: 'both'})
+    });
+    const data = await res.json();
+    if (data.ok) {
+      btn.innerText = `同步成功 (拉取负责人${data.pulled_owners}项 / 写回${data.pushed_rows}行)`;
+      setTimeout(() => location.reload(), 1200);
+    } else {
+      alert(data.error || '飞书表同步失败');
+      btn.innerText = orig;
+    }
+  } catch (e) {
+    alert('飞书表同步请求异常');
+    btn.innerText = orig;
+  } finally {
+    setTimeout(() => { btn.disabled = false; }, 2500);
+  }
+}
+
+async function triggerPatrolReminder(btn) {
+  const orig = btn.innerText;
+  btn.disabled = true;
+  btn.innerText = '巡检推送中...';
+  try {
+    const res = await fetch('/api/auto/patrol', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({push_to_feishu: true, days_threshold: 14})
+    });
+    const data = await res.json();
+    if (data.ok && data.pushed) {
+      btn.innerText = '已推送催办卡至飞书群';
+    } else {
+      btn.innerText = orig;
+    }
+  } catch (e) {
+    alert('巡检推送异常');
+    btn.innerText = orig;
+  } finally {
+    setTimeout(() => { btn.disabled = false; }, 2500);
   }
 }
 

@@ -1133,6 +1133,54 @@ def feishu_bot_command_api(payload: dict = Body(default={})):
     return out
 
 
+@app.post("/api/auto/collect-metrics")
+def api_collect_live_metrics(s: Session = Depends(get_session)):
+    """能力 1：自动探测各专家生产接口与 /reports 最新报告，刷新实测状态。"""
+    from .automation_suite import collect_live_metrics
+
+    return collect_live_metrics(s)
+
+
+@app.post("/api/feishu/sheet-sync")
+def api_feishu_sheet_sync(
+    payload: dict = Body(default={}),
+    s: Session = Depends(get_session),
+):
+    """能力 2：与飞书在线表格 FHQ0soq8ghbMQUtZOfYcWetUnIh (XhJUya + 5UK051) 直接 OpenAPI 双向同步。"""
+    from .automation_suite import sync_feishu_spreadsheet
+
+    direction = str(payload.get("direction") or "both").strip()
+    return sync_feishu_spreadsheet(s, direction=direction)
+
+
+@app.post("/api/auto/patrol")
+def api_patrol_and_reminder(
+    payload: dict = Body(default={}),
+    s: Session = Depends(get_session),
+):
+    """能力 3：24 站点掉线巡检 + 临期里程碑催办（push_to_feishu=true 则直推 ABI智能应用与算法组 群）。"""
+    from .automation_suite import run_patrol_and_reminder
+
+    push = bool(payload.get("push_to_feishu", False))
+    days = int(payload.get("days_threshold", 14))
+    return run_patrol_and_reminder(s, push_to_feishu=push, days_threshold=days)
+
+
+@app.get("/api/export.pptx")
+def api_export_executive_pptx(s: Session = Depends(get_session)):
+    """能力 4：动态生成 10 页可编辑部门项目汇报 PPTX。"""
+    from .automation_suite import generate_executive_pptx
+
+    pptx_bytes = generate_executive_pptx(s)
+    return Response(
+        content=pptx_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        headers={
+            "Content-Disposition": 'attachment; filename="ABI_Brand_Agent_OGSM_2026Q4_Report.pptx"'
+        },
+    )
+
+
 # ───────────────────────────── 实测报告与文档查阅 ─────────────────────────────
 
 

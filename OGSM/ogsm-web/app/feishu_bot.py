@@ -237,6 +237,29 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                 lines.append(f"- `{short_u}`：{st_txt}")
             return ("ABI 24 个线上工作台与子站实时探活报告", "\n".join(lines), default_btns)
 
+        # 4b. 飞书在线表格双向同步：@PMO 同步表格
+        if any(w in q_low for w in ("同步表格", "飞书表", "同步飞书", "sheet")):
+            from .automation_suite import sync_feishu_spreadsheet
+
+            sync_res = sync_feishu_spreadsheet(s, direction="both")
+            return (
+                "ABI OGSM 飞书在线表格双向同步完成",
+                (
+                    f"- **绑定飞书表格**：`{sync_res['spreadsheet_token']}`（`XhJUya` 总览页 + `5UK051` 任务计划）\n"
+                    f"- **拉取更新负责人**：{sync_res['pulled_owners']} 项\n"
+                    f"- **拉取补齐排期日期**：{sync_res['pulled_dates']} 项\n"
+                    f"- **写回飞书表最新状态与进度**：{sync_res['pushed_rows']} 行（状态码 `{sync_res['feishu_write_code']}`）"
+                ),
+                default_btns,
+            )
+
+        # 4c. 站点巡检与里程碑催办：@PMO 巡检 / @PMO 催办
+        if any(w in q_low for w in ("巡检", "催办", "提醒", "patrol")):
+            from .automation_suite import run_patrol_and_reminder
+
+            pat_res = run_patrol_and_reminder(s, push_to_feishu=False, days_threshold=14)
+            return ("ABI PMO 站点巡检与临期里程碑催办", pat_res["markdown"], default_btns)
+
         # 5. 查询特定专家项目（如 @PMO Emily / Echo / 守衡 / Source / Vicky / GEO / Shopify...）
         data = build_tree_data(s)
         for pv in data["proj_views"]:
