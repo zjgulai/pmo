@@ -6,9 +6,12 @@
   <div>
     <h1 style="margin:0;font-size:22px;color:var(--brand-900)">PMO 项目与能力进度更新台</h1>
   </div>
-  <form method="post" action="/admin/reset-seed" onsubmit="return confirm('确认将全部 14 个项目与能力重置为思维导图与 /reports 的标准初始数据吗？')">
-    <button class="ghost" type="submit">恢复标准初始数据</button>
-  </form>
+  <div style="display:flex;gap:8px;align-items:center">
+    <a href="/api/backup.json" class="btn-chip active">下载全库 JSON 备份快照</a>
+    <form method="post" action="/admin/reset-seed" onsubmit="return confirm('确认将全部 14 个项目与能力重置为思维导图与 /reports 的标准初始数据吗？')" style="margin:0">
+      <button class="ghost" type="submit">恢复标准初始数据</button>
+    </form>
+  </div>
 </div>
 
 {% for pv in proj_views %}

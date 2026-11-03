@@ -392,6 +392,7 @@ def build_tree_data(s: Session) -> dict:
                     "is_milestone": c.is_milestone,
                     "integ_name": c.integration_name,
                     "integ_url": c.integration_url,
+                    "evidence_url": getattr(c, "evidence_url", "") or "",
                 }
                 for c in p_caps
             ],
@@ -481,6 +482,40 @@ def build_tree_data(s: Session) -> dict:
         "latest_reports": latest_reports[:6],
     }
 
+    # 按负责人聚合工作负载矩阵（支持将 "吴雨宁 / 周健" 拆分统计到个人）
+    owner_buckets: dict[str, list[models.CapabilityItem]] = {}
+    for c in caps:
+        raw_owner = (c.owner or "待定").strip()
+        parts = [x.strip() for x in raw_owner.replace("、", "/").split("/") if x.strip()]
+        for person in (parts or ["待定"]):
+            owner_buckets.setdefault(person, []).append(c)
+
+    owner_workloads = []
+    for person, plist in owner_buckets.items():
+        tot = len(plist)
+        done_c = sum(1 for x in plist if x.status == "已完成")
+        doing_c = sum(1 for x in plist if x.status == "进行中")
+        plan_c = sum(1 for x in plist if x.status == "方案中")
+        avg_p = int(round(sum(x.progress_pct or 0 for x in plist) / tot)) if tot else 0
+        owner_workloads.append(
+            {
+                "owner": person,
+                "total": tot,
+                "done": done_c,
+                "doing": doing_c,
+                "plan": plan_c,
+                "pct": avg_p,
+            }
+        )
+    owner_workloads.sort(key=lambda x: (-x["total"], -x["pct"]))
+
+    try:
+        recent_audits = s.exec(
+            select(models.ChangeAuditLog).order_by(models.ChangeAuditLog.id.desc()).limit(10)
+        ).all()
+    except Exception:
+        recent_audits = []
+
     return {
         "objective": OBJECTIVE_TEXT,
         "goal_tree": goal_tree,
@@ -494,6 +529,8 @@ def build_tree_data(s: Session) -> dict:
         "stats": stats,
         "all_sites": all_sites,
         "radar_focus": radar_focus,
+        "owner_workloads": owner_workloads,
+        "recent_audits": recent_audits,
         "drawer_json": json.dumps(drawer_dict, ensure_ascii=False),
     }
 
@@ -578,6 +615,8 @@ def inline_update_capability(
     if not c:
         return JSONResponse({"ok": False, "error": "未找到该能力点"}, status_code=404)
 
+    old_status, old_verify, old_pct = c.status, c.verify_state, c.progress_pct
+
     if "status" in payload and payload["status"] in ("已完成", "进行中", "方案中"):
         c.status = payload["status"]
         if c.status == "已完成" and (c.progress_pct or 0) < 100:
@@ -595,6 +634,8 @@ def inline_update_capability(
         c.end_date = str(payload["end_date"] or "").strip()[:10]
     if "owner" in payload:
         c.owner = str(payload["owner"] or "").strip()[:40]
+    if "evidence_url" in payload:
+        c.evidence_url = str(payload["evidence_url"] or "").strip()[:300]
     if "is_milestone" in payload:
         c.is_milestone = bool(payload["is_milestone"])
 
@@ -621,6 +662,25 @@ def inline_update_capability(
             c.progress_pct = 100
 
     s.add(c)
+    changes = []
+    if c.progress_pct != old_pct:
+        changes.append(f"进度 {old_pct}% -> {c.progress_pct}%")
+    if c.status != old_status:
+        changes.append(f"状态 {old_status} -> {c.status}")
+    if c.verify_state != old_verify:
+        changes.append(f"验证 {old_verify} -> {c.verify_state}")
+    if changes:
+        s.add(
+            models.ChangeAuditLog(
+                cap_id=c.id or 0,
+                project_slug=c.project_slug,
+                expert_name=c.project_slug.upper(),
+                cap_name=c.name,
+                source="web",
+                actor="PMO",
+                summary="，".join(changes),
+            )
+        )
     s.commit()
     s.refresh(c)
     return {
@@ -632,6 +692,7 @@ def inline_update_capability(
         "start_date": c.start_date,
         "end_date": c.end_date,
         "owner": c.owner,
+        "evidence_url": c.evidence_url,
         "is_milestone": c.is_milestone,
         "kcol": _kanban_col_for(c),
     }
@@ -1177,6 +1238,27 @@ def api_export_executive_pptx(s: Session = Depends(get_session)):
         media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
         headers={
             "Content-Disposition": 'attachment; filename="ABI_Brand_Agent_OGSM_2026Q4_Report.pptx"'
+        },
+    )
+
+
+@app.get("/api/backup.json")
+def api_export_full_backup(s: Session = Depends(get_session)):
+    """全库结构化 JSON 备份快照导出（含 3G、6S、14项目、49能力、历史快照与变更审计流水）。"""
+    payload = {
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "goals": [g.model_dump(mode="json") for g in s.exec(select(models.GoalGroup).order_by(models.GoalGroup.sort)).all()],
+        "strategies": [st.model_dump(mode="json") for st in s.exec(select(models.StrategyGroup).order_by(models.StrategyGroup.sort)).all()],
+        "projects": [p.model_dump(mode="json") for p in s.exec(select(models.ProductProject).order_by(models.ProductProject.sort)).all()],
+        "capabilities": [c.model_dump(mode="json") for c in s.exec(select(models.CapabilityItem).order_by(models.CapabilityItem.sort)).all()],
+        "snapshots": [sn.model_dump(mode="json") for sn in s.exec(select(models.ProgressSnapshot).order_by(models.ProgressSnapshot.id.desc()).limit(20)).all()],
+        "audit_logs": [al.model_dump(mode="json") for al in s.exec(select(models.ChangeAuditLog).order_by(models.ChangeAuditLog.id.desc()).limit(100)).all()],
+    }
+    return Response(
+        content=json.dumps(payload, ensure_ascii=False, indent=2),
+        media_type="application/json; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="ABI_PMO_Backup_{date.today().isoformat()}.json"'
         },
     )
 

@@ -187,6 +187,17 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
             elif new_pct > 0 and target_cap.status == "方案中":
                 target_cap.status = "进行中"
             s.add(target_cap)
+            s.add(
+                models.ChangeAuditLog(
+                    cap_id=target_cap.id or 0,
+                    project_slug=target_cap.project_slug,
+                    expert_name=target_cap.project_slug.upper(),
+                    cap_name=target_cap.name,
+                    source="feishu_bot",
+                    actor="飞书群指令",
+                    summary=f"进度 {old_pct}% -> {new_pct}%，状态 {old_status} -> {target_cap.status}",
+                )
+            )
             s.commit()
             return (
                 f"PMO 能力进度已更新 · {target_cap.name}",
@@ -294,6 +305,37 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                     btns.append((f"打开 {p.expert_name} 工作台", p.workbench_url))
                 btns.append(("在 PMO 门户查看详情", f"https://pmo.luteos.com/projects#proj-{p.slug}"))
                 return (f"{p.expert_name} · {p.product_name} 项目详情", "\n".join(lines), btns)
+
+        # 5b. 查询特定负责人名下任务（如 @PMO 周健 / @PMO 吴雨宁 / @PMO 李倩怡 / @PMO 刘华丽 / @PMO 负责人）
+        for w_item in data.get("owner_workloads", []):
+            person_name = w_item["owner"]
+            if len(person_name) >= 2 and person_name.lower() in q_low:
+                person_caps = [
+                    (pv["proj"].expert_name, c)
+                    for pv in data["proj_views"]
+                    for c in pv["caps"]
+                    if person_name in (c.owner or pv["proj"].owner or "")
+                ]
+                lines = [
+                    f"**负责人**：{person_name}｜**名下能力总数**：{w_item['total']} 项（已完成 {w_item['done']} / 进行中 {w_item['doing']} / 方案中 {w_item['plan']}，平均进度 **{w_item['pct']}%**）",
+                    "",
+                    "**名下能力排期明细**：",
+                ]
+                for exp_n, c in person_caps:
+                    lines.append(
+                        f"- **[{exp_n}] {c.name}**：`{c.status} {c.progress_pct}%`（截止：{c.end_date or '待排期'}）"
+                    )
+                return (f"负责人工作负载与任务清单 · {person_name}", "\n".join(lines), default_btns)
+
+        if any(w in q_low for w in ("负责人", "负载", "分工", "workload", "owner")):
+            lines = ["**各负责人工作负载与平均完成度**：", ""]
+            for w_item in data.get("owner_workloads", []):
+                lines.append(
+                    f"- **{w_item['owner']}**：共 **{w_item['total']}** 项（已完成 {w_item['done']} / 进行中 {w_item['doing']} / 方案中 {w_item['plan']}）｜平均进度 **{w_item['pct']}%**"
+                )
+            lines.append("")
+            lines.append("可发送 `@PMO 周健` 或 `@PMO 吴雨宁` 查看个人名下具体能力排期。")
+            return ("ABI 品牌 Agent 负责人工作负载矩阵", "\n".join(lines), default_btns)
 
         # 6. 默认帮助与总览菜单
         st = data["stats"]

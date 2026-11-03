@@ -231,7 +231,10 @@ function openProjectDrawer(slug, highlightCapId) {
       <div style="font-size:13px;color:var(--ink2);margin-top:4px">${c.desc}</div>
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px">
         <span>负责：${c.owner}</span>
-        <span>排期：${c.end_date ? (c.start_date + ' 至 ' + c.end_date) : '待排期'}</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          ${c.evidence_url ? (c.evidence_url.startsWith('/reports-view') ? `<a href="javascript:void(0)" onclick="openReportPreview('${p.expert} · 实测证据', '${c.evidence_url}')" style="font-weight:600">[实测证据]</a>` : `<a href="${c.evidence_url}" target="_blank" style="font-weight:600">[实测证据]</a>`) : ''}
+          <span>排期：${c.end_date ? (c.start_date + ' 至 ' + c.end_date) : '待排期'}</span>
+        </div>
       </div>`;
     if (IS_PMO_USER) {
       html += `<div class="inline-edit-bar" style="margin-top:6px">

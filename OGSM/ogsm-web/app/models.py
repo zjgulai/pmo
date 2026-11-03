@@ -84,6 +84,7 @@ class CapabilityItem(SQLModel, table=True):
 
     integration_name: str = ""  # 待整合能力名称
     integration_url: str = ""  # 整合来源 URL
+    evidence_url: str = ""  # 实测验收证据链接（如 /reports-view/... 或工作台 URL）
     sort: int = 0
 
 
@@ -98,4 +99,20 @@ class ProgressSnapshot(SQLModel, table=True):
     done_count: int = 0
     verified_count: int = 0
     payload_json: str = ""  # JSON: {cap_id: {name, proj, status, verify_state, pct}}
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class ChangeAuditLog(SQLModel, table=True):
+    """进度与状态变更审计流水：记录网页行内修改、飞书群指令修改或表格同步的每一次变动。"""
+
+    __tablename__ = "change_audit_log"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    cap_id: int = 0
+    project_slug: str = ""
+    expert_name: str = ""
+    cap_name: str = ""
+    source: str = "web"  # web / feishu_bot / sheet_sync
+    actor: str = "PMO"
+    summary: str = ""  # 如 进度 60% -> 80%，状态 进行中 -> 已完成
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

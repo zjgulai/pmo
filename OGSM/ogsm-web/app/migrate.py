@@ -9,7 +9,7 @@ from sqlmodel import Session, SQLModel, select
 
 from .db import engine
 from .models import CapabilityItem, ProductProject
-from .seed import _ensure_v3_columns, seed
+from .seed import _ensure_v3_columns, backfill_evidence_urls, seed
 
 
 def main() -> None:
@@ -21,10 +21,15 @@ def main() -> None:
         has_dates = any(getattr(c, "start_date", "") for c in caps)
 
     if len(projs) < 14 or not has_dates:
-        print(f"[migrate] 检测到项目数={len(projs)} 或尚未初始化 V3 甘特图排期，执行 V3 初始化")
+        print(f"[migrate] 检测到项目数={len(projs)} 或尚未初始化甘特图排期，执行初始化")
         seed(force_reset=True)
     else:
-        print(f"[migrate] 已存在 {len(projs)} 个项目与 V3 排期数据，保留现有状态")
+        print(f"[migrate] 已存在 {len(projs)} 个项目与排期数据，保留现有状态")
+
+    with Session(engine) as s:
+        n = backfill_evidence_urls(s)
+        if n:
+            print(f"[migrate] 自动回填 {n} 项已验证能力的实测报告证据链接")
 
 
 if __name__ == "__main__":

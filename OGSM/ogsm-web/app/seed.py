@@ -821,7 +821,7 @@ CAPABILITIES = [
 
 
 def _ensure_v3_columns() -> None:
-    """兼容已有 PostgreSQL 表，自动补齐 V3 新增的排期与甘特图列。"""
+    """兼容已有 PostgreSQL 表，自动补齐新增的排期、甘特图与验收证据列。"""
     from sqlalchemy import text
 
     alter_stmts = [
@@ -830,6 +830,7 @@ def _ensure_v3_columns() -> None:
         "ALTER TABLE capability_item ADD COLUMN IF NOT EXISTS end_date VARCHAR DEFAULT ''",
         "ALTER TABLE capability_item ADD COLUMN IF NOT EXISTS owner VARCHAR DEFAULT ''",
         "ALTER TABLE capability_item ADD COLUMN IF NOT EXISTS is_milestone BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE capability_item ADD COLUMN IF NOT EXISTS evidence_url VARCHAR DEFAULT ''",
     ]
     with engine.begin() as conn:
         for stmt in alter_stmts:
@@ -837,6 +838,30 @@ def _ensure_v3_columns() -> None:
                 conn.execute(text(stmt))
             except Exception:
                 pass
+
+
+def backfill_evidence_urls(s: Session) -> int:
+    """为所有 verify_state=='已验证' 但尚未挂载 evidence_url 的能力自动绑定对应项目的实测报告或工作台 URL。"""
+    projs = {p.slug: p for p in s.exec(select(ProductProject)).all()}
+    caps = s.exec(select(CapabilityItem)).all()
+    filled = 0
+    for c in caps:
+        if c.verify_state == "已验证" and not (c.evidence_url or "").strip():
+            p = projs.get(c.project_slug)
+            if not p:
+                continue
+            first_rep = ""
+            for line in (p.report_links or "").splitlines():
+                if "|" in line:
+                    first_rep = line.split("|", 1)[1].strip()
+                    break
+            c.evidence_url = first_rep or c.integration_url or p.workbench_url or ""
+            if c.evidence_url:
+                s.add(c)
+                filled += 1
+    if filled:
+        s.commit()
+    return filled
 
 
 def seed(force_reset: bool = True) -> None:
