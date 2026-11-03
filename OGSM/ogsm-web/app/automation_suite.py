@@ -151,7 +151,15 @@ def sync_feishu_spreadsheet(s: Session, direction: str = "both") -> dict:
         "多渠道数据整合": "多渠道数据查询",
         "PR工作台搭建": "线索管理",
         "竞品洞察监测&风险预警": "舆情预警",
+        "IP合作计划制定": "IP 合作计划制定",
+        "Agent化改造": "数据查询与分析",
+        "Meltwater数据源替代": "线索推荐",
+        "对话式CLI界面": "对话式 CLI 界面",
+        "各Agent统一接入": "各 Agent 统一接入",
     }
+
+    def _norm(s_val: str) -> str:
+        return (s_val or "").strip().replace(" ", "").lower()
 
     def _find_cap(raw_name: str) -> models.CapabilityItem | None:
         n = (raw_name or "").strip()
@@ -162,8 +170,10 @@ def sync_feishu_spreadsheet(s: Session, direction: str = "both") -> dict:
         mapped = alias_map.get(n)
         if mapped and mapped in cap_by_name:
             return cap_by_name[mapped]
+        n_norm = _norm(n)
         for k, c_obj in cap_by_name.items():
-            if n in k or k in n:
+            k_norm = _norm(k)
+            if n_norm == k_norm or n_norm in k_norm or k_norm in n_norm:
                 return c_obj
         return None
 
@@ -206,17 +216,43 @@ def sync_feishu_spreadsheet(s: Session, direction: str = "both") -> dict:
             if c_obj and plist:
                 joined = " / ".join(plist)
                 if c_obj.owner != joined:
+                    old_ow = c_obj.owner
                     c_obj.owner = joined
                     s.add(c_obj)
+                    s.add(
+                        models.ChangeAuditLog(
+                            cap_id=c_obj.id or 0,
+                            project_slug=c_obj.project_slug,
+                            expert_name=c_obj.project_slug.upper(),
+                            cap_name=c_obj.name,
+                            source="sheet_sync",
+                            actor="飞书表 5UK051",
+                            summary=f"负责人 {old_ow or '待定'} -> {joined}",
+                        )
+                    )
                     pulled_owners += 1
 
         for fname, dlist in dates_by_func.items():
             c_obj = _find_cap(fname)
-            if c_obj and dlist and not c_obj.start_date:
-                c_obj.start_date = min(dlist)
-                c_obj.end_date = max(dlist)
-                s.add(c_obj)
-                pulled_dates += 1
+            if c_obj and dlist:
+                new_sd, new_ed = min(dlist), max(dlist)
+                if (c_obj.start_date, c_obj.end_date) != (new_sd, new_ed):
+                    old_ed = c_obj.end_date or "待排期"
+                    c_obj.start_date = new_sd
+                    c_obj.end_date = new_ed
+                    s.add(c_obj)
+                    s.add(
+                        models.ChangeAuditLog(
+                            cap_id=c_obj.id or 0,
+                            project_slug=c_obj.project_slug,
+                            expert_name=c_obj.project_slug.upper(),
+                            cap_name=c_obj.name,
+                            source="sheet_sync",
+                            actor="飞书表 5UK051",
+                            summary=f"排期截止 {old_ed} -> {new_ed}",
+                        )
+                    )
+                    pulled_dates += 1
 
         s.commit()
 
@@ -307,6 +343,7 @@ def run_patrol_and_reminder(s: Session, push_to_feishu: bool = False, days_thres
 
     # 找出距离截止日 <= days_threshold 天且未完成的能力项
     due_soon_caps = []
+    due_cap_objs = []
     for pv in data["proj_views"]:
         p = pv["proj"]
         for cv in pv["cap_views"]:
@@ -321,6 +358,7 @@ def run_patrol_and_reminder(s: Session, push_to_feishu: bool = False, days_thres
             if days_left <= days_threshold:
                 due_soon_caps.append(
                     {
+                        "cap_obj": c,
                         "expert": p.expert_name,
                         "goal": p.goal_code,
                         "name": c.name,
@@ -332,6 +370,7 @@ def run_patrol_and_reminder(s: Session, push_to_feishu: bool = False, days_thres
                     }
                 )
     due_soon_caps.sort(key=lambda x: x["days_left"])
+    due_cap_objs = [x["cap_obj"] for x in due_soon_caps]
 
     md_lines = [
         f"**巡检时间**：{ping_res['checked_at']}",
@@ -358,8 +397,11 @@ def run_patrol_and_reminder(s: Session, push_to_feishu: bool = False, days_thres
         md_lines.append(f"- 近 {days_threshold} 天内无未完成的临期能力项。")
 
     md_lines.append("")
-    md_lines.append("可在群内直接回复 `@PMO 更新 <能力名> <进度%>` 实时更新进度。")
+    md_lines.append("可直接点击下方卡片按钮免打字更新进度/上报阻塞，或在群内回复 `@PMO 更新 <能力名> <进度%>`。")
 
+    from .feishu_bot import _build_cap_quick_actions
+
+    act_btns = _build_cap_quick_actions(due_cap_objs, max_caps=3)
     card_title = f"ABI PMO 每日站点巡检与里程碑到期提醒 ({today_d.isoformat()})"
     markdown_body = "\n".join(md_lines)
     pushed_msg_id = None
@@ -372,6 +414,7 @@ def run_patrol_and_reminder(s: Session, push_to_feishu: bool = False, days_thres
                 ("打开甘特图与四列看板更新进度", "https://pmo.luteos.com/roadmap"),
                 ("打开战略全景导图", "https://pmo.luteos.com/"),
             ],
+            action_buttons=act_btns,
         )
         res = send_card_to_chat(card)
         pushed_msg_id = res.get("data", {}).get("message_id")
@@ -383,6 +426,7 @@ def run_patrol_and_reminder(s: Session, push_to_feishu: bool = False, days_thres
         "pushed": bool(pushed_msg_id),
         "message_id": pushed_msg_id,
         "markdown": markdown_body,
+        "action_buttons": act_btns,
     }
 
 

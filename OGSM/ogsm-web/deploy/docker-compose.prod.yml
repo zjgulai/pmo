@@ -58,6 +58,8 @@ services:
       - ../../..:/docs:ro
       # /reports 目录可写挂载，支持各专家 Agent 定时通过 API 自动上报最新 HTML 报告
       - ../../../reports:/docs/reports:rw
+      # /backups 目录可写挂载，支持每日 03:00 pg_dump 快照与后台一键备份/下载
+      - ../../../backups:/docs/backups:rw
     ports:
       - "172.20.0.1:18960:8000"
     networks:

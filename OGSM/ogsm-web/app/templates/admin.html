@@ -2,16 +2,39 @@
 {% block title %}项目更新后台 · ABI 品牌 & 营销 Agent{% endblock %}
 {% block body %}
 
-<div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:16px">
   <div>
     <h1 style="margin:0;font-size:22px;color:var(--brand-900)">PMO 项目与能力进度更新台</h1>
   </div>
-  <div style="display:flex;gap:8px;align-items:center">
-    <a href="/api/backup.json" class="btn-chip active">下载全库 JSON 备份快照</a>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <form method="post" action="/admin/backup-now" style="margin:0">
+      <button type="submit" class="btn-chip active">一键备份数据库 (写入 /opt/pmo/backups/)</button>
+    </form>
+    <a href="/api/backup.sql" class="btn-chip">下载最新 SQL 快照 (.sql)</a>
+    <a href="/api/backup.json" class="btn-chip">下载全库 JSON 快照 (.json)</a>
     <form method="post" action="/admin/reset-seed" onsubmit="return confirm('确认将全部 14 个项目与能力重置为思维导图与 /reports 的标准初始数据吗？')" style="margin:0">
       <button class="ghost" type="submit">恢复标准初始数据</button>
     </form>
   </div>
+</div>
+
+<!-- 数据库每日自动备份与快照防线面板 -->
+<div class="card" style="margin-bottom:20px;padding:14px 18px">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+    <strong style="font-size:14px;color:var(--brand-900)">数据库自动备份与恢复防线（/opt/pmo/backups/ · 每日 03:00 自动 pg_dump 压缩备份，保留 30 天）</strong>
+    <span class="muted" style="font-size:12px">已存档文件数：{{ backup_files | length }}</span>
+  </div>
+  {% if backup_files %}
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    {% for bf in backup_files[:8] %}
+    <a href="/admin/backup-download/{{ bf.name }}" class="btn-chip" style="font-family:var(--mono);font-size:12px">
+      {{ bf.name }} ({{ bf.size_kb }} KB · {{ bf.mtime }})
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="muted" style="font-size:12px">当前目录暂无历史归档文件，点击右上角「一键备份数据库」可立即生成快照。</div>
+  {% endif %}
 </div>
 
 {% for pv in proj_views %}
@@ -53,16 +76,17 @@
     <table>
       <thead>
         <tr>
-          <th style="width:160px">能力名称</th>
+          <th style="width:140px">能力名称</th>
           <th>能力说明</th>
-          <th style="width:95px">开发状态</th>
-          <th style="width:95px">实测验证</th>
-          <th style="width:68px">进度%</th>
-          <th style="width:122px">开始日期</th>
-          <th style="width:122px">截止日期</th>
-          <th style="width:95px">负责团队</th>
-          <th style="width:55px">里程碑</th>
-          <th style="width:72px">操作</th>
+          <th style="width:88px">开发状态</th>
+          <th style="width:88px">实测验证</th>
+          <th style="width:62px">进度%</th>
+          <th style="width:115px">开始日期</th>
+          <th style="width:115px">截止日期</th>
+          <th style="width:90px">负责团队</th>
+          <th style="width:150px">验收证据链接 (ste-zh)</th>
+          <th style="width:50px">里程碑</th>
+          <th style="width:68px">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -89,6 +113,7 @@
             <td><input type="date" name="start_date" value="{{ c.start_date }}" style="width:100%"></td>
             <td><input type="date" name="end_date" value="{{ c.end_date }}" style="width:100%"></td>
             <td><input name="owner" value="{{ c.owner }}" style="width:100%"></td>
+            <td><input name="evidence_url" value="{{ c.evidence_url }}" placeholder="/reports-view/... 或 https://..." style="width:100%;font-family:var(--mono);font-size:12px"></td>
             <td style="text-align:center"><input type="checkbox" name="is_milestone" {{ 'checked' if c.is_milestone else '' }}></td>
             <td><button type="submit" class="ghost" style="padding:4px 10px">更新</button></td>
           </form>

@@ -55,9 +55,35 @@ def get_tenant_access_token() -> str:
     return str(data["tenant_access_token"])
 
 
-def build_green_card(title: str, markdown_body: str, buttons: list[tuple[str, str]] | None = None) -> dict:
-    """构建零 Emoji、深林绿主题的飞书交互卡片。"""
+def build_green_card(
+    title: str,
+    markdown_body: str,
+    buttons: list[tuple[str, str]] | None = None,
+    action_buttons: list[tuple[str, dict]] | None = None,
+) -> dict:
+    """构建零 Emoji、深林绿主题的飞书交互卡片（同时支持 URL 跳转按钮与免打字交互回写按钮）。"""
     elements: list[dict] = [{"tag": "markdown", "content": markdown_body}]
+    if action_buttons:
+        elements.append({"tag": "hr"})
+        elements.append(
+            {
+                "tag": "markdown",
+                "content": "**免打字快捷操作（点击按钮直接更新数据库并记录审计流水）**：",
+            }
+        )
+        act_items = []
+        for idx, (label, val_dict) in enumerate(action_buttons[:12]):
+            btn_type = "danger" if val_dict.get("action") == "report_blocker" else ("primary" if idx == 0 else "default")
+            act_items.append(
+                {
+                    "tag": "button",
+                    "text": {"tag": "plain_text", "content": label},
+                    "type": btn_type,
+                    "value": val_dict,
+                }
+            )
+        elements.append({"tag": "action", "actions": act_items})
+
     if buttons:
         elements.append({"tag": "hr"})
         actions = []
@@ -66,7 +92,7 @@ def build_green_card(title: str, markdown_body: str, buttons: list[tuple[str, st
                 {
                     "tag": "button",
                     "text": {"tag": "plain_text", "content": label},
-                    "type": "primary" if idx == 0 else "default",
+                    "type": "primary" if (idx == 0 and not action_buttons) else "default",
                     "url": url,
                 }
             )
@@ -153,8 +179,117 @@ def _clean_user_query(raw_text: str) -> str:
     return txt
 
 
-def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
-    """根据群成员 @PMO 的指令生成卡片 (title, markdown_body, buttons)。"""
+def _build_cap_quick_actions(caps: list[models.CapabilityItem], max_caps: int = 3) -> list[tuple[str, dict]]:
+    """为未完成的能力点生成飞书交互卡片免打字快捷按钮（+25% / 设为100%完成 / 报阻塞）。"""
+    actions: list[tuple[str, dict]] = []
+    todo = [c for c in caps if c.status != "已完成"]
+    for c in todo[:max_caps]:
+        short_name = c.name[:8]
+        next_pct = min(100, (c.progress_pct or 0) + 25)
+        if next_pct < 100:
+            actions.append(
+                (
+                    f"{short_name} -> {next_pct}%",
+                    {"action": "set_pct", "cap_id": c.id, "pct": next_pct},
+                )
+            )
+        actions.append(
+            (
+                f"{short_name} -> 100%完成",
+                {"action": "set_pct", "cap_id": c.id, "pct": 100},
+            )
+        )
+        actions.append(
+            (
+                f"{short_name} · 报阻塞",
+                {"action": "report_blocker", "cap_id": c.id},
+            )
+        )
+    return actions
+
+
+def process_card_action_event(action_value: dict, operator_open_id: str = "") -> dict:
+    """处理飞书卡片按钮点击事件 (card.action.trigger)，免打字直接修改数据库并记录审计流水。"""
+    act_type = str(action_value.get("action") or "")
+    cap_id = int(action_value.get("cap_id") or 0)
+    if not act_type or not cap_id:
+        return {
+            "toast": {"type": "info", "content": "已收到操作请求"},
+        }
+
+    with Session(engine) as s:
+        c = s.get(models.CapabilityItem, cap_id)
+        if not c:
+            return {
+                "toast": {"type": "error", "content": f"未找到能力节点 #{cap_id}"},
+            }
+
+        p = s.exec(select(models.ProductProject).where(models.ProductProject.slug == c.project_slug)).first()
+        exp_name = p.expert_name if p else c.project_slug.upper()
+
+        if act_type == "set_pct":
+            new_pct = max(0, min(100, int(action_value.get("pct") or 0)))
+            old_pct = c.progress_pct
+            old_status = c.status
+            c.progress_pct = new_pct
+            if new_pct == 100:
+                c.status = "已完成"
+            elif new_pct > 0 and c.status == "方案中":
+                c.status = "进行中"
+            s.add(c)
+            s.add(
+                models.ChangeAuditLog(
+                    cap_id=c.id or 0,
+                    project_slug=c.project_slug,
+                    expert_name=exp_name,
+                    cap_name=c.name,
+                    source="feishu_card",
+                    actor="飞书卡片按钮",
+                    summary=f"免打字按钮：进度 {old_pct}% -> {new_pct}%，状态 {old_status} -> {c.status}",
+                )
+            )
+            s.commit()
+            return {
+                "toast": {
+                    "type": "success",
+                    "content": f"已更新「{c.name}」：{old_pct}% -> {new_pct}% ({c.status})",
+                }
+            }
+
+        if act_type == "report_blocker":
+            if p:
+                blocker_line = f"[飞书群报阻塞 {date.today().isoformat()}] {c.name}（当前 {c.progress_pct}%，负责：{c.owner or p.owner}）需协同排障"
+                existing_gaps = [x.strip() for x in (p.pending_gaps or "").splitlines() if x.strip()]
+                if not any(c.name in g for g in existing_gaps):
+                    existing_gaps.insert(0, blocker_line)
+                    p.pending_gaps = "\n".join(existing_gaps)
+                    s.add(p)
+            s.add(
+                models.ChangeAuditLog(
+                    cap_id=c.id or 0,
+                    project_slug=c.project_slug,
+                    expert_name=exp_name,
+                    cap_name=c.name,
+                    source="feishu_card",
+                    actor="飞书卡片按钮",
+                    summary=f"上报阻塞卡点：{c.name}（当前进度 {c.progress_pct}%）",
+                )
+            )
+            s.commit()
+            return {
+                "toast": {
+                    "type": "warning",
+                    "content": f"已登记「{c.name}」阻塞卡点并同步至 PMO 雷达栏",
+                }
+            }
+
+    return {"toast": {"type": "info", "content": "操作已完成"}}
+
+
+def handle_bot_command(
+    query: str,
+) -> tuple[str, str, list[tuple[str, str]], list[tuple[str, dict]]]:
+    """根据群成员 @PMO 的指令生成卡片 (title, markdown_body, buttons, action_buttons)。"""
     from .main import api_ping_sites, build_tree_data, generate_weekly_brief
 
     q = query.strip()
@@ -166,6 +301,54 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
     ]
 
     with Session(engine) as s:
+        # 1a. 报阻塞指令：@PMO 阻塞 <能力名> <原因>
+        m_blk = re.match(r"^(?:阻塞|报阻塞|卡点)\s+(\S+)(?:\s+(.+))?$", q)
+        if m_blk:
+            cap_kw = m_blk.group(1)
+            reason = (m_blk.group(2) or "进度受阻需跨团队协同").strip()
+            all_caps = s.exec(select(models.CapabilityItem)).all()
+            target_cap = next((c for c in all_caps if cap_kw.lower() in c.name.lower()), None)
+            if not target_cap:
+                return (
+                    "PMO 阻塞上报提示",
+                    f"未找到包含「**{cap_kw}**」的能力图谱节点，请核对名称后再试。",
+                    default_btns,
+                    [],
+                )
+            p = s.exec(
+                select(models.ProductProject).where(models.ProductProject.slug == target_cap.project_slug)
+            ).first()
+            exp_name = p.expert_name if p else target_cap.project_slug.upper()
+            if p:
+                blocker_line = f"{target_cap.name}：{reason}（{date.today().isoformat()} 群内上报）"
+                existing_gaps = [x.strip() for x in (p.pending_gaps or "").splitlines() if x.strip()]
+                existing_gaps.insert(0, blocker_line)
+                p.pending_gaps = "\n".join(existing_gaps)
+                s.add(p)
+            s.add(
+                models.ChangeAuditLog(
+                    cap_id=target_cap.id or 0,
+                    project_slug=target_cap.project_slug,
+                    expert_name=exp_name,
+                    cap_name=target_cap.name,
+                    source="feishu_bot",
+                    actor="飞书群指令",
+                    summary=f"上报阻塞：{reason}",
+                )
+            )
+            s.commit()
+            return (
+                f"PMO 阻塞卡点已登记 · {target_cap.name}",
+                (
+                    f"- **能力节点**：{target_cap.name}（所属项目：`{exp_name}`）\n"
+                    f"- **阻塞说明**：{reason}\n"
+                    f"- **当前进度**：`{target_cap.status} {target_cap.progress_pct}%`（负责：{target_cap.owner or '待定'}）\n"
+                    f"- **联动状态**：已写入首页跨项目重点待补齐卡点与变更审计流水"
+                ),
+                default_btns,
+                _build_cap_quick_actions([target_cap], max_caps=1),
+            )
+
         # 1. 更新指令：@PMO 更新 <能力名> <进度%>
         m_upd = re.match(r"^(?:更新|修改|设置)\s+(\S+)\s+(\d{1,3})%?$", q)
         if m_upd:
@@ -178,6 +361,7 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                     "PMO 进度更新提示",
                     f"未找到包含「**{cap_kw}**」的能力图谱节点，请核对名称后再试。",
                     default_btns,
+                    [],
                 )
             old_pct = target_cap.progress_pct
             old_status = target_cap.status
@@ -199,15 +383,21 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                 )
             )
             s.commit()
+            ev_hint = (
+                f"\n- **验收提醒**：当前已完成但未挂载实测证据，请补充证据后再流转至「已验证」。"
+                if (new_pct == 100 and not (target_cap.evidence_url or "").strip())
+                else ""
+            )
             return (
                 f"PMO 能力进度已更新 · {target_cap.name}",
                 (
                     f"- **能力名称**：{target_cap.name}（所属项目：`{target_cap.project_slug.upper()}`）\n"
                     f"- **进度变更**：`{old_pct}%` → **`{new_pct}%`**\n"
                     f"- **状态变更**：`{old_status}` → **`{target_cap.status}`**\n"
-                    f"- **截止排期**：{target_cap.end_date or '待排期'}（负责：{target_cap.owner or '待定'}）"
+                    f"- **截止排期**：{target_cap.end_date or '待排期'}（负责：{target_cap.owner or '待定'}）{ev_hint}"
                 ),
                 default_btns,
+                _build_cap_quick_actions([target_cap], max_caps=1),
             )
 
         # 2. 周报 / 进度 / 汇总
@@ -217,6 +407,7 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                 f"ABI 品牌 & 营销 Agent 周度进展与里程碑简报 ({date.today().isoformat()})",
                 brief["markdown"],
                 default_btns,
+                [],
             )
 
         # 3. 里程碑 / 甘特 / 排期
@@ -227,12 +418,19 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                 "",
                 "**近 4 周待交付关键里程碑 (Milestone)**：",
             ]
+            ms_caps = []
             for m in data["radar_focus"]["upcoming_milestones"]:
                 c = m["cap"]
+                ms_caps.append(c)
                 lines.append(
                     f"- **{c.end_date}**（剩 {m['days_left']} 天）｜**{m['proj_expert']} · {c.name}**：当前 **{c.progress_pct}%**（{c.owner}）"
                 )
-            return ("ABI 2026Q4 关键里程碑与甘特排期", "\n".join(lines), default_btns)
+            return (
+                "ABI 2026Q4 关键里程碑与甘特排期",
+                "\n".join(lines),
+                default_btns,
+                _build_cap_quick_actions(ms_caps, max_caps=3),
+            )
 
         # 4. 探活 / 站点 / 工作台
         if any(w in q_low for w in ("探活", "站点", "工作台", "健康", "ping", "site")):
@@ -246,7 +444,7 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                 short_u = url.replace("https://", "").replace("/", "")
                 st_txt = f"200 在线 ({info['ms']}ms)" if info["ok"] else f"受限/内网 ({info.get('err') or info.get('code')})"
                 lines.append(f"- `{short_u}`：{st_txt}")
-            return ("ABI 24 个线上工作台与子站实时探活报告", "\n".join(lines), default_btns)
+            return ("ABI 24 个线上工作台与子站实时探活报告", "\n".join(lines), default_btns, [])
 
         # 4b. 飞书在线表格双向同步：@PMO 同步表格
         if any(w in q_low for w in ("同步表格", "飞书表", "同步飞书", "sheet")):
@@ -262,6 +460,7 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                     f"- **写回飞书表最新状态与进度**：{sync_res['pushed_rows']} 行（状态码 `{sync_res['feishu_write_code']}`）"
                 ),
                 default_btns,
+                [],
             )
 
         # 4c. 站点巡检与里程碑催办：@PMO 巡检 / @PMO 催办
@@ -269,7 +468,12 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
             from .automation_suite import run_patrol_and_reminder
 
             pat_res = run_patrol_and_reminder(s, push_to_feishu=False, days_threshold=14)
-            return ("ABI PMO 站点巡检与临期里程碑催办", pat_res["markdown"], default_btns)
+            return (
+                "ABI PMO 站点巡检与临期里程碑催办",
+                pat_res["markdown"],
+                default_btns,
+                pat_res.get("action_buttons", []),
+            )
 
         # 5. 查询特定专家项目（如 @PMO Emily / Echo / 守衡 / Source / Vicky / GEO / Shopify...）
         data = build_tree_data(s)
@@ -289,8 +493,9 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                 ]
                 for c in pv["caps"]:
                     ms_tag = "[里程碑] " if c.is_milestone else ""
+                    ev_tag = " [已挂证据]" if (c.evidence_url or "").strip() else ""
                     lines.append(
-                        f"- {ms_tag}**{c.name}**：`{c.status} {c.progress_pct}%`（{c.verify_state}，截止：{c.end_date or '待排期'}）"
+                        f"- {ms_tag}**{c.name}**：`{c.status} {c.progress_pct}%`（{c.verify_state}{ev_tag}，截止：{c.end_date or '待排期'}）"
                     )
                 lines.append("")
                 lines.append(f"**实测成果总结**：\n{p.verified_summary}")
@@ -304,28 +509,57 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                 if p.workbench_url:
                     btns.append((f"打开 {p.expert_name} 工作台", p.workbench_url))
                 btns.append(("在 PMO 门户查看详情", f"https://pmo.luteos.com/projects#proj-{p.slug}"))
-                return (f"{p.expert_name} · {p.product_name} 项目详情", "\n".join(lines), btns)
+                return (
+                    f"{p.expert_name} · {p.product_name} 项目详情",
+                    "\n".join(lines),
+                    btns,
+                    _build_cap_quick_actions(pv["caps"], max_caps=3),
+                )
 
-        # 5b. 查询特定负责人名下任务（如 @PMO 周健 / @PMO 吴雨宁 / @PMO 李倩怡 / @PMO 刘华丽 / @PMO 负责人）
+        # 5b. 查询特定负责人名下任务（如 @PMO 我的任务 / @PMO 周健 / @PMO 吴雨宁 / @PMO 李倩怡 / @PMO 刘华丽 / @PMO 负责人）
+        target_person_q = q_low
+        if any(w in q_low for w in ("我的任务", "我的排期", "我的项目", "my task")):
+            target_person_q = "周健"
+
         for w_item in data.get("owner_workloads", []):
             person_name = w_item["owner"]
-            if len(person_name) >= 2 and person_name.lower() in q_low:
+            if len(person_name) >= 2 and person_name.lower() in target_person_q:
                 person_caps = [
                     (pv["proj"].expert_name, c)
                     for pv in data["proj_views"]
                     for c in pv["caps"]
                     if person_name in (c.owner or pv["proj"].owner or "")
                 ]
+                today_d = date.today()
                 lines = [
                     f"**负责人**：{person_name}｜**名下能力总数**：{w_item['total']} 项（已完成 {w_item['done']} / 进行中 {w_item['doing']} / 方案中 {w_item['plan']}，平均进度 **{w_item['pct']}%**）",
                     "",
-                    "**名下能力排期明细**：",
+                    "**名下能力排期与剩余天数明细**：",
                 ]
+                raw_caps_only = []
                 for exp_n, c in person_caps:
+                    raw_caps_only.append(c)
+                    day_info = "待排期"
+                    if c.end_date:
+                        try:
+                            dl = (date.fromisoformat(c.end_date[:10]) - today_d).days
+                            if c.status == "已完成":
+                                day_info = f"{c.end_date} 已交付"
+                            elif dl < 0:
+                                day_info = f"{c.end_date} (已逾期 {-dl} 天)"
+                            else:
+                                day_info = f"{c.end_date} (剩 {dl} 天)"
+                        except ValueError:
+                            day_info = c.end_date
                     lines.append(
-                        f"- **[{exp_n}] {c.name}**：`{c.status} {c.progress_pct}%`（截止：{c.end_date or '待排期'}）"
+                        f"- **[{exp_n}] {c.name}**：`{c.status} {c.progress_pct}%`｜截止：{day_info}"
                     )
-                return (f"负责人工作负载与任务清单 · {person_name}", "\n".join(lines), default_btns)
+                return (
+                    f"负责人工作负载与任务清单 · {person_name}",
+                    "\n".join(lines),
+                    default_btns,
+                    _build_cap_quick_actions(raw_caps_only, max_caps=3),
+                )
 
         if any(w in q_low for w in ("负责人", "负载", "分工", "workload", "owner")):
             lines = ["**各负责人工作负载与平均完成度**：", ""]
@@ -334,8 +568,8 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
                     f"- **{w_item['owner']}**：共 **{w_item['total']}** 项（已完成 {w_item['done']} / 进行中 {w_item['doing']} / 方案中 {w_item['plan']}）｜平均进度 **{w_item['pct']}%**"
                 )
             lines.append("")
-            lines.append("可发送 `@PMO 周健` 或 `@PMO 吴雨宁` 查看个人名下具体能力排期。")
-            return ("ABI 品牌 Agent 负责人工作负载矩阵", "\n".join(lines), default_btns)
+            lines.append("可发送 `@PMO 我的任务`、`@PMO 周健`、`@PMO 吴雨宁`、`@PMO 李倩怡` 或 `@PMO 刘华丽` 查看个人名下具体能力排期并直接点击卡片按钮改状态。")
+            return ("ABI 品牌 Agent 负责人工作负载矩阵", "\n".join(lines), default_btns, [])
 
         # 6. 默认帮助与总览菜单
         st = data["stats"]
@@ -343,13 +577,14 @@ def handle_bot_command(query: str) -> tuple[str, str, list[tuple[str, str]]]:
             f"当前纳管 **14 个专家 Agent 产品项目**、**{st['cap_total']} 项能力图谱**（总进度 **{st['overall_pct']}%**，已实测验证 **{st['cap_verified']} 项**，在线站点 **{st['site_online']}/{st['site_total']}**）。",
             "",
             "**在群内 @PMO 支持以下实时指令**：",
+            "- `@PMO 我的任务` 或 `@PMO 周健` / `@PMO 吴雨宁` / `@PMO 李倩怡` / `@PMO 刘华丽`：查询个人名下任务、剩余天数并支持一键点按钮改进度",
             "- `@PMO 周报` 或 `@PMO 进度`：获取最新周度进展对比与里程碑简报",
             "- `@PMO 里程碑` 或 `@PMO 甘特`：查看近 4 周待交付关键里程碑排期",
             "- `@PMO 探活`：实时并发检测全部 24 个工作台站点 HTTP 状态与延迟",
-            "- `@PMO <项目名>`（如 `@PMO Emily`、`@PMO Echo`、`@PMO 守衡`、`@PMO Source`）：查询指定专家项目的能力进度与实测报告",
-            "- `@PMO 更新 <能力名> <进度%>`（如 `@PMO 更新 采集探针 50%`）：在群内直接更新能力进度并同步至甘特图与看板",
+            "- `@PMO <项目名>`（如 `@PMO Emily`、`@PMO Radar`、`@PMO Echo`、`@PMO Source`）：查询指定专家项目的能力进度与实测报告",
+            "- `@PMO 更新 <能力名> <进度%>` 或 `@PMO 阻塞 <能力名> <原因>`：在群内直接改进度或上报阻塞卡点",
         ]
-        return ("ABI PMO 品牌 & 营销 Agent 统筹助手", "\n".join(help_lines), default_btns)
+        return ("ABI PMO 品牌 & 营销 Agent 统筹助手", "\n".join(help_lines), default_btns, [])
 
 
 def process_incoming_message_event(event_dict: dict) -> dict:
@@ -406,8 +641,8 @@ def process_incoming_message_event(event_dict: dict) -> dict:
 
     def _async_reply():
         try:
-            title, md_body, btns = handle_bot_command(clean_q)
-            card = build_green_card(title, md_body, btns)
+            title, md_body, btns, act_btns = handle_bot_command(clean_q)
+            card = build_green_card(title, md_body, btns, action_buttons=act_btns)
             reply_card_to_message(msg_id, card, fallback_chat_id=chat_id)
         except Exception as exc:
             print(f"[feishu-bot] 回复异常: {exc}", flush=True)
@@ -417,9 +652,14 @@ def process_incoming_message_event(event_dict: dict) -> dict:
 
 
 def start_ws_client_forever() -> None:
-    """使用 lark_oapi.ws.Client 启动飞书长连接事件监听（作为独立守护进程运行）。"""
+    """使用 lark_oapi.ws.Client 启动飞书长连接事件监听（作为独立守护进程运行，同时监听群消息与卡片按钮回调）。"""
     import lark_oapi as lark
     from lark_oapi.api.im.v1 import P2ImMessageReceiveV1
+    from lark_oapi.event.callback.model.p2_card_action_trigger import (
+        CallBackToast,
+        P2CardActionTrigger,
+        P2CardActionTriggerResponse,
+    )
 
     app_id, app_secret, _ = get_feishu_creds()
 
@@ -431,9 +671,26 @@ def start_ws_client_forever() -> None:
         except Exception as exc:
             print(f"[feishu-ws] 处理消息异常: {exc}", flush=True)
 
+    def _on_p2_card_action(data: P2CardActionTrigger) -> P2CardActionTriggerResponse:
+        resp = P2CardActionTriggerResponse()
+        try:
+            ev = getattr(data, "event", None)
+            act = getattr(ev, "action", None) if ev else None
+            op = getattr(ev, "operator", None) if ev else None
+            val = (getattr(act, "value", None) or {}) if act else {}
+            open_id = (getattr(op, "open_id", "") or "") if op else ""
+            res_dict = process_card_action_event(val, operator_open_id=open_id)
+            toast_info = res_dict.get("toast") or {"type": "success", "content": "已更新"}
+            resp.toast = CallBackToast(toast_info)
+        except Exception as exc:
+            print(f"[feishu-ws] 处理卡片按钮异常: {exc}", flush=True)
+            resp.toast = CallBackToast({"type": "error", "content": f"处理失败: {exc}"})
+        return resp
+
     handler = (
         lark.EventDispatcherHandler.builder("", "")
         .register_p2_im_message_receive_v1(_on_p2_message)
+        .register_p2_card_action_trigger(_on_p2_card_action)
         .build()
     )
     cli = lark.ws.Client(

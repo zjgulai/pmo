@@ -43,6 +43,7 @@ signer = URLSafeSerializer(SECRET, salt="ogsm-pmo")
 REPO_ROOT = Path(os.getenv("OGSM_DOCS_DIR", str(BASE.parent.parent)))
 OGSM_DOCS_DIR = REPO_ROOT / "OGSM" if (REPO_ROOT / "OGSM").exists() else REPO_ROOT
 REPORTS_DIR = REPO_ROOT / "reports"
+BACKUPS_DIR = REPO_ROOT / "backups"
 
 GANTT_START = date(2026, 8, 1)
 GANTT_END = date(2026, 12, 31)
@@ -113,8 +114,9 @@ def _calc_gantt_bar(start_str: str, end_str: str, today_d: date, status: str) ->
 
 
 def _kanban_col_for(c: models.CapabilityItem) -> str:
+    has_ev = bool((getattr(c, "evidence_url", "") or "").strip())
     if c.status == "已完成":
-        return "verified" if c.verify_state == "已验证" else "pending_verify"
+        return "verified" if (c.verify_state == "已验证" and has_ev) else "pending_verify"
     if c.status == "进行中":
         if (c.progress_pct or 0) >= 80:
             return "pending_verify"
@@ -482,7 +484,7 @@ def build_tree_data(s: Session) -> dict:
         "latest_reports": latest_reports[:6],
     }
 
-    # 按负责人聚合工作负载矩阵（支持将 "吴雨宁 / 周健" 拆分统计到个人）
+    # 按负责人聚合工作负载矩阵（支持将 "吴雨宁 / 周健" 拆分统计到个人，并统计临期/逾期项）
     owner_buckets: dict[str, list[models.CapabilityItem]] = {}
     for c in caps:
         raw_owner = (c.owner or "待定").strip()
@@ -497,6 +499,12 @@ def build_tree_data(s: Session) -> dict:
         doing_c = sum(1 for x in plist if x.status == "进行中")
         plan_c = sum(1 for x in plist if x.status == "方案中")
         avg_p = int(round(sum(x.progress_pct or 0 for x in plist) / tot)) if tot else 0
+        urgent_c = 0
+        for x in plist:
+            if x.status != "已完成" and x.end_date:
+                ed = _parse_date(x.end_date)
+                if ed and (ed - today_d).days <= 7:
+                    urgent_c += 1
         owner_workloads.append(
             {
                 "owner": person,
@@ -505,6 +513,7 @@ def build_tree_data(s: Session) -> dict:
                 "doing": doing_c,
                 "plan": plan_c,
                 "pct": avg_p,
+                "urgent": urgent_c,
             }
         )
     owner_workloads.sort(key=lambda x: (-x["total"], -x["pct"]))
@@ -616,6 +625,8 @@ def inline_update_capability(
         return JSONResponse({"ok": False, "error": "未找到该能力点"}, status_code=404)
 
     old_status, old_verify, old_pct = c.status, c.verify_state, c.progress_pct
+    old_ev = getattr(c, "evidence_url", "") or ""
+    evidence_gate_warning = ""
 
     if "status" in payload and payload["status"] in ("已完成", "进行中", "方案中"):
         c.status = payload["status"]
@@ -653,13 +664,23 @@ def inline_update_capability(
                 c.progress_pct = 60
         elif kcol == "pending_verify":
             c.status = "进行中"
-            c.verify_state = "已验证"
+            c.verify_state = "部分验证"
             if (c.progress_pct or 0) < 85:
                 c.progress_pct = 85
         elif kcol == "verified":
             c.status = "已完成"
-            c.verify_state = "已验证"
             c.progress_pct = 100
+            if (c.evidence_url or "").strip():
+                c.verify_state = "已验证"
+            else:
+                c.verify_state = "部分验证"
+                evidence_gate_warning = "验收证据硬挂钩拦截：尚未挂载实测证据链接，已设为 100% 完成（待补证据），请补充证据链接后再转入「已验证」。"
+
+    # 若试图将无证据链接的能力设为「已验证」，按 ste-zh 铁律自动降级为「部分验证（待补证据）」
+    if c.verify_state == "已验证" and not (c.evidence_url or "").strip():
+        c.verify_state = "部分验证"
+        if not evidence_gate_warning:
+            evidence_gate_warning = "按 ste-zh 规范「已完成 ≠ 已验证」：请先填写验收证据链接（evidence_url）再标为已验证。"
 
     s.add(c)
     changes = []
@@ -669,6 +690,8 @@ def inline_update_capability(
         changes.append(f"状态 {old_status} -> {c.status}")
     if c.verify_state != old_verify:
         changes.append(f"验证 {old_verify} -> {c.verify_state}")
+    if (c.evidence_url or "") != old_ev:
+        changes.append(f"挂载验收证据 {c.evidence_url or '清空'}")
     if changes:
         s.add(
             models.ChangeAuditLog(
@@ -695,6 +718,7 @@ def inline_update_capability(
         "evidence_url": c.evidence_url,
         "is_milestone": c.is_milestone,
         "kcol": _kanban_col_for(c),
+        "warning": evidence_gate_warning,
     }
 
 
@@ -806,6 +830,21 @@ def generate_weekly_brief(s: Session = Depends(get_session)):
     lines.append("## 四、 跨项目核心待补齐卡点（需协同支持）")
     for b in data["radar_focus"]["top_blockers"]:
         lines.append(f"- **[{b['goal']} · {b['expert']}]** {b['gap']}")
+    lines.append("")
+
+    lines.append("## 五、 进度与状态变更审计流水（Change Audit Log）")
+    if data.get("recent_audits"):
+        for al in data["recent_audits"][:8]:
+            src_label = (
+                "飞书卡片按钮"
+                if al.source == "feishu_card"
+                else ("飞书群指令" if al.source == "feishu_bot" else ("飞书表同步" if al.source == "sheet_sync" else "网页更新"))
+            )
+            lines.append(
+                f"- `{al.created_at.strftime('%m-%d %H:%M')}` **[{al.expert_name} · {al.cap_name}]**（{src_label}）：{al.summary}"
+            )
+    else:
+        lines.append("- 暂无近期变更记录。")
 
     return {
         "ok": True,
@@ -1153,8 +1192,8 @@ def push_weekly_to_feishu(
 
 @app.post("/api/feishu/events")
 async def feishu_events_webhook(request: Request):
-    """飞书事件订阅 HTTP Webhook 回调端点（同时支持 url_verification 握手与 im.message.receive_v1）。"""
-    from .feishu_bot import process_incoming_message_event
+    """飞书事件订阅 HTTP Webhook 回调端点（同时支持 url_verification 握手、im.message.receive_v1 与 card.action.trigger）。"""
+    from .feishu_bot import process_card_action_event, process_incoming_message_event
 
     try:
         body = await request.json()
@@ -1165,14 +1204,44 @@ async def feishu_events_webhook(request: Request):
     if body.get("type") == "url_verification" or "challenge" in body:
         return {"challenge": body.get("challenge", "")}
 
-    # 2. v2.0 消息事件处理
+    # 2. v2.0 消息与卡片动作事件处理
     header = body.get("header") or {}
     event_type = header.get("event_type") or body.get("type") or ""
     if event_type == "im.message.receive_v1":
         res = process_incoming_message_event(body)
         return res
+    if event_type == "card.action.trigger" or "action" in (body.get("event") or body):
+        ev = body.get("event") or body
+        act_obj = ev.get("action") or {}
+        op_obj = ev.get("operator") or {}
+        val = act_obj.get("value") or {}
+        open_id = str(op_obj.get("open_id") or "")
+        return process_card_action_event(val, operator_open_id=open_id)
 
     return {"ok": True, "ignored_event": event_type}
+
+
+@app.post("/api/feishu/card-action")
+def feishu_card_action_api(payload: dict = Body(default={})):
+    """飞书交互卡片按钮免打字一键回写接口（支持直接改状态/进度与上报阻塞卡点，并写入变更审计流水）。"""
+    from .feishu_bot import process_card_action_event
+
+    val = payload.get("value") if isinstance(payload.get("value"), dict) else payload
+    op_id = str(payload.get("open_id") or "")
+    return process_card_action_event(val, operator_open_id=op_id)
+
+
+@app.get("/api/audit-logs")
+def api_list_audit_logs(limit: int = 30, s: Session = Depends(get_session)):
+    """查询进度与状态变更审计流水（Change Audit Log）。"""
+    rows = s.exec(
+        select(models.ChangeAuditLog).order_by(models.ChangeAuditLog.id.desc()).limit(max(1, min(200, limit)))
+    ).all()
+    return {
+        "ok": True,
+        "count": len(rows),
+        "items": [r.model_dump(mode="json") for r in rows],
+    }
 
 
 @app.post("/api/feishu/command")
@@ -1184,9 +1253,15 @@ def feishu_bot_command_api(payload: dict = Body(default={})):
     push = bool(payload.get("push", False))
     chat_id = str(payload.get("chat_id") or DEFAULT_CHAT_ID).strip()
 
-    title, md_body, btns = handle_bot_command(q)
-    card = build_green_card(title, md_body, btns)
-    out = {"ok": True, "query": q, "title": title, "markdown": md_body}
+    title, md_body, btns, act_btns = handle_bot_command(q)
+    card = build_green_card(title, md_body, btns, action_buttons=act_btns)
+    out = {
+        "ok": True,
+        "query": q,
+        "title": title,
+        "markdown": md_body,
+        "action_buttons": [label for label, _ in act_btns],
+    }
     if push:
         res = send_card_to_chat(card, chat_id=chat_id)
         out["pushed"] = res.get("code") == 0
@@ -1336,11 +1411,119 @@ def logout():
     return resp
 
 
+def _generate_sql_dump(s: Session) -> str:
+    """生成 PostgreSQL 标准可恢复的 SQL 快照文本（含 3G、6S、14项目、49能力、快照与审计流水）。"""
+    def _sql_lit(v) -> str:
+        if v is None:
+            return "NULL"
+        if isinstance(v, bool):
+            return "TRUE" if v else "FALSE"
+        if isinstance(v, (int, float)):
+            return str(v)
+        if isinstance(v, datetime):
+            return "'" + v.isoformat().replace("'", "''") + "'"
+        return "'" + str(v).replace("'", "''") + "'"
+
+    lines = [
+        f"-- ABI PMO OGSM PostgreSQL Snapshot ({datetime.now(timezone.utc).isoformat()})",
+        "BEGIN;",
+    ]
+    tables = [
+        ("goal_group", models.GoalGroup, models.GoalGroup.sort),
+        ("strategy_group", models.StrategyGroup, models.StrategyGroup.sort),
+        ("product_project", models.ProductProject, models.ProductProject.sort),
+        ("capability_item", models.CapabilityItem, models.CapabilityItem.sort),
+        ("progress_snapshot", models.ProgressSnapshot, models.ProgressSnapshot.id),
+        ("change_audit_log", models.ChangeAuditLog, models.ChangeAuditLog.id),
+    ]
+    for tbl_name, model_cls, order_col in tables:
+        rows = s.exec(select(model_cls).order_by(order_col)).all()
+        lines.append(f"\n-- Table: {tbl_name} ({len(rows)} rows)")
+        lines.append(f"TRUNCATE TABLE {tbl_name} RESTART IDENTITY CASCADE;")
+        for r in rows:
+            d = r.model_dump()
+            cols = ", ".join(d.keys())
+            vals = ", ".join(_sql_lit(v) for v in d.values())
+            lines.append(f"INSERT INTO {tbl_name} ({cols}) VALUES ({vals});")
+    lines.append("COMMIT;\n")
+    return "\n".join(lines)
+
+
+def _list_backup_files() -> list[dict]:
+    files = []
+    if BACKUPS_DIR.exists():
+        for p in sorted(BACKUPS_DIR.glob("pmo_*"), key=lambda x: x.stat().st_mtime, reverse=True):
+            if p.is_file():
+                files.append(
+                    {
+                        "name": p.name,
+                        "size_kb": round(p.stat().st_size / 1024, 1),
+                        "mtime": datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
+                    }
+                )
+    return files[:20]
+
+
+@app.get("/api/backup.sql")
+def api_export_sql_backup(s: Session = Depends(get_session)):
+    """导出标准 SQL 快照（或优先返回服务器每日 03:00 自动生成的最新 pg_dump 快照）。"""
+    sql_text = _generate_sql_dump(s)
+    return Response(
+        content=sql_text,
+        media_type="application/sql; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="ABI_PMO_Snapshot_{date.today().isoformat()}.sql"'
+        },
+    )
+
+
+@app.post("/admin/backup-now")
+def admin_trigger_backup_now(request: Request, s: Session = Depends(get_session)):
+    """在 /admin 一键执行立即备份并写入 /opt/pmo/backups/ 目录。"""
+    if not is_pmo(request):
+        return RedirectResponse("/login", status_code=303)
+    import gzip
+
+    BACKUPS_DIR.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    sql_path = BACKUPS_DIR / f"pmo_pg_{stamp}.sql.gz"
+    json_path = BACKUPS_DIR / f"pmo_json_{stamp}.json.gz"
+
+    sql_bytes = _generate_sql_dump(s).encode("utf-8")
+    with gzip.open(sql_path, "wb", compresslevel=9) as f:
+        f.write(sql_bytes)
+
+    json_resp = api_export_full_backup(s)
+    with gzip.open(json_path, "wb", compresslevel=9) as f:
+        f.write(json_resp.body)
+
+    return RedirectResponse("/admin", status_code=303)
+
+
+@app.get("/admin/backup-download/{filename}")
+def admin_download_backup_file(filename: str, request: Request):
+    """下载 /opt/pmo/backups/ 下的指定历史压缩快照（.sql.gz / .json.gz）。"""
+    if not is_pmo(request):
+        return RedirectResponse("/login", status_code=303)
+    target = (BACKUPS_DIR / filename).resolve()
+    if not target.exists() or BACKUPS_DIR.resolve() not in target.parents:
+        return RedirectResponse("/admin", status_code=303)
+    return Response(
+        content=target.read_bytes(),
+        media_type="application/gzip",
+        headers={"Content-Disposition": f'attachment; filename="{target.name}"'},
+    )
+
+
 @app.get("/admin", response_class=HTMLResponse)
 def admin_panel(request: Request, s: Session = Depends(get_session)):
     if not is_pmo(request):
         return RedirectResponse("/login", status_code=303)
-    return render(request, "admin.html", ctx(request, s, active_nav="admin"))
+    return render(
+        request,
+        "admin.html",
+        ctx(request, s, active_nav="admin", backup_files=_list_backup_files()),
+    )
 
 
 @app.post("/admin/project/{project_id}")
@@ -1385,6 +1568,7 @@ def update_capability(
     start_date: str = Form(default=""),
     end_date: str = Form(default=""),
     owner: str = Form(default=""),
+    evidence_url: str = Form(default=""),
     is_milestone: str = Form(default=""),
     integration_name: str = Form(default=""),
     integration_url: str = Form(default=""),
@@ -1394,10 +1578,17 @@ def update_capability(
         return RedirectResponse("/login", status_code=303)
     c = s.get(models.CapabilityItem, cap_id)
     if c:
+        old_status, old_verify, old_pct = c.status, c.verify_state, c.progress_pct
+        old_ev = c.evidence_url or ""
         c.name = name.strip() or c.name
         c.description = description.strip()
         c.status = status
-        c.verify_state = verify_state
+        c.evidence_url = evidence_url.strip()[:300]
+        # 验收证据硬挂钩：无证据不可标为已验证
+        if verify_state == "已验证" and not c.evidence_url:
+            c.verify_state = "部分验证"
+        else:
+            c.verify_state = verify_state
         c.progress_pct = max(0, min(100, int(progress_pct or 0)))
         c.start_date = start_date.strip()[:10]
         c.end_date = end_date.strip()[:10]
@@ -1406,6 +1597,27 @@ def update_capability(
         c.integration_name = integration_name.strip()
         c.integration_url = integration_url.strip()
         s.add(c)
+        changes = []
+        if c.progress_pct != old_pct:
+            changes.append(f"进度 {old_pct}% -> {c.progress_pct}%")
+        if c.status != old_status:
+            changes.append(f"状态 {old_status} -> {c.status}")
+        if c.verify_state != old_verify:
+            changes.append(f"验证 {old_verify} -> {c.verify_state}")
+        if c.evidence_url != old_ev:
+            changes.append(f"证据 {c.evidence_url or '清空'}")
+        if changes:
+            s.add(
+                models.ChangeAuditLog(
+                    cap_id=c.id or 0,
+                    project_slug=c.project_slug,
+                    expert_name=c.project_slug.upper(),
+                    cap_name=c.name,
+                    source="web",
+                    actor="PMO后台",
+                    summary="，".join(changes),
+                )
+            )
         s.commit()
     return RedirectResponse("/admin#proj-" + (c.project_slug if c else ""), status_code=303)
 

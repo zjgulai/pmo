@@ -105,11 +105,22 @@
 
   <div class="radar-box">
     <div class="radar-box-head">
-      <span>最新实测成果报告 (页内直读)</span>
-      <a href="/docs" style="font-size:12px">报告库</a>
+      <span>最新实测报告 &amp; 进度变更留痕</span>
+      <a href="/docs" style="font-size:12px">报告与审计</a>
     </div>
     <ul class="radar-list">
-      {% for rf in radar_focus.latest_reports %}
+      {% for al in recent_audits[:3] %}
+      <li class="radar-item" onclick="openProjectDrawer('{{ al.project_slug }}', {{ al.cap_id }})">
+        <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px">
+          <span class="dot dot-doing"></span>
+          <span class="badge badge-g1">{{ al.expert_name }}</span>
+          <strong>{{ al.cap_name }}</strong>
+          <span style="color:var(--ink2);font-size:12px">{{ al.summary }}</span>
+        </div>
+        <span class="muted" style="font-size:12px;flex-shrink:0">{{ al.created_at.strftime('%m-%d %H:%M') }}</span>
+      </li>
+      {% endfor %}
+      {% for rf in radar_focus.latest_reports[: (6 - (recent_audits[:3] | length))] %}
       <li class="radar-item" onclick="openReportPreview('{{ rf.expert }} · {{ rf.name }}', '{{ rf.url }}')">
         <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px">
           <span class="dot dot-done"></span>

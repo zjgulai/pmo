@@ -232,12 +232,12 @@ function openProjectDrawer(slug, highlightCapId) {
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px">
         <span>负责：${c.owner}</span>
         <div style="display:flex;gap:8px;align-items:center">
-          ${c.evidence_url ? (c.evidence_url.startsWith('/reports-view') ? `<a href="javascript:void(0)" onclick="openReportPreview('${p.expert} · 实测证据', '${c.evidence_url}')" style="font-weight:600">[实测证据]</a>` : `<a href="${c.evidence_url}" target="_blank" style="font-weight:600">[实测证据]</a>`) : ''}
+          ${c.evidence_url ? (c.evidence_url.startsWith('/reports-view') ? `<a href="javascript:void(0)" onclick="openReportPreview('${p.expert} · 实测证据', '${c.evidence_url}')" style="font-weight:600">[实测证据]</a>` : `<a href="${c.evidence_url}" target="_blank" style="font-weight:600">[实测证据]</a>`) : (c.status === '已完成' ? `<span class="badge badge-ms" style="font-size:11px;padding:1px 6px">待补证据</span>` : '')}
           <span>排期：${c.end_date ? (c.start_date + ' 至 ' + c.end_date) : '待排期'}</span>
         </div>
       </div>`;
     if (IS_PMO_USER) {
-      html += `<div class="inline-edit-bar" style="margin-top:6px">
+      html += `<div class="inline-edit-bar" style="margin-top:6px;flex-wrap:wrap">
         <select onchange="drawerQuickSave(${c.id}, {status: this.value})">
           <option value="方案中" ${c.status==='方案中'?'selected':''}>方案中</option>
           <option value="进行中" ${c.status==='进行中'?'selected':''}>进行中</option>
@@ -250,6 +250,7 @@ function openProjectDrawer(slug, highlightCapId) {
         </select>
         <input type="number" min="0" max="100" step="5" value="${c.pct}" style="width:58px" onchange="drawerQuickSave(${c.id}, {progress_pct: this.value})" title="进度%">
         <input type="date" value="${c.end_date}" onchange="drawerQuickSave(${c.id}, {end_date: this.value})" title="截止日">
+        <input type="text" value="${c.evidence_url || ''}" placeholder="验收证据 URL (/reports-view/...)" style="flex:1;min-width:160px;font-size:12px" onchange="drawerQuickSave(${c.id}, {evidence_url: this.value})" title="实测验收证据链接">
       </div>`;
     }
     html += `</div>`;
@@ -293,7 +294,13 @@ async function drawerQuickSave(capId, payload) {
     body: JSON.stringify(payload)
   });
   const data = await res.json();
-  if (!data.ok) alert(data.error || '保存失败');
+  if (!data.ok) {
+    alert(data.error || '保存失败');
+    return;
+  }
+  if (data.warning) {
+    alert(data.warning);
+  }
 }
 
 async function openWeeklyBriefModal() {

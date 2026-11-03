@@ -60,9 +60,12 @@
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px">
     {% for ow in owner_workloads %}
     <div class="btn-chip" onclick="filterByOwner('{{ ow.owner }}', this)" style="display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:8px 10px;text-align:left">
-      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:13px;color:var(--brand-900)">
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:13px;color:var(--brand-900);align-items:center">
         <span>{{ ow.owner }}</span>
-        <span>{{ ow.pct }}% ({{ ow.total }}项)</span>
+        <div style="display:flex;gap:4px;align-items:center">
+          {% if ow.urgent > 0 %}<span class="badge badge-ms" style="font-size:11px;padding:1px 5px" title="含 7 天内临期或已逾期未完成项">临期 {{ ow.urgent }}</span>{% endif %}
+          <span>{{ ow.pct }}% ({{ ow.total }}项)</span>
+        </div>
       </div>
       <div class="stacked-bar" style="height:5px">
         <div class="sb-done" style="width:{{ ow.pct }}%"></div>
@@ -265,6 +268,8 @@
               {% else %}
               <a href="{{ c.evidence_url }}" target="_blank" style="font-weight:600">[实测证据]</a>
               {% endif %}
+            {% elif c.status == '已完成' or col_key in ('pending_verify', 'verified') %}
+              <span class="badge badge-ms" style="font-size:11px;padding:1px 6px">待补证据</span>
             {% endif %}
             <span>截止：{{ c.end_date if c.end_date else '待排期' }}</span>
           </div>
@@ -312,7 +317,7 @@
       {% for al in recent_audits %}
       <tr>
         <td class="muted" style="font-family:var(--mono);font-size:12px">{{ al.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-        <td><span class="badge badge-g1">{{ '飞书群指令' if al.source == 'feishu_bot' else '网页更新' }}</span></td>
+        <td><span class="badge badge-g1">{{ '飞书卡片按钮' if al.source == 'feishu_card' else ('飞书群指令' if al.source == 'feishu_bot' else ('飞书表同步' if al.source == 'sheet_sync' else '网页更新')) }}</span></td>
         <td><strong>{{ al.expert_name }}</strong></td>
         <td><strong>{{ al.cap_name }}</strong></td>
         <td>{{ al.summary }}</td>
@@ -334,6 +339,16 @@ function filterByOwner(ownerName, btn) {
   document.querySelectorAll('.gantt-row-cap').forEach(r => {
     const ow = r.dataset.owner || '';
     r.style.display = (ownerName === 'ALL' || ow.includes(ownerName)) ? 'grid' : 'none';
+  });
+  document.querySelectorAll('.gantt-row-proj').forEach(pr => {
+    if (ownerName === 'ALL') {
+      pr.style.display = 'grid';
+      return;
+    }
+    const slug = (pr.getAttribute('onclick') || '').match(/'([^']+)'/)?.[1];
+    if (!slug) return;
+    const anyVis = Array.from(document.querySelectorAll('.cap-of-' + slug)).some(r => r.style.display !== 'none');
+    pr.style.display = anyVis ? 'grid' : 'none';
   });
   document.querySelectorAll('.kanban-card').forEach(c => {
     const ow = c.dataset.owner || '';
@@ -379,6 +394,9 @@ async function inlineSave(capId, payload) {
     if (!data.ok) {
       alert(data.error || '保存失败');
       return;
+    }
+    if (data.warning) {
+      alert(data.warning);
     }
     const toast = document.getElementById('save-toast');
     toast.style.display = 'block';
