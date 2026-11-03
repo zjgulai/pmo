@@ -1,0 +1,47 @@
+﻿id,layer,title,importance,unit_type,when,labels,source_ref,owner,status
+pmo-l1-identity,L1 核心准则,PMO Agent 身份与决策优先级,1.0,decision,timeless,"identity,persona,redline",OGSM/ogsm-web/README.md + .claude/settings.local.json,AI Agent,planned
+pmo-l1-redlines,L1 核心准则,PMO 八条操作红线,1.0,decision,timeless,"redline,governance,ogsm",OGSM/OGSM-v1-整合版-20261102.md §0/§6,AI Agent,planned
+pmo-l1-boundary,L1 核心准则,仓库物理边界与数据零读写纪律,1.0,decision,timeless,"boundary,infra",OGSM/ogsm-web/README.md 环境变量/目录 + .gitignore,AI Agent,planned
+pmo-l2-o-r1r4,L2 业务口径,O 与 R1–R4 结果口径,0.9,fact,timeless,"caliber,ogsm,metric",OGSM-v1 §1 + §9,AI Agent,planned
+pmo-l2-g1g3,L2 业务口径,G1–G3 唯一结算指标与准入规则,0.9,fact,timeless,"caliber,goal,metric",OGSM-v1 §2,AI Agent,planned
+pmo-l2-ogsm-generations,L2 业务口径,两代 OGSM 版本、O/G/S 编号对照与引用规则,0.9,fact,timeless,"caliber,strategy",seed.py#GOALS/STRATEGIES + OGSM-v1 §1–§3,AI Agent,planned
+pmo-l2-portfolio18,L2 业务口径,18 项产线登记与 14 产品组合,0.9,fact,timeless,"portfolio,ogsm",OGSM-v1 §5 + seed.py#PROJECTS,AI Agent,planned
+pmo-l2-metric-t1t5,L2 业务口径,T1–T5 指标层与 decision_use,0.9,fact,timeless,"metric,caliber",OGSM-v1 §4.1,AI Agent,planned
+pmo-l2-misuse12,L2 业务口径,12 条指标误用 M01–M12,0.9,fact,timeless,"metric,gate",OGSM-v1 §4.3,AI Agent,planned
+pmo-l2-gates,L2 业务口径,三道 Gate 与回执规则,0.9,procedure,timeless,"gate,compliance",brand-agent-ogsm-three-gates-draft-20261101.md §0/§2,AI Agent,planned
+pmo-l2-stage4,L2 业务口径,四阶自进化标尺与 50% 封顶,0.9,procedure,timeless,"stage,sop,agent",templates/sop.html §四阶标尺,AI Agent,planned
+pmo-l2-quadrant,L2 业务口径,四象限续投判定与四个熔断,0.9,procedure,timeless,"gate,governance",OGSM-v1 §6,AI Agent,planned
+pmo-l2-keys9,L2 业务口径,9 主键与对象级 A,0.9,fact,timeless,"data,key,evidence",brand-agent-ogsm-key-registry-draft-20261101.md §14 + OGSM-v1 §8,AI Agent,planned
+pmo-l2-handoff6,L2 业务口径,6 条跨岗交接链与 Handoff Packet,0.9,fact,timeless,"handoff,agent,contract",templates/sites.html §2,AI Agent,planned
+pmo-l2-cadence,L2 业务口径,PMO 管理节奏与有效校准会判据,0.9,procedure,timeless,"governance,cadence",OGSM-v1 §6,AI Agent,planned
+pmo-l2-evidence,L2 业务口径,证据分级 L0–L4 与 measuredActions,0.9,fact,timeless,"evidence,action,gate",templates/sites.html §6 + models.py BusinessActionLedger,AI Agent,planned
+pmo-l3-progress,L3 避坑实证,进度不是结果：C1–C7 与 M11,0.85,learning,timeless,"pitfall,ogsm,metric",OGSM/ogsm-web/README.md + OGSM-v1 §0/§4.3,AI Agent,planned
+pmo-l3-feishu-select,L3 避坑实证,飞书多维表格单选静默丢弃与批量覆盖,0.85,learning,timeless,"pitfall,feishu",feishu_bot.py/automation_suite.py 同步逻辑 + 实战复盘,AI Agent,planned
+pmo-l3-mime,L3 避坑实证,飞书/文档 MIME 解析陷阱与 .markdown 规范,0.85,learning,timeless,"pitfall,library",SOP §3.2/§5.2,AI Agent,planned
+pmo-l3-evidence-gate,L3 避坑实证,无 evidence_url 不得标已验证,0.85,learning,timeless,"pitfall,evidence,gate",v7.1 commit 312ebc6 + main.py inline endpoint,AI Agent,planned
+pmo-l3-backup,L3 避坑实证,SQL 快照与每日备份防线,0.85,learning,timeless,"pitfall,infra,backup",v7.1 commit 312ebc6 + deploy/backup-db.sh,AI Agent,planned
+pmo-l3-roas,L3 避坑实证,平台 ROAS/归因不得进经营结论,0.85,learning,timeless,"pitfall,metric,paid",OGSM-v1 §4.3 M01/M10/M12,AI Agent,planned
+pmo-l3-adspend,L3 避坑实证,加投前查移动页负载与 3P 失败率,0.85,learning,timeless,"pitfall,paid,site",templates/sites.html 交接链 4,AI Agent,planned
+pmo-l3-voc,L3 避坑实证,全量 VOC 重算与 86x 增量管线,0.85,learning,timeless,"pitfall,voc,pipeline",seed.py Echo 项目画像 + /reports 实测,AI Agent,planned
+pmo-l3-stage-inflation,L3 避坑实证,Vicky 100%→50% 的进度挤水分,0.85,learning,timeless,"pitfall,stage,agent",seed.py Vicky + templates/sop.html,AI Agent,planned
+pmo-l3-ai-answer,L3 避坑实证,AI 提及 ≠ Best Overall 推荐,0.85,learning,timeless,"pitfall,geo,ai",seed.py GEO（Perplexity 5/5 提及、0/5 Best Overall）,AI Agent,planned
+pmo-l3-claim,L3 避坑实证,315 SKU 事实原子不等于可发布内容,0.85,learning,timeless,"pitfall,claim,compliance",seed.py GEO/守衡 + three-gates,AI Agent,planned
+pmo-l4-portfolio,L4 沉淀纪要,14 Agent 组合总览（Wave/Stage/均值）,0.75,context,past,"portfolio,status,history",seed.py#PROJECTS 聚合,AI Agent,planned
+pmo-l4-emily,L4 沉淀纪要,Emily 项目画像,0.75,context,past,"portfolio,agent,emily",seed.py#PROJECTS[slug=emily] + 项目报告,AI Agent,planned
+pmo-l4-clone,L4 沉淀纪要,Clone 项目画像,0.75,context,past,"portfolio,agent,clone",seed.py#PROJECTS[slug=clone] + 项目报告,AI Agent,planned
+pmo-l4-vicky,L4 沉淀纪要,Vicky 项目画像,0.75,context,past,"portfolio,agent,vicky",seed.py#PROJECTS[slug=vicky] + 项目报告,AI Agent,planned
+pmo-l4-geo,L4 沉淀纪要,GEO 项目画像,0.75,context,past,"portfolio,agent,geo",seed.py#PROJECTS[slug=geo] + 项目报告,AI Agent,planned
+pmo-l4-radar,L4 沉淀纪要,Radar 项目画像,0.75,context,past,"portfolio,agent,radar",seed.py#PROJECTS[slug=radar] + 项目报告,AI Agent,planned
+pmo-l4-echo,L4 沉淀纪要,Echo 项目画像,0.75,context,past,"portfolio,agent,echo",seed.py#PROJECTS[slug=echo] + 项目报告,AI Agent,planned
+pmo-l4-market,L4 沉淀纪要,Market 项目画像,0.75,context,past,"portfolio,agent,market",seed.py#PROJECTS[slug=market] + 项目报告,AI Agent,planned
+pmo-l4-source,L4 沉淀纪要,Source 项目画像,0.75,context,past,"portfolio,agent,source",seed.py#PROJECTS[slug=source] + 项目报告,AI Agent,planned
+pmo-l4-signal,L4 沉淀纪要,Signal 项目画像,0.75,context,past,"portfolio,agent,signal",seed.py#PROJECTS[slug=signal] + 项目报告,AI Agent,planned
+pmo-l4-shouheng,L4 沉淀纪要,守衡 项目画像,0.75,context,past,"portfolio,agent,shouheng",seed.py#PROJECTS[slug=shouheng] + 项目报告,AI Agent,planned
+pmo-l4-daisy,L4 沉淀纪要,Daisy 项目画像,0.75,context,past,"portfolio,agent,daisy",seed.py#PROJECTS[slug=daisy] + 项目报告,AI Agent,planned
+pmo-l4-main,L4 沉淀纪要,Main 项目画像,0.75,context,past,"portfolio,agent,main",seed.py#PROJECTS[slug=main] + 项目报告,AI Agent,planned
+pmo-l4-shopify,L4 沉淀纪要,Shopify 项目画像,0.75,context,past,"portfolio,agent,shopify",seed.py#PROJECTS[slug=shopify] + 项目报告,AI Agent,planned
+pmo-l4-pmo,L4 沉淀纪要,PMO 项目画像,0.75,context,past,"portfolio,agent,pmo",seed.py#PROJECTS[slug=pmo] + 项目报告,AI Agent,planned
+pmo-l4-capabilities,L4 沉淀纪要,49 项能力分布与 34 项已验证基线,0.75,context,past,"capability,status",seed.py#CAPABILITIES,AI Agent,planned
+pmo-l4-team-sites,L4 沉淀纪要,三人铁三角、RACI 与 24 站点,0.75,context,past,"team,raci,site",templates/sop.html + seed.py#extra_sites,AI Agent,planned
+pmo-l4-waves-risks,L4 沉淀纪要,Wave 1–3 窗口、关键里程碑与风险,0.75,context,past,"wave,risk,history",seed.py#support_notes + OGSM-v1 §9,AI Agent,planned
+pmo-l4-product-surface,L4 沉淀纪要,产品面 Map：12 页面/45 路由/飞书 Bot/自动化,0.75,context,past,"product,api,feishu",README + main.py 路由 + automation_suite.py,AI Agent,planned

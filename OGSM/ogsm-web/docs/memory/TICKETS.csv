@@ -1,0 +1,19 @@
+﻿id,epic,title,priority,estimate_hours,depends_on,owner,reviewer,output,acceptance,status,evidence
+PMO-MEM-001,E0 冻结与目录,冻结 10 份真源、扫描密钥、确认 46 张记忆卡目录,P0,3,,AI Agent,周健 / 刘华丽,"sources.yaml, memory_cards.csv",10 份真源与排除项确认；密钥扫描 0 命中；46 张卡均有 id/title/layer/type/source_ref,done,sources.yaml + memory_cards.csv 冻结；密钥扫描 0 命中（仅 README 占位变量名）
+PMO-MEM-002,E1 底座,创建 abi-pmo strict Space 与 pmo-guardian Agent,P0,1,001,AI Agent,周健,space + agent profile,spaces list 显示 abi-pmo/strict；agents list 默认 Space=abi-pmo,done,abi-pmo strict；pmo-guardian 默认空间 abi-pmo
+PMO-MEM-003,E1 底座,注入 3 条 Space Rules,P0,1,002,AI Agent,PMO,pmo_core_persona / pmo_repo_boundary / pmo_memory_write_discipline,context bundle 输出 3 条规则，priority 100/90/80,done,3 条规则 priority 100/90/80，context bundle 已输出
+PMO-MEM-004,E1 底座,初始化 Working Memory,P0,1,002,AI Agent,PMO,working memory,含 Focus Areas 与 Briefing；数字与 2026-11-04 基线一致,done,Working Memory 含 Focus Areas/Briefing，as_of 2026-11-04
+PMO-MEM-005,E2 Library,生成 10 份可解析副本（.markdown/.txt）,P0,3,001,AI Agent,吴雨宁,/tmp/pmo-mem/*.markdown|txt,10 个文件存在且非空；所有 .md 已转 .markdown；HTML/Python 已抽正文,done,/tmp/pmo-mem 10 份 .markdown/.txt；HTML/Python 已抽正文
+PMO-MEM-006,E2 Library,批量入库 Library 并校验 indexed,P0,1,005,AI Agent,PMO,library artifacts,10/10 indexed；错误数 0,done,library list 10/10 indexed，错误 0
+PMO-MEM-007,E3 蒸馏,蒸馏 L1 核心准则 3 条,P0,2,"002,003,006",AI Agent,刘华丽,3 memories,均为 decision/1.0/timeless；含来源；与八条红线一致,done,3 条 L1 decision/1.0/timeless，含来源
+PMO-MEM-008,E3 蒸馏,蒸馏 L2 业务口径 13 条,P0,4,006,AI Agent,刘华丽 / 吴雨宁,13 memories,13 条 fact/procedure/0.9；O/G/S、T1-T5、12 误用、Gate、四阶、四象限数字与 OGSM v1 一致,done,13 条 L2 fact/procedure/0.9，已区分两代 OGSM
+PMO-MEM-009,E3 蒸馏,蒸馏 L3 避坑实证 11 条,P0,4,006,AI Agent,周健 / 刘华丽,11 memories,11 条 learning/0.85；每条有可回指的 commit/文件/报告,done,11 条 L3 learning/0.85，含 commit/文件/报告来源
+PMO-MEM-010,E3 蒸馏,蒸馏 L4 组合画像 19 条,P0,5,006,AI Agent,吴雨宁,19 memories,14 个项目卡字段齐全；4 张聚合卡数字可由 seed.py 回算,done,19 条 L4 context/0.75，14 项目画像由 seed.py 生成
+PMO-MEM-011,E3 蒸馏,去重、冲突、来源、长度校验,P0,3,007-010,AI Agent,PMO,QC report,46 条、0 重复 ID、100% 来源、单条 <=600 字、0 未解决冲突,done,46/46 canonical 存在；0 重复标题；0 超 600 字；100% 含来源
+PMO-MEM-012,E4 图谱,编写并校验 ontology patch,P0,3,002,AI Agent,周健,ontology_patch.draft.json,JSON 合法；14 对象 + 16 关系；scope 明确,done,ontology_patch.draft.json 合法：14 对象 + 16 关系
+PMO-MEM-013,E4 图谱,apply 本体并检查覆盖率,P0,1,012,AI Agent,周健,ontology applied,ontology show 14 类实体覆盖 > 0；scope 未污染其他 Space,done,revision 7 已 apply 到 space abi-pmo；实体覆盖待 KG backfill 完成
+PMO-MEM-014,E4 图谱,核心实体补链与别名治理,P0,3,"011,013",AI Agent,吴雨宁,entity links,14 Agent、6 交接链、G1-G3 可从记忆多跳到达；别名不重复,partial,本体 revision 7 已 apply；KG 已连接 18/46 canonical（如 pmo-l2-keys9 挂 20 实体），剩余 28 张后台分波；Magpie 检查完成：vod/gpt-5.3-chat 等小请求可用但真实 KG 请求 502/超时；background 保留唯一成功过的 minimax-m3.1-flash；详见 EXECUTION-REPORT §5.2
+PMO-MEM-015,E5 运行时,环境变量与 AGENTS.md 开机约定,P0,1,002,AI Agent,周健,.claude/settings.local.json + AGENTS.md,新会话可自动加载 Context Bundle；env 不泄密,done,.claude/settings.local.json 注入 NMEM_SPACE/NMEM_AGENT_ID；新增 AGENTS.md
+PMO-MEM-016,E5 运行时,3 秒 Recall Helper + 降级测试,P1,4,"002,011",AI Agent,周健,app/memory.py + test_pmo_nmem_recall.py,真实检索通过；超时/离线返回空串不抛错；产品主链路不受影响,done,app/memory.py + tests 9/9 通过（真实检索/超时/离线/坏 JSON/低分）
+PMO-MEM-017,E6 验收,12 条 Golden Query 验收,P0,2,"011,013,016",AI Agent,PMO,acceptance report,10/12 Top1 >=0.70；12/12 Top3 命中；跨空间 0 命中,done,Top1 分数>=0.70：10/12；Top3 命中：12/12；跨空间隔离通过
+PMO-MEM-018,E6 验收,SOP 8 条验收、提交与交接,P0,2,all,AI Agent,周健 / PMO,checklist + commit + handoff,SOP 8/8 + PMO 6/6；约定式提交；交接摘要落库,done,SOP 8 条与 PMO 6 条验收完成；见 EXECUTION-REPORT.md；约定式提交

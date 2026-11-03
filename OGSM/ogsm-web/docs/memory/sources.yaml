@@ -1,0 +1,97 @@
+# PMO 记忆系统 Library 真源清单（执行前冻结）
+# 规则：所有 .md 在入库前复制为 .markdown；HTML/Python 先抽成 .txt。
+# 目标：10 份以内，只放权威真源，不把 12 份草稿全部灌入。
+
+version: 1
+frozen_at: "2026-11-04"
+space: abi-pmo
+agent: pmo-guardian
+
+sources:
+  - id: L01
+    priority: P0
+    title: ABI 品牌 & 营销域 OGSM v1.0
+    src: OGSM/OGSM-v1-整合版-20261102.md
+    target: ogsm-v1.markdown
+    labels: [ogsm, caliber, decision]
+    reason: O/G/S/M/产线/治理的唯一批准口径；所有 G 与指标记忆的第一真源。
+  - id: L02
+    priority: P0
+    title: PMO 管理站产品说明与运行手册
+    src: OGSM/ogsm-web/README.md
+    target: pmo-product-readme.markdown
+    labels: [product, architecture, runbook]
+    reason: 产品定位、技术取舍、五视图、运行方式、已知取舍。
+  - id: L03
+    priority: P0
+    title: 四阶自进化标尺与 14 岗位说明书
+    src: OGSM/ogsm-web/app/templates/sop.html
+    target: pmo-sop-4stage.txt
+    labels: [sop, stage, raci]
+    reason: Stage 1–4 判据、50% 硬门禁、三人铁三角与 14 Agent 岗位边界。
+  - id: L04
+    priority: P0
+    title: 6 条跨岗交接链与历史资产矩阵
+    src: OGSM/ogsm-web/app/templates/sites.html
+    target: pmo-handoff-chains.txt
+    labels: [handoff, contract, agent]
+    reason: 6 条链的拓扑、Handoff Packet、阻断规则与 P0 产线资产复用。
+  - id: L05
+    priority: P0
+    title: PMO 数据模型
+    src: OGSM/ogsm-web/app/models.py
+    target: pmo-data-model.txt
+    labels: [data, schema, product]
+    reason: 7 张表与字段语义；记忆中的实体类型必须与产品数据模型对齐。
+  - id: L06
+    priority: P0
+    title: 指标与实验协议
+    src: OGSM/brand-agent-pmo-metric-and-experiment-protocol-draft-20261101.md
+    target: pmo-metric-protocol.markdown
+    labels: [metric, experiment, gate]
+    reason: T1–T5、12 条误用、四段式 M、预注册与核算规则的详细定义。
+  - id: L07
+    priority: P1
+    title: 三道 Gate 规格
+    src: OGSM/brand-agent-ogsm-three-gates-draft-20261101.md
+    target: pmo-three-gates.markdown
+    labels: [gate, compliance, evidence]
+    reason: Claim/授权/实验 gate 的状态机、回执、超时与拒绝记录。
+  - id: L08
+    priority: P1
+    title: 主键字典
+    src: OGSM/brand-agent-ogsm-key-registry-draft-20261101.md
+    target: pmo-key-registry.markdown
+    labels: [data, key, evidence]
+    reason: 9 主键、对象级 A、ai_answer_snapshot_id 与断点恢复。
+  - id: L09
+    priority: P1
+    title: RACI 与问责矩阵
+    src: OGSM/brand-agent-ogsm-raci-matrix-draft-20261101.md
+    target: pmo-raci.markdown
+    labels: [raci, governance, owner]
+    reason: 段 A/G-A/PMO 的问责边界与四条熔断的落地解释。
+  - id: L10
+    priority: P1
+    title: 产品路由与 API 面
+    src: OGSM/ogsm-web/app/main.py
+    target: pmo-api-surface.txt
+    labels: [product, api, feishu]
+    reason: 12 个只读页面、45 条路由、飞书回调、自动化与导出能力。
+
+exclude:
+  - OGSM/PPT汇报方案v2-部门项目汇报.md
+  - OGSM/brand-agent-ogsm-governance-mindmap-draft-20261101.md
+  - OGSM/brand-agent-ogsm-scenario-capability-completion-draft-20261101.md
+  - OGSM/brand-agent-p0-four-lines-draft-20261101.md
+  - 归档历史/
+  - reports/ 原始 HTML
+  - .lody/attachments/
+  - 任何含 Feishu app_secret、DB password、API key、pem 的文件
+
+checks:
+  - 每个 target 文件必须存在且非空
+  - 所有 .md 源必须复制为 .markdown，不得直接入库 .md
+  - HTML 必须抽正文，不得把 200KB 标签页整体灌入
+  - Python 只抽模块 docstring、类名、字段名与路由，不灌全文件
+  - 入库后 nmem library list --space abi-pmo 状态必须全为 indexed

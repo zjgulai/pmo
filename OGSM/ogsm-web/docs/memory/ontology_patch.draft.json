@@ -1,0 +1,140 @@
+{
+  "objectTypes": [
+    {
+      "key": "Objective",
+      "displayName": "O 战略意图",
+      "description": "一年后要变成什么样的一句话总目标，PMO 的唯一 North Star。"
+    },
+    {
+      "key": "Goal",
+      "displayName": "G 结果目标",
+      "description": "承载经营结果的目标，如 G1 需求、G2 转化、G3 留存；每个 G 只认一个结算主指标。"
+    },
+    {
+      "key": "Strategy",
+      "displayName": "S 战略打法",
+      "description": "怎么赢的选择，必须挂产线并写反证条件。"
+    },
+    {
+      "key": "Metric",
+      "displayName": "指标",
+      "description": "T1–T5 五层指标及版本化口径，含 decision_use 与是否可进结算。"
+    },
+    {
+      "key": "ProductAgent",
+      "displayName": "专家 Agent/产品",
+      "description": "14 个独立飞书 Agent 及其 Web 工作台，如 Emily、Vicky、Echo。"
+    },
+    {
+      "key": "Capability",
+      "displayName": "能力项",
+      "description": "49 项可验收能力，是导图叶子、场景工位、甘特与看板的最小管理单元。"
+    },
+    {
+      "key": "HandoffChain",
+      "displayName": "跨岗交接链",
+      "description": "6 条 Agent-to-Agent 标准交接链及其 Handoff Packet 契约。"
+    },
+    {
+      "key": "Gate",
+      "displayName": "门禁",
+      "description": "Claim、授权、实验等 gate；无回执不得迁移状态。"
+    },
+    {
+      "key": "Evidence",
+      "displayName": "证据资产",
+      "description": "实测报告、evidence_url、gate 回执、业务动作回写等可核验证据。"
+    },
+    {
+      "key": "Owner",
+      "displayName": "责任人或角色",
+      "description": "段 A、G-A、PMO、业务负责人、核心铁三角等责任主体。"
+    },
+    {
+      "key": "Workbench",
+      "displayName": "工作台站点",
+      "description": "24 个 *.luteos.com 站点与工作台入口。"
+    },
+    {
+      "key": "DeliveryWave",
+      "displayName": "交付波次",
+      "description": "Wave 1–3 与四阶自进化 Stage 的交付窗口。"
+    },
+    {
+      "key": "BusinessAction",
+      "displayName": "业务动作",
+      "description": "品牌市场部在飞书卡片上认领、批准、整改、采纳等 measuredActions。"
+    },
+    {
+      "key": "Risk",
+      "displayName": "风险/未决项",
+      "description": "未锁定基线、口径冲突、依赖缺口、进度虚高等需要跟踪的风险。"
+    }
+  ],
+  "linkTypes": [
+    {
+      "key": "DECOMPOSES_TO",
+      "displayName": "分解为"
+    },
+    {
+      "key": "SUPPORTS",
+      "displayName": "支撑"
+    },
+    {
+      "key": "MEASURED_BY",
+      "displayName": "由指标结算"
+    },
+    {
+      "key": "OWNS",
+      "displayName": "负责"
+    },
+    {
+      "key": "DELIVERS",
+      "displayName": "交付能力"
+    },
+    {
+      "key": "DEPENDS_ON",
+      "displayName": "依赖"
+    },
+    {
+      "key": "HANDS_OFF_TO",
+      "displayName": "交接给"
+    },
+    {
+      "key": "PARTICIPATES_IN",
+      "displayName": "参与交接链"
+    },
+    {
+      "key": "GATED_BY",
+      "displayName": "受门禁约束"
+    },
+    {
+      "key": "EVIDENCED_BY",
+      "displayName": "由证据支撑"
+    },
+    {
+      "key": "HOSTED_ON",
+      "displayName": "部署于工作台"
+    },
+    {
+      "key": "EVOLVES_IN",
+      "displayName": "在波次中演进"
+    },
+    {
+      "key": "BLOCKS",
+      "displayName": "阻断"
+    },
+    {
+      "key": "CONTRIBUTES_TO",
+      "displayName": "贡献于"
+    },
+    {
+      "key": "TRACKS",
+      "displayName": "跟踪"
+    },
+    {
+      "key": "MITIGATES",
+      "displayName": "缓解风险"
+    }
+  ]
+}
