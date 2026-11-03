@@ -1042,70 +1042,95 @@ def push_weekly_to_feishu(
     payload: dict = Body(default={}),
     s: Session = Depends(get_session),
 ):
-    """能力 4：向飞书群 Webhook 一键或定时推送《ABI 品牌 Agent 里程碑周报卡片》。"""
+    """能力 4：向飞书群（默认 ABI智能应用与算法组 oc_b7b7d26f970f614d018c76d8eb557847）一键推送里程碑周报卡片。"""
+    from .feishu_bot import DEFAULT_CHAT_ID, build_green_card, send_card_to_chat
+
     webhook_url = str(payload.get("webhook_url") or os.getenv("FEISHU_WEBHOOK_URL") or "").strip()
+    target_chat_id = str(payload.get("chat_id") or DEFAULT_CHAT_ID).strip()
     brief = generate_weekly_brief(s)
-    card_payload = {
-        "msg_type": "interactive",
-        "card": {
-            "config": {"wide_screen_mode": True},
-            "header": {
-                "template": "green",
-                "title": {
-                    "tag": "plain_text",
-                    "content": f"ABI 品牌 & 营销 Agent 里程碑周报 ({date.today().isoformat()})",
-                },
-            },
-            "elements": [
-                {
-                    "tag": "markdown",
-                    "content": brief["markdown"],
-                },
-                {"tag": "hr"},
-                {
-                    "tag": "action",
-                    "actions": [
-                        {
-                            "tag": "button",
-                            "text": {"tag": "plain_text", "content": "打开 PMO 战略全景与甘特图门户"},
-                            "type": "primary",
-                            "url": "https://pmo.luteos.com/",
-                        },
-                        {
-                            "tag": "button",
-                            "text": {"tag": "plain_text", "content": "查看 14 大产品系统架构图"},
-                            "type": "default",
-                            "url": "https://pmo.luteos.com/sites",
-                        },
-                    ],
-                },
-            ],
-        },
-    }
 
-    if not webhook_url:
-        return {
-            "ok": False,
-            "pushed": False,
-            "error": "尚未填写飞书群机器人 Webhook 地址（可在弹窗内直接输入，或在服务器 .env 配置 FEISHU_WEBHOOK_URL）",
-            "card_preview": card_payload,
-        }
+    card = build_green_card(
+        f"ABI 品牌 & 营销 Agent 里程碑周报 ({date.today().isoformat()})",
+        brief["markdown"],
+        [
+            ("打开 PMO 战略全景与甘特图门户", "https://pmo.luteos.com/"),
+            ("甘特图与四列看板", "https://pmo.luteos.com/roadmap"),
+            ("查看 14 大产品系统架构图", "https://pmo.luteos.com/sites"),
+        ],
+    )
 
-    if not webhook_url.startswith("https://open.feishu.cn/") and not webhook_url.startswith("https://open.larksuite.com/"):
-        return JSONResponse({"ok": False, "error": "仅支持标准飞书/Lark Webhook 地址"}, status_code=400)
+    # 优先使用自定义 Webhook（若用户显式输入），否则默认走 PMO 飞书应用 OpenAPI 直推 ABI智能应用与算法组 群
+    if webhook_url:
+        if not webhook_url.startswith("https://open.feishu.cn/") and not webhook_url.startswith("https://open.larksuite.com/"):
+            return JSONResponse({"ok": False, "error": "仅支持标准飞书/Lark Webhook 地址"}, status_code=400)
+        try:
+            req = urllib.request.Request(
+                webhook_url,
+                data=json.dumps({"msg_type": "interactive", "card": card}, ensure_ascii=False).encode("utf-8"),
+                headers={"Content-Type": "application/json; charset=utf-8"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=8) as resp:
+                resp_body = resp.read().decode("utf-8", errors="replace")
+            return {"ok": True, "pushed": True, "mode": "webhook", "feishu_response": resp_body}
+        except Exception as e:
+            return JSONResponse({"ok": False, "pushed": False, "error": f"Webhook 推送失败：{e}"}, status_code=502)
 
     try:
-        req = urllib.request.Request(
-            webhook_url,
-            data=json.dumps(card_payload, ensure_ascii=False).encode("utf-8"),
-            headers={"Content-Type": "application/json; charset=utf-8"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=8) as resp:
-            resp_body = resp.read().decode("utf-8", errors="replace")
-        return {"ok": True, "pushed": True, "feishu_response": resp_body}
+        res = send_card_to_chat(card, chat_id=target_chat_id)
+        return {
+            "ok": res.get("code") == 0,
+            "pushed": res.get("code") == 0,
+            "mode": "app_bot",
+            "chat_id": target_chat_id,
+            "message_id": res.get("data", {}).get("message_id"),
+            "feishu_response": res,
+        }
     except Exception as e:
-        return JSONResponse({"ok": False, "pushed": False, "error": f"推送失败：{e}"}, status_code=502)
+        return JSONResponse({"ok": False, "pushed": False, "error": f"应用机器人推送失败：{e}"}, status_code=502)
+
+
+@app.post("/api/feishu/events")
+async def feishu_events_webhook(request: Request):
+    """飞书事件订阅 HTTP Webhook 回调端点（同时支持 url_verification 握手与 im.message.receive_v1）。"""
+    from .feishu_bot import process_incoming_message_event
+
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"ok": False, "error": "invalid json"}, status_code=400)
+
+    # 1. 飞书后台配置请求地址时的 url_verification 握手校验
+    if body.get("type") == "url_verification" or "challenge" in body:
+        return {"challenge": body.get("challenge", "")}
+
+    # 2. v2.0 消息事件处理
+    header = body.get("header") or {}
+    event_type = header.get("event_type") or body.get("type") or ""
+    if event_type == "im.message.receive_v1":
+        res = process_incoming_message_event(body)
+        return res
+
+    return {"ok": True, "ignored_event": event_type}
+
+
+@app.post("/api/feishu/command")
+def feishu_bot_command_api(payload: dict = Body(default={})):
+    """手动或测试触发 PMO 机器人指令（可选 push=true 直接发到 ABI智能应用与算法组 群）。"""
+    from .feishu_bot import DEFAULT_CHAT_ID, build_green_card, handle_bot_command, send_card_to_chat
+
+    q = str(payload.get("query") or "帮助").strip()
+    push = bool(payload.get("push", False))
+    chat_id = str(payload.get("chat_id") or DEFAULT_CHAT_ID).strip()
+
+    title, md_body, btns = handle_bot_command(q)
+    card = build_green_card(title, md_body, btns)
+    out = {"ok": True, "query": q, "title": title, "markdown": md_body}
+    if push:
+        res = send_card_to_chat(card, chat_id=chat_id)
+        out["pushed"] = res.get("code") == 0
+        out["message_id"] = res.get("data", {}).get("message_id")
+    return out
 
 
 # ───────────────────────────── 实测报告与文档查阅 ─────────────────────────────

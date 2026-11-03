@@ -87,8 +87,8 @@
     <div style="padding:16px 20px;flex:1;overflow-y:auto">
       <textarea id="brief-markdown-box" rows="15" style="width:100%;font-family:var(--mono);font-size:13px;line-height:1.6;padding:12px;background:var(--bg)"></textarea>
       <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-        <input id="feishu-webhook-input" placeholder="选填：输入飞书群自定义机器人 Webhook URL (https://open.feishu.cn/open-apis/bot/v2/hook/...)" style="flex:1;font-family:var(--mono);font-size:12px">
-        <button class="btn" onclick="pushWeeklyToFeishu(this)">推送绿头周报卡片至飞书群</button>
+        <input id="feishu-webhook-input" placeholder="已绑定 PMO 飞书应用，留空即默认直推「ABI智能应用与算法组」群（也可填入其他群 Webhook）" style="flex:1;font-family:var(--mono);font-size:12px">
+        <button class="btn" onclick="pushWeeklyToFeishu(this)">一键推送至「ABI智能应用与算法组」群</button>
       </div>
     </div>
     <div style="padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--surface-subtle);border-radius:0 0 12px 12px">
