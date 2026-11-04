@@ -23,7 +23,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Resp
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from itsdangerous import BadSignature, URLSafeSerializer
-from sqlmodel import Session, select
+from sqlmodel import SQLModel, Session, select
 
 from . import models
 from .db import get_session
@@ -1592,6 +1592,83 @@ def api_sop_telemetry(
         "rework_rate_pct": cand.rework_rate_pct,
         "current_stage": cand.current_stage,
     }
+
+
+# ───────────────────── P0-4 三道 Gate 状态机守卫 & P0-2 飞书 Bot 脚手架 API ─────────────────────
+
+
+@app.post("/api/gate/evaluate")
+def api_gate_evaluate(
+    payload: dict = Body(default={}),
+    s: Session = Depends(get_session),
+):
+    """P0-4：提交 C(Claim)/A(授权)/X(实验) 三道 Gate 状态机守卫评估并签发 `GateReceipt`。"""
+    from .gate_engine import evaluate_and_issue_gate_receipt, seed_initial_gate_receipts
+
+    SQLModel.metadata.create_all(s.get_bind())
+    seed_initial_gate_receipts(s)
+    return evaluate_and_issue_gate_receipt(s, payload)
+
+
+@app.post("/api/gate/verify")
+def api_gate_verify_post(
+    payload: dict = Body(default={}),
+    s: Session = Depends(get_session),
+):
+    """P0-4：下游 Agent 发布或投流前校验 `receipt_id` 是否有效（Fail-closed）。"""
+    from .gate_engine import seed_initial_gate_receipts, verify_gate_receipt
+
+    SQLModel.metadata.create_all(s.get_bind())
+    seed_initial_gate_receipts(s)
+    rid = str(payload.get("receipt_id") or "").strip()
+    chash = str(payload.get("content_hash") or "").strip()
+    return verify_gate_receipt(s, receipt_id=rid, expected_content_hash=chash)
+
+
+@app.get("/api/gate/receipts")
+def api_gate_list_receipts(
+    gate_type: str = "",
+    s: Session = Depends(get_session),
+):
+    """P0-4：列出已签发的 Gate 回执台账。"""
+    from .gate_engine import seed_initial_gate_receipts
+
+    SQLModel.metadata.create_all(s.get_bind())
+    seed_initial_gate_receipts(s)
+    stmt = select(models.GateReceipt).order_by(models.GateReceipt.id.desc())
+    if gate_type:
+        stmt = stmt.where(models.GateReceipt.gate_type == gate_type.strip().upper())
+    rows = s.exec(stmt.limit(50)).all()
+    return {"ok": True, "count": len(rows), "items": [r.model_dump(mode="json") for r in rows]}
+
+
+@app.post("/api/gate/hypothesis")
+def api_gate_issue_hypothesis(
+    payload: dict = Body(default={}),
+    s: Session = Depends(get_session),
+):
+    """P0-4：PMO 实验 Gate 预注册发号器（生成 `hyp-{yyMMdd}-{seq3}` 并冻结阈值哈希）。"""
+    from .gate_engine import issue_hypothesis_id, seed_initial_gate_receipts
+
+    SQLModel.metadata.create_all(s.get_bind())
+    seed_initial_gate_receipts(s)
+    return issue_hypothesis_id(
+        s,
+        hypothesis_statement=str(payload.get("statement") or ""),
+        primary_metric=str(payload.get("primary_metric") or "m-l1-mer@1"),
+        min_threshold=str(payload.get("min_threshold") or "+5%"),
+        window_days=int(payload.get("window_days") or 14),
+        proposer=str(payload.get("proposer") or "Emily"),
+    )
+
+
+@app.get("/api/bot-kit/registry")
+def api_bot_kit_registry():
+    """P0-2：查看全部 14 个独立飞书专家 Bot 脚手架配置、所需 Gate 与标准指令矩阵。"""
+    from .abi_feishu_agent_kit import list_expert_bot_scaffold_status
+
+    items = list_expert_bot_scaffold_status()
+    return {"ok": True, "count": len(items), "items": items}
 
 
 # ───────────────────────────── 实测报告与文档查阅 ─────────────────────────────

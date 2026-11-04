@@ -13,9 +13,13 @@ from pathlib import Path
 WEB = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(WEB))
 
-os.environ["DATABASE_URL"] = "sqlite:////tmp/ogsm_expert_bot_test.db"
+os.environ["DATABASE_URL"] = "sqlite:////tmp/ogsm_pmo_expert_test.db"
 
 from sqlmodel import Session, select  # noqa: E402
+
+import os as _os
+_os.environ["DATABASE_URL"] = "sqlite:////tmp/ogsm_pmo_expert_test.db"
+
 from app import models  # noqa: E402
 from app.db import engine  # noqa: E402
 from app.feishu_bot import handle_bot_command, process_card_action_event  # noqa: E402

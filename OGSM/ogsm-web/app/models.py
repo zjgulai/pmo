@@ -154,3 +154,36 @@ class BusinessActionLedger(SQLModel, table=True):
     status: str = "已回写"  # 已认领 / 执行中 / 已回写
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+
+class GateReceipt(SQLModel, table=True):
+    """P0-4 三道 Gate 状态机守卫回执（子记录，定位串 {subject_id}@{version}#{gate}-{seq4}）。
+
+    遵循《品牌 Agent 三个 Gate 规格与 Fail-closed 默认》：
+    - gate_type: C (Claim Gate 守衡主责) / A (授权 Gate Radar台账+守衡核验) / X (实验 Gate PMO主责)
+    - verdict: PASS / CONDITIONAL / BLOCK
+    - 五项绑定指纹：subject_id@version, content_hash, claim_refs_json, rule_refs_json, market_overlay_version
+    """
+
+    __tablename__ = "gate_receipt"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    receipt_id: str = Field(unique=True, index=True)  # 如 scr-bpc-tiktok-00317@2#C-0001
+    subject_id: str = Field(index=True)  # 如 scr-bpc-tiktok-00317
+    subject_version: int = 1
+    gate_type: str = Field(index=True)  # C / A / X
+    seq4: str = "0001"
+    verdict: str = "BLOCK"  # PASS / CONDITIONAL / BLOCK
+    content_hash: str = ""  # SHA-256 指纹
+    claim_refs_json: str = "[]"  # ["clm-bpc-us-0142@3"]
+    rule_refs_json: str = "[]"  # ["rule-claim-cosmetic-medical-boundary-us-review@3"]
+    market_overlay_version: str = ""  # 如 overlay-us-ftc-fda@1
+    evidence_refs_json: str = "[]"  # ["evd-sgs-2026-009@1"] 或 ["NOT_APPLICABLE"]
+    conditions_json: str = "[]"  # CONDITIONAL 限制谓词
+    valid_until: str = ""  # YYYY-MM-DD，到期自动视为 expired = BLOCK
+    invalidate_on_json: str = '["content_hash_change","claim_version_change","rule_version_change","rights_revoked","expired"]'
+    judged_by: str = "守衡-Engine@v2.1 (抽检:刘华丽)"
+    status: str = "active"  # active / superseded / overturned / expired
+    reason_summary: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+

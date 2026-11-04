@@ -1061,6 +1061,12 @@ def sync_enriched_content(s: Session) -> dict:
             s.add(BusinessActionLedger(**ba))
 
     s.commit()
+    try:
+        from .gate_engine import seed_initial_gate_receipts
+
+        seed_initial_gate_receipts(s)
+    except Exception:
+        pass
     return {"updated_projects": updated_projs, "updated_capabilities": updated_caps}
 
 

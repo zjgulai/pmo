@@ -278,6 +278,47 @@ def process_card_action_event(action_value: dict, operator_open_id: str = "") ->
     """处理飞书卡片按钮点击事件 (card.action.trigger)，免打字直接修改数据库并记录审计流水。"""
     act_type = str(action_value.get("action") or "")
     cap_id = int(action_value.get("cap_id") or 0)
+
+    # P0-2 & P0-3：各专家飞书 Bot 标准卡片按钮动作（批准采纳 DRAFT -> 记入 measuredActions；打回修改 -> 触发 Stage 3 自进化计数+1）
+    if act_type in ("bot_approve_draft", "bot_reject_draft"):
+        from .main import api_sop_telemetry
+
+        slug = str(action_value.get("slug") or "shopify").strip().lower()
+        title = str(action_value.get("title") or "飞书卡片业务草案").strip()
+        receipt_id = str(action_value.get("receipt_id") or "").strip()
+        with Session(engine) as s:
+            if act_type == "bot_approve_draft":
+                api_sop_telemetry(
+                    payload={
+                        "event_type": "measured_action",
+                        "project_slug": slug,
+                        "action_type": "飞书卡片批准采纳",
+                        "action_title": title,
+                        "receipt_id": receipt_id,
+                        "receipt_ref": receipt_id or f"{slug}-card-approved",
+                        "outcome_metric": "业务已在飞书卡片点击批准采纳并回写 PMO",
+                    },
+                    s=s,
+                )
+                return {
+                    "toast": {
+                        "type": "success",
+                        "content": f"已批准采纳「{title}」，并记入 PMO 业务动作回写账本（measuredActions+1）",
+                    }
+                }
+            else:
+                res_rej = api_sop_telemetry(
+                    payload={"event_type": "reject", "project_slug": slug},
+                    s=s,
+                )
+                rej_cnt = res_rej.get("reject_count", 1) if isinstance(res_rej, dict) else 1
+                return {
+                    "toast": {
+                        "type": "warning",
+                        "content": f"已登记打回「{title}」（累计打回 {rej_cnt} 次，满 3 次自动触发 Stage 3 SOP 自进化）",
+                    }
+                }
+
     if not act_type or not cap_id:
         return {
             "toast": {"type": "info", "content": "已收到操作请求"},
@@ -549,6 +590,95 @@ def handle_bot_command(
     ]
 
     with Session(engine) as s:
+        # 1x. P0-4 三道 Gate 回执核验指令：@PMO 查回执 <receipt_id>
+        m_rcp = re.match(r"^(?:查回执|核验回执|校验回执|回执)\s+(\S+)$", q)
+        if m_rcp:
+            from .gate_engine import seed_initial_gate_receipts, verify_gate_receipt
+            from sqlmodel import SQLModel
+
+            SQLModel.metadata.create_all(s.get_bind())
+            seed_initial_gate_receipts(s)
+            rid = m_rcp.group(1).strip()
+            vres = verify_gate_receipt(s, rid)
+            gate_names = {"C": "Claim Gate (内容宣称·守衡)", "A": "授权 Gate (达人七元组·Radar×守衡)", "X": "实验 Gate (预注册·PMO)"}
+            g_label = gate_names.get(str(vres.get("gate_type") or ""), "Gate 状态机守卫")
+            return (
+                f"PMO Gate 回执状态机核验 · {rid}",
+                (
+                    f"- **回执定位串**：`{rid}`（{g_label}）\n"
+                    f"- **判定结果**：**`{vres.get('verdict')}`**（状态：`{vres.get('status', 'unknown')}`，放行许可：`{'允许迁移' if vres.get('valid') else '系统层拒绝迁移 (BLOCK)'}`）\n"
+                    f"- **有效期至**：`{vres.get('valid_until', '—')}`｜**签发引擎**：{vres.get('judged_by', '—')}\n"
+                    f"- **判定依据**：{vres.get('reason', '')}"
+                ),
+                default_btns,
+                [],
+            )
+
+        # 1y. P0-4 实验 Gate 预注册发号指令：@PMO 发号 <实验假设陈述>
+        m_hyp = re.match(r"^(?:发号|实验发号|预注册)\s+(.+)$", q)
+        if m_hyp:
+            from .gate_engine import evaluate_and_issue_gate_receipt, issue_hypothesis_id
+            from sqlmodel import SQLModel
+
+            SQLModel.metadata.create_all(s.get_bind())
+            stmt_txt = m_hyp.group(1).strip()
+            h_res = issue_hypothesis_id(s, hypothesis_statement=stmt_txt)
+            if not h_res.get("ok"):
+                return ("PMO 实验预注册发号失败", h_res.get("error", "参数错误"), default_btns, [])
+            g_res = evaluate_and_issue_gate_receipt(
+                s,
+                {
+                    "gate_type": "X",
+                    "subject_id": f"exp-{h_res['hypothesis_id']}",
+                    "subject_version": 1,
+                    "hypothesis_id": h_res["hypothesis_id"],
+                    "changed_variables": ["single_test_variable"],
+                    "control_variant_id": "ctrl-baseline-001",
+                    "arm_count": 2,
+                },
+            )
+            return (
+                f"PMO 实验 Gate 预注册发号成功 · {h_res['hypothesis_id']}",
+                (
+                    f"- **预注册实验号 (`hypothesis_id`)**：**`{h_res['hypothesis_id']}`**\n"
+                    f"- **签发 Gate 回执 (`receipt_id`)**：**`{g_res.get('receipt_id')}`**（判定：`{g_res.get('verdict')}`）\n"
+                    f"- **实验假设陈述**：{stmt_txt}\n"
+                    f"- **主结算指标**：`{h_res['primary_metric']}`｜**最小效应阈值 (MDE)**：`{h_res['min_threshold']}`｜**观察窗**：`{h_res['window_days']} 天`\n"
+                    f"- **阈值冻结哈希 (`thresholds_frozen_sha`)**：`{h_res['thresholds_frozen_sha'][:24]}...`（开测后严禁篡改阈值，同批 >5 臂须声明多重比较校正）"
+                ),
+                default_btns,
+                [],
+            )
+
+        # 1w. P0-4 & P0-2 查询三道 Gate 台账或 14 专家 Bot 脚手架：@PMO 门禁 / @PMO 脚手架
+        if q_low in ("门禁", "gate", "gates", "回执列表", "脚手架", "bot-kit"):
+            from .abi_feishu_agent_kit import list_expert_bot_scaffold_status
+            from .gate_engine import seed_initial_gate_receipts
+            from sqlmodel import SQLModel
+
+            SQLModel.metadata.create_all(s.get_bind())
+            seed_initial_gate_receipts(s)
+            receipts = s.exec(select(models.GateReceipt).order_by(models.GateReceipt.id.desc()).limit(8)).all()
+            kits = list_expert_bot_scaffold_status()
+            live_bots = sum(1 for k in kits if k["bot_live"])
+            lines = [
+                f"**P0-4 三道 Gate 状态机守卫台账（最近 {len(receipts)} 条回执）**：",
+            ]
+            for r in receipts:
+                lines.append(
+                    f"- `{r.receipt_id}`｜**`{r.verdict}`**（{r.status}，有效至 {r.valid_until}）：{r.reason_summary[:65]}"
+                )
+            lines.append("")
+            lines.append(f"**P0-2 14 专家独立飞书 Bot 标准脚手架 (`abi_feishu_agent_kit.py` · 已点亮 {live_bots}/14)**：")
+            lines.append("- 已内置自动遥测（`@Bot` 提问 `ask+1`、卡片打回 `reject+1`、批准采纳 `measuredActions+1`）与前置 Gate 守卫拦截。")
+            lines.append("- 可发送 `@PMO 查回执 scr-bpc-tiktok-00317@2#C-0001` 或 `@PMO 发号 若将M5吸奶器首3秒钩子改为痛点提问则CTR提升0.5pp` 实时调用。")
+            return (
+                "ABI 三道 Gate 状态机回执台账 & 14 专家 Bot 脚手架",
+                "\n".join(lines),
+                default_btns,
+                [],
+            )
+
         # 1z. 三棒交接指令：@PMO 交棒 <能力名> [交接说明]（支持能力名中含空格，如 "IP 合作计划制定"）
         m_baton = re.match(r"^(?:交棒|完成交棒|转交|移交)\s+(.+)$", q)
         if m_baton:
