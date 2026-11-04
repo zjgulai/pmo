@@ -4,26 +4,32 @@
 
 <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:16px">
   <div>
-    <h1 style="margin:0;font-size:22px;color:var(--brand-900)">2026Q4 跨项目排期甘特图与四列敏捷看板</h1>
+    <h1 style="margin:0;font-size:22px;color:var(--brand-900)">2026Q4 三级串联甘特图（产品 → 49功能项 → 147条三棒工序）与敏捷看板</h1>
+    <p class="muted" style="margin:4px 0 0">
+      每项功能均由「P1 吴雨宁（需求/前端/架构 30%） → P2 周健（全栈/飞书Bot/算法 40%） → P3 刘华丽（测试/Agent运营 + 联合吴雨宁推广 30%）」三棒接力闭环。点击任意功能行可展开/折叠 3 条成员接力工序。
+    </p>
   </div>
-  <div style="display:flex;gap:8px;align-items:center">
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <button id="tab-btn-gantt" class="btn-chip {{ 'active' if current_view != 'kanban' else '' }}" onclick="switchView('gantt')">
-      跨项目甘特图 (Gantt)
+      三级串联甘特图 (Gantt)
     </button>
     <button id="tab-btn-kanban" class="btn-chip {{ 'active' if current_view == 'kanban' else '' }}" onclick="switchView('kanban')">
       四列敏捷看板 (Kanban)
     </button>
-    <a href="/api/export.csv" class="btn-chip">导出 CSV</a>
+    <button class="btn-chip" onclick="pushTodoReminderToFeishu(this)" title="立即向 ABI智能应用与算法组 群推送 @吴雨宁 @周健 @刘华丽 个人当期接棒待办清单">
+      飞书群 @三人 推送当期待办
+    </button>
+    <a href="/api/export.csv" class="btn-chip">导出 147道工序 CSV</a>
   </div>
 </div>
 
 <!-- 顶部排期与看板概览 -->
 <div class="kpi-strip">
   <div class="kpi-card">
-    <div class="kpi-label">总体排期覆盖度</div>
-    <div class="kpi-val">{{ stats.scheduled_count }}<small>/ {{ stats.cap_total }} 项已排期</small></div>
+    <div class="kpi-label">三级串联工序总规模</div>
+    <div class="kpi-val">147<small>道成员接力工序 (49功能×3棒)</small></div>
     <div class="kpi-sub">
-      <span>待排期 {{ stats.unscheduled_count }} 项（Radar 3项）</span>
+      <span>Wave 1–3 三波次 100% 锁定（待排期 {{ stats.unscheduled_count }} 项）</span>
     </div>
   </div>
   <div class="kpi-card">
@@ -35,7 +41,7 @@
   </div>
   <div class="kpi-card">
     <div class="kpi-label">看板四列分布 (ste-zh 口径)</div>
-    <div class="kpi-val">{{ stats.kanban_counts.verified }}<small>项已实测验证</small></div>
+    <div class="kpi-val">{{ stats.kanban_counts.verified }}<small>项已 100% 固化验证</small></div>
     <div class="kpi-sub">
       <span>联调收口 {{ stats.kanban_counts.pending_verify }} · 进行中 {{ stats.kanban_counts.doing }} · 方案 {{ stats.kanban_counts.plan }}</span>
     </div>
@@ -46,34 +52,43 @@
       {{ stats.overdue_count }}<small>项逾期未完</small>
     </div>
     <div class="kpi-sub">
-      <span>红线标识当前日期在 Q4 时间轴位置</span>
+      <span>每周一 / 周三 09:00 飞书群自动 @三人 催办当期接棒任务</span>
     </div>
   </div>
 </div>
 
-<!-- 负责人工作负载分布矩阵 (Owner Workload Matrix) -->
+<!-- 三棒接力成员工作负载与当期在手接棒矩阵 (Relay Baton Workload Matrix) -->
 <div class="card" style="padding:14px 18px;margin-bottom:16px">
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px">
-    <strong style="font-size:13px;color:var(--brand-900)">负责人工作负载与完成度分布（点击姓名可按负责人筛选甘特图与看板）</strong>
-    <button class="btn-chip active" id="owner-all-btn" onclick="filterByOwner('ALL', this)" style="font-size:12px;padding:3px 10px">全部负责人 (49)</button>
+    <div>
+      <strong style="font-size:13px;color:var(--brand-900)">3 人三棒接力闭环（P1 吴雨宁 → P2 周健 → P3 刘华丽）· 当期在手接棒（Active Baton）负载矩阵</strong>
+      <span class="muted" style="font-size:12px;margin-left:8px">点击成员卡片可筛选「当前球在该成员手里（正在接棒执行）」的功能项，或展开查看该成员全部 49 道工序</span>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-chip active" id="owner-all-btn" onclick="filterByOwner('ALL', 'baton', this)" style="font-size:12px;padding:3px 10px">全部 49 项功能</button>
+      <button class="btn-chip" onclick="toggleAllSubsteps(true)" style="font-size:12px;padding:3px 10px">展开全部 147 道成员工序</button>
+      <button class="btn-chip" onclick="toggleAllSubsteps(false)" style="font-size:12px;padding:3px 10px">收起成员工序</button>
+    </div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
     {% for ow in owner_workloads %}
-    <div class="btn-chip" onclick="filterByOwner('{{ ow.owner }}', this)" style="display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:8px 10px;text-align:left">
-      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:13px;color:var(--brand-900);align-items:center">
-        <span>{{ ow.owner }}</span>
+    <div class="btn-chip" onclick="filterByOwner('{{ ow.owner }}', 'baton', this)" style="display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:10px 12px;text-align:left">
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px;color:var(--brand-900);align-items:center">
+        <span><span class="badge badge-g1" style="margin-right:4px">{{ ow.step_code }}</span>{{ ow.owner }}</span>
         <div style="display:flex;gap:4px;align-items:center">
-          {% if ow.urgent > 0 %}<span class="badge badge-ms" style="font-size:11px;padding:1px 5px" title="含 7 天内临期或已逾期未完成项">临期 {{ ow.urgent }}</span>{% endif %}
-          <span>{{ ow.pct }}% ({{ ow.total }}项)</span>
+          <span class="badge badge-doing" style="font-size:11px;padding:1px 6px">当期在手接棒 {{ ow.active_baton }} 项</span>
+          {% if ow.urgent > 0 %}<span class="badge badge-ms" style="font-size:11px;padding:1px 5px">7天内临期 {{ ow.urgent }}</span>{% endif %}
         </div>
       </div>
+      <div style="font-size:11.5px;color:var(--ink2)">{{ ow.role_desc }}</div>
       <div class="stacked-bar" style="height:5px">
         <div class="sb-done" style="width:{{ ow.pct }}%"></div>
       </div>
       <div style="font-size:12px;color:var(--muted);display:flex;justify-content:space-between">
-        <span>完成 {{ ow.done }}</span>
-        <span>进行 {{ ow.doing }}</span>
-        <span>方案 {{ ow.plan }}</span>
+        <span>49道工序总进度 <strong>{{ ow.pct }}%</strong></span>
+        <span>已交棒 {{ ow.done }}</span>
+        <span>正执行 {{ ow.doing }}</span>
+        <span>待上游交棒 {{ ow.plan }}</span>
       </div>
     </div>
     {% endfor %}
@@ -90,18 +105,18 @@
     <button class="btn-chip" onclick="filterRoadmapGoal('G3', this)">G3 数字化运营 (5项目)</button>
   </div>
   <div class="toolbar-group" id="gantt-fold-controls">
-    <button class="btn-chip" onclick="toggleAllProjects(true)">展开全部能力行 (49)</button>
+    <button class="btn-chip" onclick="toggleAllProjects(true)">展开 49 项功能行</button>
     <button class="btn-chip" onclick="toggleAllProjects(false)">折叠为 14 个产品项目</button>
   </div>
 </div>
 
-<!-- 视图 A：两级可折叠甘特图 -->
+<!-- 视图 A：三级可折叠串联甘特图（L1 产品 -> L2 功能项 -> L3 成员三棒接力工序） -->
 <div id="view-gantt" style="display:{{ 'none' if current_view == 'kanban' else 'block' }}">
   <div class="gantt-wrap">
     <div class="gantt-table">
       <div class="gantt-header">
-        <div>产品项目 / 能力图谱节点 (点击项目行折叠)</div>
-        <div style="text-align:center">状态</div>
+        <div>L1 产品 / L2 功能项 / L3 成员三棒工序 (点击功能行展开 P1吴雨宁→P2周健→P3刘华丽)</div>
+        <div style="text-align:center">当前接棒 / 状态</div>
         <div style="text-align:center">进度%</div>
         <div class="gantt-months-bar">
           {% for m in gantt_months %}
@@ -117,13 +132,14 @@
       {% set g = gnode.goal %}
       <div class="gantt-goal-block" id="gantt-goal-{{ g.code }}" data-goal="{{ g.code }}">
         <div style="background:var(--surface-tint);padding:8px 14px;font-weight:700;font-size:13px;color:var(--brand-900);border-bottom:1px solid var(--line-strong);display:flex;justify-content:space-between">
-          <span>{{ g.title }}（{{ gnode.proj_count }} 个产品项目 / {{ gnode.cap_total }} 项能力）</span>
+          <span>{{ g.title }}（{{ gnode.proj_count }} 个产品项目 / {{ gnode.cap_total }} 项功能 / {{ gnode.cap_total * 3 }} 道成员工序）</span>
           <span>目标综合进度：{{ gnode.pct }}%</span>
         </div>
 
         {% for pv in gnode.projects %}
         {% set p = pv.proj %}
         {% set pg = pv.proj_gbar %}
+        <!-- L1: 产品项目汇总行 -->
         <div class="gantt-row gantt-row-proj" onclick="toggleProjCaps('{{ p.slug }}')">
           <div class="gantt-cell-title">
             <span id="icon-{{ p.slug }}" style="font-family:var(--mono);font-size:12px;width:14px;display:inline-block">-</span>
@@ -147,13 +163,10 @@
             {% if pg.has_schedule %}
             <div class="gantt-bar-outer bar-proj" style="left:{{ pg.left_pct }}%;width:{{ pg.width_pct }}%">
               <div class="gantt-bar-fill fill-已完成" style="width:{{ pv.pct }}%"></div>
-              <div class="gantt-bar-label">
-                <span>{{ p.expert_name }} ({{ pg.start_short }}–{{ pg.end_short }})</span>
-                <span>{{ pv.done_n }}/{{ pv.total_n }}完成</span>
+              <div class="gantt-bar-label {{ 'label-left' if pg.left_pct > 75 else '' }}">
+                <span>{{ p.expert_name }} ({{ pg.start_short }}–{{ pg.end_short }}) · {{ pv.pct }}%</span>
               </div>
             </div>
-            {% else %}
-            <div style="padding:10px 14px;font-size:12px;color:var(--muted)">暂未排定具体起止日期（待排期项）</div>
             {% endif %}
           </div>
         </div>
@@ -161,26 +174,33 @@
         {% for cv in pv.cap_views %}
         {% set c = cv.cap %}
         {% set cb = cv.gbar %}
-        <div class="gantt-row gantt-row-cap cap-of-{{ p.slug }}" id="gantt-cap-{{ c.id }}" data-owner="{{ c.owner or p.owner }}">
-          <div class="gantt-cell-title" style="padding-left:28px" onclick="openProjectDrawer('{{ p.slug }}', {{ c.id }})">
+        {% set rel = cv.relay %}
+        <!-- L2: 功能项行（内置三棒接力胶囊与展开按钮） -->
+        <div class="gantt-row gantt-row-cap cap-of-{{ p.slug }}" id="gantt-cap-{{ c.id }}"
+             data-active-owner="{{ rel.active_owner }}" data-all-owners="吴雨宁,周健,刘华丽">
+          <div class="gantt-cell-title" style="padding-left:24px" onclick="toggleCapSteps({{ c.id }})">
+            <span id="cap-icon-{{ c.id }}" style="font-family:var(--mono);font-size:11px;width:12px;display:inline-block;color:var(--primary)">+</span>
             {% if c.is_milestone %}<span class="diamond-mark" title="关键里程碑"></span>{% else %}<span class="dot dot-plan"></span>{% endif %}
-            <div>
-              <div style="font-weight:600;color:var(--ink);cursor:pointer">{{ c.name }}</div>
-              <div style="font-size:12px;color:var(--muted)">{{ c.owner or p.owner }}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <span style="font-weight:600;color:var(--ink);cursor:pointer">{{ c.name }}</span>
+                <a href="javascript:void(0)" onclick="event.stopPropagation();openProjectDrawer('{{ p.slug }}', {{ c.id }})" style="font-size:11px;color:var(--primary)">[详情]</a>
+              </div>
+              <!-- 三棒接力进度微胶囊：吴雨宁(P1) -> 周健(P2) -> 刘华丽(P3) -->
+              <div style="display:flex;gap:4px;align-items:center;margin-top:3px;font-size:11px;flex-wrap:wrap">
+                {% for st_item in rel.steps %}
+                <span style="padding:1px 5px;border-radius:4px;border:1px solid {{ 'var(--primary)' if st_item.is_active else 'var(--line)' }};background:{{ 'var(--primary-soft)' if st_item.is_active else ('#ecfdf5' if st_item.status=='已完成' else '#f8faf9') }};color:{{ 'var(--brand-900)' if st_item.is_active or st_item.status=='已完成' else 'var(--muted)' }};font-weight:{{ '700' if st_item.is_active else '500' }}">
+                  {{ st_item.step_code }}·{{ st_item.owner }}:{{ st_item.pct }}%
+                </span>
+                {% if not loop.last %}<span style="color:var(--muted)">→</span>{% endif %}
+                {% endfor %}
+              </div>
             </div>
           </div>
-          <div class="gantt-cell-meta">
-            {% if is_pmo %}
-            <select onchange="inlineSave({{ c.id }}, {status: this.value})" style="font-size:12px;padding:2px 4px">
-              {% for st in ['已完成', '进行中', '方案中'] %}
-              <option value="{{ st }}" {{ 'selected' if c.status == st else '' }}>{{ st }}</option>
-              {% endfor %}
-            </select>
-            {% else %}
-            <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}">
-              {{ c.status }}
+          <div class="gantt-cell-meta" style="flex-direction:column;gap:2px">
+            <span class="badge {{ 'badge-done' if c.status == '已完成' else ('badge-doing' if c.status == '进行中' else 'badge-plan') }}" style="font-size:11px">
+              {{ '已闭环' if c.status == '已完成' else ('接棒:' ~ rel.active_owner) }}
             </span>
-            {% endif %}
           </div>
           <div class="gantt-cell-meta">
             {% if is_pmo %}
@@ -188,32 +208,63 @@
                    onchange="inlineSave({{ c.id }}, {progress_pct: this.value})"
                    style="width:54px;font-size:12px;padding:2px 4px;text-align:center">
             {% else %}
-            <span>{{ c.progress_pct }}%</span>
+            <strong>{{ c.progress_pct }}%</strong>
             {% endif %}
           </div>
           <div class="gantt-timeline-cell">
             <div class="gantt-today-line" style="left:{{ today_pct }}%"></div>
             {% if cb.has_schedule %}
             <div class="gantt-bar-outer" style="left:{{ cb.left_pct }}%;width:{{ cb.width_pct }}%"
-                 title="{{ c.name }}：{{ c.start_date }} 至 {{ c.end_date }}（进度 {{ c.progress_pct }}%）">
+                 title="点击左侧展开三棒工序｜{{ c.name }}：{{ c.start_date }} 至 {{ c.end_date }}（当前接棒：{{ rel.active_owner }} · {{ rel.active_step }}）">
               <div class="gantt-bar-fill fill-{{ c.status }}" style="width:{{ c.progress_pct }}%"></div>
-              <div class="gantt-bar-label">
-                <span>{{ cb.start_short }}–{{ cb.end_short }}</span>
-                <span>{{ c.progress_pct }}%</span>
+              <div class="gantt-bar-label {{ 'label-left' if cb.left_pct > 75 else '' }}">
+                <span>{{ cb.start_short }}–{{ cb.end_short }} · 接棒:{{ rel.active_owner }} ({{ c.progress_pct }}%)</span>
               </div>
-            </div>
-            {% else %}
-            <div style="padding:8px 14px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px">
-              <span>待排期</span>
-              {% if is_pmo %}
-              <input type="date" value="{{ c.start_date }}" onchange="inlineSave({{ c.id }}, {start_date: this.value})" style="font-size:12px;padding:2px 4px">
-              <span>至</span>
-              <input type="date" value="{{ c.end_date }}" onchange="inlineSave({{ c.id }}, {end_date: this.value})" style="font-size:12px;padding:2px 4px">
-              {% endif %}
             </div>
             {% endif %}
           </div>
         </div>
+
+        <!-- L3: 该功能项下的 3 条成员接力工序行（P1 吴雨宁 -> P2 周健 -> P3 刘华丽） -->
+        {% for st_item in rel.steps %}
+        {% set sb = st_item.gbar %}
+        <div class="gantt-row gantt-row-substep substep-of-cap-{{ c.id }} substep-of-proj-{{ p.slug }}"
+             data-step-owner="{{ st_item.owner }}" data-is-active="{{ '1' if st_item.is_active else '0' }}"
+             style="display:none;background:{{ 'var(--primary-soft)' if st_item.is_active else '#f8fbf9' }};border-bottom:1px dashed var(--line)">
+          <div class="gantt-cell-title" style="padding-left:48px;font-size:12px">
+            <span class="badge {{ 'badge-done' if st_item.status == '已完成' else ('badge-doing' if st_item.is_active else 'badge-plan') }}" style="font-size:10px;padding:1px 5px">
+              {{ st_item.step_code }} · {{ st_item.owner }}
+            </span>
+            <div style="min-width:0">
+              <div style="font-weight:600;color:var(--brand-900)">
+                {{ st_item.step_title }}
+                <span class="muted" style="font-weight:400">（权重 {{ st_item.weight }}% · {{ st_item.collab }}）</span>
+              </div>
+              <div class="muted" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{{ st_item.deliverable }}">
+                准出交接物：{{ st_item.deliverable }}
+              </div>
+            </div>
+          </div>
+          <div class="gantt-cell-meta">
+            <span class="badge {{ 'badge-done' if st_item.status == '已完成' else ('badge-doing' if st_item.status == '进行中' else 'badge-plan') }}" style="font-size:11px">
+              {{ '当期接棒' if st_item.is_active else st_item.status }}
+            </span>
+          </div>
+          <div class="gantt-cell-meta" style="font-size:12px;color:var(--ink2)">{{ st_item.pct }}%</div>
+          <div class="gantt-timeline-cell">
+            <div class="gantt-today-line" style="left:{{ today_pct }}%"></div>
+            {% if sb.has_schedule %}
+            <div class="gantt-bar-outer" style="left:{{ sb.left_pct }}%;width:{{ sb.width_pct }}%;height:20px;top:9px"
+                 title="{{ st_item.step_code }} {{ st_item.owner }} ({{ st_item.step_title }})：{{ st_item.start_date }} ~ {{ st_item.end_date }}">
+              <div class="gantt-bar-fill {{ 'fill-已完成' if st_item.status == '已完成' else ('fill-进行中' if st_item.status == '进行中' else 'fill-方案中') }}" style="width:{{ st_item.pct }}%"></div>
+              <div class="gantt-bar-label {{ 'label-left' if sb.left_pct > 75 else '' }}" style="font-size:11px">
+                <span>{{ st_item.step_code }}·{{ st_item.owner }} ({{ sb.start_short }}–{{ sb.end_short }}) {{ st_item.pct }}%</span>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
         {% endfor %}
         {% endfor %}
       </div>
@@ -225,10 +276,10 @@
 <!-- 视图 B：四列流转敏捷看板 -->
 <div id="view-kanban" style="display:{{ 'block' if current_view == 'kanban' else 'none' }}">
   {% set col_defs = [
-    ('plan', '1. 方案中 (需求与架构设计)', 'badge-plan'),
-    ('doing', '2. 进行中 (研发与管线实现)', 'badge-doing'),
-    ('pending_verify', '3. 联调收口 · 待最终验收 (≥80%)', 'badge-doing'),
-    ('verified', '4. 已验证 · 生产实测通过', 'badge-done')
+    ('plan', '1. 方案中 (P1 需求与架构设计起跑)', 'badge-plan'),
+    ('doing', '2. 进行中 (P1 设计交棒 → P2 全栈与飞书Bot研发)', 'badge-doing'),
+    ('pending_verify', '3. 联调收口 · 待最终固化 (P3 测试运营与推广 ≥80%)', 'badge-doing'),
+    ('verified', '4. 已验证 · 三棒闭环 100% 固化', 'badge-done')
   ] %}
   <div class="kanban-board">
     {% for col_key, col_title, badge_cls in col_defs %}
@@ -241,7 +292,8 @@
 
       {% for cv in items %}
       {% set c = cv.cap %}
-      <div class="kanban-card" data-goal="{{ cv.goal_code }}" data-owner="{{ c.owner or '待定' }}" id="kb-card-{{ c.id }}">
+      {% set rel = cv.relay %}
+      <div class="kanban-card" data-goal="{{ cv.goal_code }}" data-active-owner="{{ rel.active_owner }}" id="kb-card-{{ c.id }}">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
           <span class="badge badge-g1">{{ cv.goal_code }} · {{ cv.proj_expert }}</span>
           <div style="display:flex;gap:4px;align-items:center">
@@ -253,14 +305,25 @@
         <div style="font-weight:700;font-size:14px;color:var(--brand-900);cursor:pointer" onclick="openProjectDrawer('{{ c.project_slug }}', {{ c.id }})">
           {{ c.name }}
         </div>
-        <div style="font-size:13px;color:var(--ink2);line-height:1.5">{{ c.description }}</div>
+
+        <!-- 看板卡片内展示三棒接力状态 -->
+        <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;font-size:11px">
+          {% for st_item in rel.steps %}
+          <span style="padding:1px 5px;border-radius:4px;border:1px solid {{ 'var(--primary)' if st_item.is_active else 'var(--line)' }};background:{{ 'var(--primary-soft)' if st_item.is_active else '#f8faf9' }};font-weight:{{ '700' if st_item.is_active else '400' }}">
+            {{ st_item.step_code }}·{{ st_item.owner }}({{ st_item.end_date[5:] }})
+          </span>
+          {% if not loop.last %}<span>→</span>{% endif %}
+          {% endfor %}
+        </div>
+
+        <div style="font-size:12.5px;color:var(--ink2);line-height:1.45">{{ c.description }}</div>
 
         <div class="stacked-bar" style="height:5px">
           <div class="sb-done" style="width:{{ c.progress_pct }}%"></div>
         </div>
 
         <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted)">
-          <span>负责：{{ c.owner or '待定' }}</span>
+          <span>当前接棒：<strong style="color:var(--brand-900)">{{ rel.active_owner }}</strong> ({{ rel.active_step }})</span>
           <div style="display:flex;gap:6px;align-items:center">
             {% if c.evidence_url %}
               {% if c.evidence_url.startswith('/reports-view') %}
@@ -271,24 +334,9 @@
             {% elif c.status == '已完成' or col_key in ('pending_verify', 'verified') %}
               <span class="badge badge-ms" style="font-size:11px;padding:1px 6px">待补证据</span>
             {% endif %}
-            <span>截止：{{ c.end_date if c.end_date else '待排期' }}</span>
+            <span>收口：{{ c.end_date if c.end_date else '待排期' }}</span>
           </div>
         </div>
-
-        {% if is_pmo %}
-        <div class="inline-edit-bar">
-          <select onchange="inlineMoveKanban({{ c.id }}, this.value)">
-            <option value="plan" {{ 'selected' if col_key == 'plan' else '' }}>流转至：方案中</option>
-            <option value="doing" {{ 'selected' if col_key == 'doing' else '' }}>流转至：进行中</option>
-            <option value="pending_verify" {{ 'selected' if col_key == 'pending_verify' else '' }}>流转至：联调收口</option>
-            <option value="verified" {{ 'selected' if col_key == 'verified' else '' }}>流转至：已验证</option>
-          </select>
-          <input type="number" min="0" max="100" step="5" value="{{ c.progress_pct }}"
-                 onchange="inlineSave({{ c.id }}, {progress_pct: this.value})" style="width:56px">
-          <input type="date" value="{{ c.end_date }}"
-                 onchange="inlineSave({{ c.id }}, {end_date: this.value})" style="width:124px">
-        </div>
-        {% endif %}
       </div>
       {% endfor %}
     </div>
@@ -301,7 +349,7 @@
 <div class="card" style="margin-top:20px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
     <strong style="font-size:14px;color:var(--brand-900)">最近进度与状态变更审计流水（网页行内修改 / 飞书群指令修改）</strong>
-    <span class="muted" style="font-size:12px">实时留痕，自动纳入周五对比简报</span>
+    <span class="muted" style="font-size:12px">实时留痕，自动纳入对比简报</span>
   </div>
   <table>
     <thead>
@@ -333,12 +381,34 @@
 </div>
 
 <script>
-function filterByOwner(ownerName, btn) {
+function toggleCapSteps(capId) {
+  const rows = document.querySelectorAll('.substep-of-cap-' + capId);
+  const icon = document.getElementById('cap-icon-' + capId);
+  const showing = rows.length > 0 && rows[0].style.display === 'none';
+  rows.forEach(r => r.style.display = showing ? 'grid' : 'none');
+  if (icon) icon.innerText = showing ? '-' : '+';
+}
+
+function toggleAllSubsteps(expand) {
+  document.querySelectorAll('.gantt-row-substep').forEach(r => r.style.display = expand ? 'grid' : 'none');
+  document.querySelectorAll('[id^="cap-icon-"]').forEach(ic => ic.innerText = expand ? '-' : '+');
+}
+
+function filterByOwner(ownerName, mode, btn) {
   document.querySelectorAll('[onclick^="filterByOwner"]').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.gantt-row-cap').forEach(r => {
-    const ow = r.dataset.owner || '';
-    r.style.display = (ownerName === 'ALL' || ow.includes(ownerName)) ? 'grid' : 'none';
+    const activeOw = r.dataset.activeOwner || '';
+    const match = (ownerName === 'ALL' || activeOw === ownerName);
+    r.style.display = match ? 'grid' : 'none';
+    const capId = r.id.replace('gantt-cap-', '');
+    document.querySelectorAll('.substep-of-cap-' + capId).forEach(sr => {
+      if (ownerName === 'ALL') {
+        sr.style.display = 'none';
+      } else {
+        sr.style.display = (match && sr.dataset.stepOwner === ownerName) ? 'grid' : 'none';
+      }
+    });
   });
   document.querySelectorAll('.gantt-row-proj').forEach(pr => {
     if (ownerName === 'ALL') {
@@ -351,10 +421,11 @@ function filterByOwner(ownerName, btn) {
     pr.style.display = anyVis ? 'grid' : 'none';
   });
   document.querySelectorAll('.kanban-card').forEach(c => {
-    const ow = c.dataset.owner || '';
-    c.style.display = (ownerName === 'ALL' || ow.includes(ownerName)) ? '' : 'none';
+    const activeOw = c.dataset.activeOwner || '';
+    c.style.display = (ownerName === 'ALL' || activeOw === ownerName) ? '' : 'none';
   });
 }
+
 function switchView(v) {
   document.getElementById('view-gantt').style.display = (v === 'gantt') ? 'block' : 'none';
   document.getElementById('view-kanban').style.display = (v === 'kanban') ? 'block' : 'none';
@@ -362,17 +433,23 @@ function switchView(v) {
   document.getElementById('tab-btn-gantt').classList.toggle('active', v === 'gantt');
   document.getElementById('tab-btn-kanban').classList.toggle('active', v === 'kanban');
 }
+
 function toggleProjCaps(slug) {
   const rows = document.querySelectorAll('.cap-of-' + slug);
+  const subrows = document.querySelectorAll('.substep-of-proj-' + slug);
   const icon = document.getElementById('icon-' + slug);
   const hiding = rows.length > 0 && rows[0].style.display !== 'none';
   rows.forEach(r => r.style.display = hiding ? 'none' : 'grid');
+  if (hiding) subrows.forEach(sr => sr.style.display = 'none');
   if (icon) icon.innerText = hiding ? '+' : '-';
 }
+
 function toggleAllProjects(expand) {
   document.querySelectorAll('.gantt-row-cap').forEach(r => r.style.display = expand ? 'grid' : 'none');
+  if (!expand) document.querySelectorAll('.gantt-row-substep').forEach(sr => sr.style.display = 'none');
   document.querySelectorAll('[id^="icon-"]').forEach(ic => ic.innerText = expand ? '-' : '+');
 }
+
 function filterRoadmapGoal(goal, btn) {
   btn.parentElement.querySelectorAll('.btn-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -383,6 +460,30 @@ function filterRoadmapGoal(goal, btn) {
     c.style.display = (goal === 'ALL' || c.dataset.goal === goal) ? '' : 'none';
   });
 }
+
+async function pushTodoReminderToFeishu(btn) {
+  btn.disabled = true;
+  const orig = btn.innerText;
+  btn.innerText = '正在推送 @三人 待办卡...';
+  try {
+    const res = await fetch('/api/feishu/push-member-todos', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({push_to_feishu: true})
+    });
+    const data = await res.json();
+    if (data.ok) {
+      alert('已向「ABI智能应用与算法组」群推送 @吴雨宁 @周健 @刘华丽 当期接棒待办清单！');
+    } else {
+      alert('推送失败：' + (data.error || '未知错误'));
+    }
+  } catch (e) {
+    alert('请求异常');
+  }
+  btn.disabled = false;
+  btn.innerText = orig;
+}
+
 async function inlineSave(capId, payload) {
   try {
     const res = await fetch(`/api/cap/${capId}/inline`, {
@@ -405,6 +506,7 @@ async function inlineSave(capId, payload) {
     alert('网络请求失败');
   }
 }
+
 async function inlineMoveKanban(capId, kcol) {
   await inlineSave(capId, {kcol: kcol});
   setTimeout(() => location.reload(), 300);

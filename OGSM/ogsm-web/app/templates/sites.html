@@ -20,7 +20,185 @@
   <iframe src="/static/abi-arch-diagram.html" title="ABI 14大产品系统架构全景图" style="width:100%;height:1120px;border:none;display:block"></iframe>
 </div>
 
-<!-- 2. 14 大主工作台与关联子平台导航表 -->
+<!-- 1.5 3人核心铁三角 × 自建干活 Agent × 品牌市场部 协同分工总表 -->
+<div class="card" style="margin-bottom:20px">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge badge-done">3人核心铁三角 × Agent替代矩阵</span>
+      <strong style="font-size:16px;color:var(--brand-900)">ABI 组织真实编制与「3 人 + 14 自建干活 Agent + 品牌市场部」分工矩阵（49 项能力唯一主责）</strong>
+    </div>
+    <span class="muted" style="font-size:12px">彻底取消虚拟小组名与双人混签：每项能力仅 1 位人类主责人（Accountable），缺编岗位由自建 Agent 自动承接</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:160px">核心角色 / 协同方</th>
+        <th style="width:230px">职能边界定义</th>
+        <th style="width:120px">主责能力数</th>
+        <th>具体主责事项清单（按 G1 / G2 / G3 穿透）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--brand-900)">1. 周健</strong><br><span class="muted" style="font-size:12px">全栈 / 项目管理 / 算法</span></td>
+        <td>所有产品的全栈开发、所有产品项目管理（PMO）、所有数据算法与模型研发</td>
+        <td><span class="badge badge-done">18 项主责</span></td>
+        <td style="font-size:13px;line-height:1.55">
+          <strong>G1 声量</strong>：Emily 批量脚本生成算法(#4)、Clone 爆款拆解算法与16节点流水线(#5)、Vicky 话题推荐与编辑匹配算法(#8)、GEO 采集探针(#12)/指标解析(#13)/RAG内容生成(#15)、Radar 合作机会识别算法(#19)<br>
+          <strong>G2 洞察</strong>：Echo 86倍重算与VOA机会卡报告引擎(#23)、Market Sage 4大确定性核算与DataPilot 122万行ETL(#25)、Source 70平台调度网关(#26)/TikTok采集(#27)/Reddit采集(#28)、Signal Search Quality Gate降噪与异动归因算法(#35)<br>
+          <strong>G3 运营</strong>：守衡两段式判定引擎与三库138条规则编码(#37)、Daisy 9大Agent统一适配层与48条星链路由(#40)、Main Agent SDK运行时/184 Profile/容器沙箱(#43)、Shopify Fusion(SHI×CVI)选品算法(#47)、PMO 14大产品统筹与90天四象限裁决(#48)
+        </td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">2. 吴雨宁</strong><br><span class="muted" style="font-size:12px">需求 / 前端 / 数据架构 / 推广</span></td>
+        <td>所有产品的需求调研、前端界面设计、数据架构与Schema设计、向品牌市场部产品推广</td>
+        <td><span class="badge badge-doing">15 项主责</span></td>
+        <td style="font-size:13px;line-height:1.55">
+          <strong>G1 声量</strong>：Emily 社媒趋势调研与看板设计(#1)/10品牌Brand Token策略护栏设计与推广(#3)、Vicky PR 7表数据架构与媒体主数据MR-ID(#7)、GEO 20问/ASIN标准问句库架构(#11)/缺口诊断前端与推广(#14)、Radar 达人四维分层与creator_id授权七元组架构(#17)<br>
+          <strong>G2 洞察</strong>：Echo v6.4标签字典(2346行)与全渠道VOC数据架构(#20)/拖拽多维分析前端与29张Superset看板推广(#22)、Market 43页工作台前端与53条证据源/三层TAM架构(#24)、Source 9大主键(order_id/sku_id)与48张abi schema架构(#33)、Signal 加权SOV与净情感指标架构及看板(#34)<br>
+          <strong>G3 运营</strong>：Daisy 315 SKU事实原子与四层知识库架构(#41)/对话式CLI前端设计与推广(#42)、Shopify 14领域178篇知识图谱架构与推广(#45)、PMO Verdant品牌视觉前端/10页PPTX设计与推广(#49)
+        </td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">3. 刘华丽</strong><br><span class="muted" style="font-size:12px">测试 / Agent运营 / 控制台</span></td>
+        <td>所有产品的质量门禁测试、各Agent日常运营调度、各Agent控制台与配额管理</td>
+        <td><span class="badge badge-verify">16 项主责</span></td>
+        <td style="font-size:13px;line-height:1.55">
+          <strong>G1 声量</strong>：Emily 控制台运营与34个定时作业/5档情绪测试(#2)、Clone 14案例Eval测试與待审包控制台管理(#6)、Vicky 控制台舆情预警运营(#9)/每日09:50重算与666条记录质检(#10)、GEO 控制台月度复测运营与月报签发(#16)、Radar 控制台动态监测运营与授权到期核验(#18)<br>
+          <strong>G2 洞察</strong>：Echo 早07:05无人值守10步流水线监控与200样本精度测试(#21)、Source YouTube(#29)/Instagram(#30)/Facebook(#31)/Google Trends(#32) 四大采集器控制台管理、57项凭据配置与配额验收测试、Signal 9470个竞品ASIN雷达控制台运营与告警测试(#36)<br>
+          <strong>G3 运营</strong>：守衡 141个自证检查器测试与消毒器Launch Gate索证核验(#38)/14页审核控制台管理与待放行队列运营(#39)、Main llm.luteos.com评测控制台管理与264单测回归(#44)、Shopify 5个岗位Agent控制台运营与360性能巡检测试(#46)
+        </td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">4. 自建干活 Agent 群</strong><br><span class="muted" style="font-size:12px">替代缺编执行人力</span></td>
+        <td>承接全天候数据抓取、评论打标、视频拆片、脚本初稿、合规初审、Listing草稿生成与日报推送</td>
+        <td><span class="badge badge-g1">14 专职 Agent</span></td>
+        <td style="font-size:13px;line-height:1.55">
+          <strong>替代初级运营/文案/爬数员/初级QA</strong>：Source Agent（284端点日采+Drift检测）→ Echo Agent（早07:05自动打标出晨报）→ Emily/Clone Agent（自动拆爆款出S1-S5脚本）→ Vicky/GEO/Radar Agent（09:50重算PR表、跑20问AI探针、查达人授权）→ 守衡 Agent（138条规则秒级初审拦截）→ Shopify/Sage Agent（生成Listing DRAFT草稿与财务止血/造血核算）→ PMO Agent（08:30自动巡检催办与飞书同步）。
+        </td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">5. 品牌市场部</strong><br><span class="muted" style="font-size:12px">需求输入 &amp; 商业确认方</span></td>
+        <td>提报业务需求、确认品牌语调/合规红线、认领P0行动卡（measuredActions）、点击最终商业发布</td>
+        <td><span class="badge badge-plan">需求与签发</span></td>
+        <td style="font-size:13px;line-height:1.55">
+          <strong>对接吴雨宁提需求、对接刘华丽接交付</strong>：① 社媒/内容编导确认 Emily/Clone 脚本并实拍投流；② PR/达人BD确认 Vicky 媒体攻关与 Radar 达人签约；③ 品类/独立站运营认领 Echo/Market 痛点卡与止血SKU清单，在 Shopify 后台对 Agent 生成的 DRAFT 商品点最终发布；④ 合规/法务代表在守衡 ca.luteos.com 对 BLOCK/REVIEW 案件做最终人工签字。
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 2. Native Agent 6 条跨岗标准交接链 (Handoff Pipelines) -->
+<div class="card" style="margin-bottom:20px">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge badge-verify">Agent-to-Agent 契约</span>
+      <strong style="font-size:16px;color:var(--brand-900)">Native Agent 组织 · 6 条跨岗标准交接链（Handoff Pipelines）</strong>
+    </div>
+    <span class="muted" style="font-size:12px">打通 L3（产出分析报告）→ L4（机器受控执行与业务动作回写 measuredActions）</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:170px">协同链路名称</th>
+        <th style="width:270px">跨 Agent 串联拓扑</th>
+        <th style="width:250px">标准交接契约对象 (Handoff Packet)</th>
+        <th>组织分工与阻断门禁规则</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--brand-900)">1. 声量到内容工业化链</strong></td>
+        <td><code>Source</code> → <code>Echo</code> → <code>Emily</code> → <code>Clone</code> → <code>守衡 / Radar</code></td>
+        <td><code>pain_tag_id</code> (v6.4字典) + <code>BrandToken</code> + <code>PendingReviewAssetPacket</code></td>
+        <td>Echo 输出高赞用户原话与沉默痛点；Emily 注入 10 品牌语调护栏（≥85分）生成策略；Clone 按 S1-S5 模板拆解脚本，强制经守衡核验 <code>claim_id</code> 与 Radar 核验达人二创 <code>rights_ref</code> 后方解锁 <code>publish_allowed</code>。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">2. AI 权威引用夺权链</strong></td>
+        <td><code>Source</code> → <code>GEO</code> → <code>Vicky</code> + <code>Shopify</code> → <code>GEO</code></td>
+        <td><code>ai_answer_snapshot_id</code> + <code>315 SKU 事实原子</code> + <code>S级媒体报道</code></td>
+        <td>GEO 探针基于 20 问/ASIN 检出 Perplexity/Rufus「提及但未获 Best Overall」缺口（如 HSA/FSA 报销），分派 Vicky 攻关权威媒体评测背书、分派 Shopify 补齐 PDP 的 FAQ/Review Schema，次月自动复测。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">3. 选品到上架准入链</strong></td>
+        <td><code>product</code> → <code>Market</code> → <code>守衡</code> → <code>Shopify</code></td>
+        <td><code>OppScore (SHI×CVI)</code> + <code>decision_contract</code> + <code>accio_to_shopify CSV</code></td>
+        <td>AI 选品算出 OppScore ≥ 75 → Market 核验三层 TAM、7 国法规（CPSC/MDR）与 DataPilot 毛利基线 → 守衡完成工厂实验室索证（B1 Gate） → 自动生成带成本/MOQ/认证 Metafields 的 Shopify DRAFT 商品。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">4. 流量承接与库存护栏链</strong></td>
+        <td><code>Market / Signal</code> → <code>Paid Media / Radar</code> → <code>Shopify (360 &amp; SCM)</code></td>
+        <td><code>PreAdSpend Hook</code> + <code>3P Script Budget</code> + <code>activity_stock_guard</code></td>
+        <td>任何达人或广告预算加投前，自动触发灵词 Hook 校验：先查 <code>shopify.luteos.com</code> 落地页移动端 JS 负载与 3P 失败率（防送入 2.2MB 重页面），再查 SCM 可用库存（防 DOS &lt; 30 断货烧钱）。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">5. 售后反哺研发与风控链</strong></td>
+        <td><code>Echo (712万VOC)</code> → <code>CS &amp; After-sales</code> → <code>Market / 产品企划</code></td>
+        <td><code>actual_platform</code> + <code>退货四层归因</code> + <code>ProductOpportunityCard</code></td>
+        <td>当跨渠道 Gap 雷达检出社媒安全/故障词（如 <code>motor_failure</code>）或退货率突破基线（5.1%→14.2%），立即触发 P0 熔断：暂停对应 SKU 加投、按 Brand Token 生成 DTC 差评回复、向研发输出改款决策包。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">6. 经营诊断与 PMO 裁决链</strong></td>
+        <td><code>DataPilot + 14 Agents</code> → <code>Daisy (路由)</code> → <code>PMO</code></td>
+        <td><code>evidence_url (L0-L4)</code> + <code>measuredActions</code> + <code>90天四象限裁决</code></td>
+        <td>各 Agent 通过 Daisy 四层底座（asset/wiki/skills/brand）统一路由；每周向 PMO 上报真实业务采纳回写数（<code>measuredActions</code>），结合 DataPilot 122 万行财务账本执行季度续投、减半或关停裁决。</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 3. 历史资产孵化 OGSM 四大 P0 交易产线对照表 -->
+<div class="card" style="margin-bottom:20px">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge badge-done">资产复用矩阵</span>
+      <strong style="font-size:16px;color:var(--brand-900)">22 份历史产品资产 → 直接孵化《OGSM-v1》四大 P0 交易侧产线</strong>
+    </div>
+    <span class="muted" style="font-size:12px">告别从零造轮子：直接用已跑通的核算引擎、契约与工作流填补交易侧空白</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:170px">OGSM P0 交易侧产线</th>
+        <th style="width:210px">解决的核心经营空洞</th>
+        <th style="width:310px">直接复用的历史产品资产包</th>
+        <th>组装后的首期可交付闭环</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--brand-900)">P0-1 · Paid Media</strong></td>
+        <td>对「花出去的广告钱换回什么增量毛利」负责（G2-A）</td>
+        <td><code>DataPilot</code>（14渠道边际ROAS前沿线）+ <code>NurtureLoop</code>（4张广告/归因CSV契约）+ <code>灵词</code>（预算阈值Hook）</td>
+        <td>接管 Vicky 付费媒体空表与社媒 ROI 数据，每周自动输出基于边际贡献毛利（MER）的「周度预算腾挪变更单」。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">P0-2 · CS &amp; After-sales</strong></td>
+        <td>接住「买完出问题」与退货四层归因（S3.1）</td>
+        <td><code>ai_nlp_voc</code>（Zendesk 真实来源还原 + v6.4字典）+ <code>BrandOS</code>（DTC 1.6万差评响应流）+ <code>数智作战室</code>（退款×VOC双视图）</td>
+        <td>建立「平台码→业务原因→责任方→可整改项」四层退货归因看板，并将 Momcozy DTC 差评回复率从 0% 拉升至 30%。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">P0-3 · Retention</strong></td>
+        <td>对「第二单复购」与 CAC Payback 负责（G3-A）</td>
+        <td><code>Momcozy 360审计</code>（Klaviyo 弃单追回 P3 战单）+ <code>DataPilot</code>（清洗机/吸奶器剃须刀配件毛利飞轮）+ <code>Paper2Skills</code>（流失Uplift模型）</td>
+        <td>停止全场 99% 订单高折扣依赖（止血 65M CNY），落地 Klaviyo 3 封弃单追回邮件（月挽回 $13k-$27k）与高毛利耗材配件复购序列。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--brand-900)">P0-4 · Amazon 站内</strong></td>
+        <td>承接 64% 营收基本盘的 Listing 转化与 Account Health（S2.2）</td>
+        <td><code>路特星链 Starlink</code>（Amazon PPC/Listing/竞品 3 大 Skill）+ <code>Paper2Skills</code>（Listing 医生 + <code>/api/daily-inspect</code>）+ <code>SCM</code>（FBA 库存对账）</td>
+        <td>每日按 <code>DOS &lt; 30</code>、<code>ACOS &gt; 40</code> 自动巡检 Amazon 核心 ASIN 并推送飞书行动卡，联动 VOC 用户原话优化五点与 A+。</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 4. 14 大主工作台与关联子平台导航表 -->
 {% for gnode in goal_tree %}
 {% set g = gnode.goal %}
 <div class="card" style="margin-bottom:20px">

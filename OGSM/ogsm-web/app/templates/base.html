@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}ABI 品牌 & 营销 Agent 项目管理门户{% endblock %}</title>
-<link rel="stylesheet" href="/static/style.css?v=20261103v6">
+<link rel="stylesheet" href="/static/style.css?v=20261104v9">
 </head>
 <body>
 <header class="top">
@@ -19,6 +19,7 @@
     <a href="/" class="{{ 'active' if active_nav == 'mindmap' else '' }}">战略全景导图</a>
     <a href="/projects" class="{{ 'active' if active_nav == 'projects' else '' }}">产品与场景装配 (14)</a>
     <a href="/roadmap" class="{{ 'active' if active_nav == 'roadmap' else '' }}">甘特图与看板 ({{ stats.cap_total if stats else 49 }})</a>
+    <a href="/sop" class="{{ 'active' if active_nav == 'sop' else '' }}">岗位说明书与自进化标准</a>
     <a href="/sites" class="{{ 'active' if active_nav == 'sites' else '' }}">系统架构与站点 ({{ stats.site_online if stats else 23 }})</a>
     <a href="/present" class="{{ 'active' if active_nav == 'present' else '' }}">里程碑汇报</a>
     <a href="/docs" class="{{ 'active' if active_nav == 'docs' else '' }}">实测报告库</a>
@@ -229,11 +230,12 @@ function openProjectDrawer(slug, highlightCapId) {
         </div>
       </div>
       <div style="font-size:13px;color:var(--ink2);margin-top:4px">${c.desc}</div>
+      ${(c.relay_steps && c.relay_steps.length) ? `<div style="display:flex;flex-direction:column;gap:3px;margin-top:6px;padding:6px 8px;background:var(--surface-subtle);border-radius:6px;font-size:11.5px">` + c.relay_steps.map(st => `<div style="display:flex;justify-content:space-between;align-items:center;font-weight:${st.is_active ? '700' : '400'};color:${st.is_active ? 'var(--brand-900)' : 'var(--ink2)'}"><span>${st.is_active ? '★ 当期接棒 ' : ''}[${st.step_code} · ${st.owner}] ${st.step_title}</span><span>${st.start_date.slice(5)}~${st.end_date.slice(5)} (${st.pct}%)</span></div>`).join('') + `</div>` : ''}
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px">
-        <span>负责：${c.owner}</span>
+        <span>当前接棒：<strong>${c.owner}</strong> (${c.active_step || ''})</span>
         <div style="display:flex;gap:8px;align-items:center">
           ${c.evidence_url ? (c.evidence_url.startsWith('/reports-view') ? `<a href="javascript:void(0)" onclick="openReportPreview('${p.expert} · 实测证据', '${c.evidence_url}')" style="font-weight:600">[实测证据]</a>` : `<a href="${c.evidence_url}" target="_blank" style="font-weight:600">[实测证据]</a>`) : (c.status === '已完成' ? `<span class="badge badge-ms" style="font-size:11px;padding:1px 6px">待补证据</span>` : '')}
-          <span>排期：${c.end_date ? (c.start_date + ' 至 ' + c.end_date) : '待排期'}</span>
+          <span>总排期：${c.end_date ? (c.start_date + ' 至 ' + c.end_date) : '待排期'}</span>
         </div>
       </div>`;
     if (IS_PMO_USER) {
@@ -262,6 +264,12 @@ function openProjectDrawer(slug, highlightCapId) {
   if (p.gaps && p.gaps.length) {
     html += `<div><div class="section-label">下一阶段待补齐卡点</div><div class="gaps-box"><ul>`;
     p.gaps.forEach(g => { html += `<li>${g}</li>`; });
+    html += `</ul></div></div>`;
+  }
+
+  if (p.support && p.support.length) {
+    html += `<div><div class="section-label">飞书 Agent ⇄ 工作台自进化交接链 &amp; 甘特收口说明</div><div class="verified-box"><ul style="margin:0;padding-left:18px">`;
+    p.support.forEach(s => { html += `<li style="margin:3px 0">${s}</li>`; });
     html += `</ul></div></div>`;
   }
 

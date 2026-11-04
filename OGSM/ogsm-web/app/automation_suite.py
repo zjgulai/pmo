@@ -131,8 +131,8 @@ def collect_live_metrics(s: Session) -> dict:
 def sync_feishu_spreadsheet(s: Session, direction: str = "both") -> dict:
     """与飞书在线表格《ABI OGSM 总览表》(FHQ0soq8ghbMQUtZOfYcWetUnIh) 直接双向同步。
 
-    - pull: 从 5UK051（任务计划最新）与 XhJUya（OGSM总览）读取具体负责人（如吴雨宁/周健/李倩怡/刘华丽）与计划排期，补齐到数据库。
-    - push: 将数据库中 49 项能力的最新状态与进度百分比写回飞书表 XhJUya 对应行（I列需求状态、J列开发状态、K列进度）。
+    - pull: 从 5UK051（任务计划最新）与 XhJUya（OGSM总览）读取具体负责人（周健/吴雨宁/刘华丽）与未排期项，补齐到数据库。
+    - push: 将数据库中 49 项能力的最新状态、进度百分比、起止日期与唯一主责人写回飞书表 XhJUya 对应行（I~N列）。
     """
     token = get_tenant_access_token()
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json; charset=utf-8"}
@@ -211,13 +211,20 @@ def sync_feishu_spreadsheet(s: Session, direction: str = "both") -> dict:
             if e_d and len(e_d) == 10:
                 dates_by_func.setdefault(cur_func_name, []).append(e_d)
 
+        VALID_CORE_OWNERS = {"周健", "吴雨宁", "刘华丽"}
         for fname, plist in owners_by_func.items():
             c_obj = _find_cap(fname)
-            if c_obj and plist:
-                joined = " / ".join(plist)
-                if c_obj.owner != joined:
+            if not c_obj or not plist:
+                continue
+            # 若当前能力已绑定 3 人核心团队的唯一主责人（周健/吴雨宁/刘华丽），不再被飞书表的双人混签或外部人员名覆盖
+            if (c_obj.owner or "").strip() in VALID_CORE_OWNERS:
+                continue
+            valid_persons = [p for p in plist if p in VALID_CORE_OWNERS]
+            if valid_persons:
+                new_owner = valid_persons[0]
+                if c_obj.owner != new_owner:
                     old_ow = c_obj.owner
-                    c_obj.owner = joined
+                    c_obj.owner = new_owner
                     s.add(c_obj)
                     s.add(
                         models.ChangeAuditLog(
@@ -227,38 +234,38 @@ def sync_feishu_spreadsheet(s: Session, direction: str = "both") -> dict:
                             cap_name=c_obj.name,
                             source="sheet_sync",
                             actor="飞书表 5UK051",
-                            summary=f"负责人 {old_ow or '待定'} -> {joined}",
+                            summary=f"负责人 {old_ow or '待定'} -> {new_owner}",
                         )
                     )
                     pulled_owners += 1
 
         for fname, dlist in dates_by_func.items():
             c_obj = _find_cap(fname)
-            if c_obj and dlist:
+            # 仅当能力尚未设置排期（start_date/end_date 为空）时才从飞书旧表 5UK051 补齐，绝不覆盖 pmo.luteos.com 已校准的 Wave 1-3 甘特排期
+            if c_obj and dlist and (not c_obj.start_date or not c_obj.end_date):
                 new_sd, new_ed = min(dlist), max(dlist)
-                if (c_obj.start_date, c_obj.end_date) != (new_sd, new_ed):
-                    old_ed = c_obj.end_date or "待排期"
-                    c_obj.start_date = new_sd
-                    c_obj.end_date = new_ed
-                    s.add(c_obj)
-                    s.add(
-                        models.ChangeAuditLog(
-                            cap_id=c_obj.id or 0,
-                            project_slug=c_obj.project_slug,
-                            expert_name=c_obj.project_slug.upper(),
-                            cap_name=c_obj.name,
-                            source="sheet_sync",
-                            actor="飞书表 5UK051",
-                            summary=f"排期截止 {old_ed} -> {new_ed}",
-                        )
+                old_ed = c_obj.end_date or "待排期"
+                c_obj.start_date = new_sd
+                c_obj.end_date = new_ed
+                s.add(c_obj)
+                s.add(
+                    models.ChangeAuditLog(
+                        cap_id=c_obj.id or 0,
+                        project_slug=c_obj.project_slug,
+                        expert_name=c_obj.project_slug.upper(),
+                        cap_name=c_obj.name,
+                        source="sheet_sync",
+                        actor="飞书表 5UK051",
+                        summary=f"排期截止 {old_ed} -> {new_ed}",
                     )
-                    pulled_dates += 1
+                )
+                pulled_dates += 1
 
         s.commit()
 
-    # Step B: 读取 XhJUya（OGSM总览）并将网站最新状态与进度写回 XhJUya
+    # Step B: 读取 XhJUya（OGSM总览）并将网站最新状态、进度、校准后的起止日期与唯一主责人写回 XhJUya
     req_ov = urllib.request.Request(
-        f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{FEISHU_SPREADSHEET_TOKEN}/values/{SHEET_OGSM_OVERVIEW}!A1:M70?valueRenderOption=FormattedValue",
+        f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{FEISHU_SPREADSHEET_TOKEN}/values/{SHEET_OGSM_OVERVIEW}!A1:N70?valueRenderOption=FormattedValue",
         headers=headers,
     )
     ov_data = _http_json(req_ov)
@@ -287,19 +294,78 @@ def sync_feishu_spreadsheet(s: Session, direction: str = "both") -> dict:
                 pulled_dates += 1
 
         if direction in ("push", "both"):
-            # XhJUya 的 I列(需求状态)、J列(开发/上线状态)、K列(进度0~1小数)
+            from .main import _compute_cap_relay
+
+            rel = _compute_cap_relay(c_obj, date.today())
+            # XhJUya 的 I列(需求状态)、J列(开发/上线状态)、K列(进度)、L列(计划开始)、M列(计划结束)、N列(需求负责人:吴雨宁)、O列(开发&测试闭环:周健/刘华丽)
             feishu_st = "已完成" if c_obj.status == "已完成" else ("进行中" if c_obj.status == "进行中" else "待启动")
             req_st = "已完成" if c_obj.status in ("已完成", "进行中") else "待启动"
             pct_str = f"{c_obj.progress_pct}%"
+            req_owner_col = f"吴雨宁 (当前接棒:{rel['active_owner']})" if c_obj.status != "已完成" else "吴雨宁 (已闭环)"
+            dev_qa_col = "周健 (开发) / 刘华丽 (测试&运营)"
             value_ranges_to_write.append(
                 {
-                    "range": f"{SHEET_OGSM_OVERVIEW}!I{row_idx}:K{row_idx}",
-                    "values": [[req_st, feishu_st, pct_str]],
+                    "range": f"{SHEET_OGSM_OVERVIEW}!I{row_idx}:O{row_idx}",
+                    "values": [[req_st, feishu_st, pct_str, c_obj.start_date or "", c_obj.end_date or "", req_owner_col, dev_qa_col]],
                 }
             )
             pushed_rows += 1
 
     s.commit()
+
+    # Step C: 将全部 49 项功能 × 3 棒 = 147 道成员接力工序完整写回飞书表 5UK051（每一行均填满项目名、产品名与功能点名，零空缺）
+    pushed_plan_rows = 0
+    if direction in ("push", "both"):
+        from .main import build_tree_data
+
+        tree_d = build_tree_data(s)
+        plan_matrix = [
+            ["项目名称（产品名称）", "产品名称", "功能点", "阶段（三棒工序）", "任务说明（准出交接物）", "当前状态", "完成进度(%)", "计划开始日期", "计划结束日期", "持续天数", "负责人", "备注（当前接棒状态）"]
+        ]
+        for pv in tree_d["proj_views"]:
+            p = pv["proj"]
+            for cv in pv["cap_views"]:
+                c = cv["cap"]
+                rel = cv["relay"]
+                for st_item in rel["steps"]:
+                    sd_d = date.fromisoformat(st_item["start_date"])
+                    ed_d = date.fromisoformat(st_item["end_date"])
+                    dur_days = max(1, (ed_d - sd_d).days + 1)
+                    plan_matrix.append(
+                        [
+                            f"{p.product_name}（{p.expert_name}）",
+                            p.expert_name,
+                            c.name,
+                            f"{st_item['step_code']} · {st_item['step_title']}",
+                            st_item["deliverable"],
+                            "已完成" if st_item["status"] == "已完成" else ("进行中" if st_item["status"] == "进行中" else "待启动"),
+                            f"{st_item['pct']}%",
+                            st_item["start_date"],
+                            st_item["end_date"],
+                            str(dur_days),
+                            st_item["owner"],
+                            "★ 当期在手接棒" if st_item["is_active"] else st_item["collab"],
+                        ]
+                    )
+                    pushed_plan_rows += 1
+
+        try:
+            unmerge_req = urllib.request.Request(
+                f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{FEISHU_SPREADSHEET_TOKEN}/unmerge_cells",
+                data=json.dumps({"range": f"{SHEET_TASK_PLAN}!A2:C160"}).encode("utf-8"),
+                headers=headers,
+                method="POST",
+            )
+            _http_json(unmerge_req)
+        except Exception:
+            pass
+
+        value_ranges_to_write.append(
+            {
+                "range": f"{SHEET_TASK_PLAN}!A1:L{len(plan_matrix)}",
+                "values": plan_matrix,
+            }
+        )
 
     write_res = None
     if value_ranges_to_write and direction in ("push", "both"):
@@ -318,7 +384,89 @@ def sync_feishu_spreadsheet(s: Session, direction: str = "both") -> dict:
         "pulled_owners": pulled_owners,
         "pulled_dates": pulled_dates,
         "pushed_rows": pushed_rows,
+        "pushed_plan_rows": pushed_plan_rows,
         "feishu_write_code": write_res.get("code") if isinstance(write_res, dict) else 0,
+    }
+
+
+def push_member_baton_todos(s: Session, push_to_feishu: bool = True) -> dict:
+    """每周一、周三定时（或手动点击）向飞书群推送 @吴雨宁 @周健 @刘华丽 个人当期在手接棒（Active Baton）待办任务卡片。"""
+    from .feishu_bot import _build_cap_quick_actions
+    from .main import build_tree_data
+
+    data = build_tree_data(s)
+    today_d = date.today()
+    weekday_cn = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"][today_d.weekday()]
+
+    md_lines = [
+        f"**点名提醒**：**@吴雨宁**（P1 需求/前端/架构 & 终棒推广） · **@周健**（P2 全栈/飞书Bot/算法） · **@刘华丽**（P3 测试/Agent控制台运营）",
+        f"**播报基准**：{today_d.isoformat()}（{weekday_cn}例行三棒接力待办清点）｜全站总进度 **{data['stats']['overall_pct']}%**（147 道工序）",
+    ]
+
+    urgent_cap_objs = []
+    role_order = [
+        ("吴雨宁", "P1 需求/前端/数据架构 (+终棒推广)"),
+        ("周健", "P2 全栈开发/独立飞书Bot/算法研发"),
+        ("刘华丽", "P3 测试验收/Agent控制台运营/高频统计"),
+    ]
+
+    for person, role_label in role_order:
+        active_items = []
+        for pv in data["proj_views"]:
+            p = pv["proj"]
+            for cv in pv["cap_views"]:
+                c = cv["cap"]
+                rel = cv["relay"]
+                for st_item in rel["steps"]:
+                    if st_item["owner"] == person and st_item["is_active"]:
+                        ed_d = date.fromisoformat(st_item["end_date"])
+                        days_left = (ed_d - today_d).days
+                        active_items.append((days_left, p.expert_name, c, st_item))
+
+        active_items.sort(key=lambda x: x[0])
+        md_lines.append("")
+        md_lines.append(f"**@{person}｜{role_label}（当期在手接棒 {len(active_items)} 项）**：")
+        if active_items:
+            for dl, exp_name, c_obj, st_item in active_items[:6]:
+                if len(urgent_cap_objs) < 3:
+                    urgent_cap_objs.append(c_obj)
+                dl_tag = f"剩 {dl} 天" if dl >= 0 else f"已超 {-dl} 天"
+                ms_tag = "[里程碑] " if c_obj.is_milestone else ""
+                md_lines.append(
+                    f"- **{st_item['end_date']}**（{dl_tag}）｜{ms_tag}**[{exp_name}] {c_obj.name}** → `{st_item['step_code']}:{st_item['pct']}%`（总进度 {c_obj.progress_pct}%）\n"
+                    f"  └ 准出交接物：{st_item['deliverable']}"
+                )
+            if len(active_items) > 6:
+                md_lines.append(f"- *…其余 {len(active_items) - 6} 项远期接棒任务见甘特图个人筛选视图*")
+        else:
+            md_lines.append("- 当前无阻塞在手接棒项。")
+
+    md_lines.append("")
+    md_lines.append("完成本棒工序后，请直接点击下方按钮推进进度（满 30% 自动从吴雨宁交棒给周健，满 70% 自动从周健交棒给刘华丽）。")
+
+    act_btns = _build_cap_quick_actions(urgent_cap_objs, max_caps=3)
+    card_title = f"ABI 三棒接力当期待办点名 (@吴雨宁 @周健 @刘华丽 · {today_d.isoformat()} {weekday_cn})"
+    markdown_body = "\n".join(md_lines)
+    pushed_msg_id = None
+
+    if push_to_feishu:
+        card = build_green_card(
+            card_title,
+            markdown_body,
+            [
+                ("打开三级串联甘特图按人筛选", "https://pmo.luteos.com/roadmap"),
+                ("岗位说明书与自进化漏斗", "https://pmo.luteos.com/sop"),
+            ],
+            action_buttons=act_btns,
+        )
+        res = send_card_to_chat(card)
+        pushed_msg_id = res.get("data", {}).get("message_id")
+
+    return {
+        "ok": True,
+        "pushed": bool(pushed_msg_id),
+        "message_id": pushed_msg_id,
+        "markdown": markdown_body,
     }
 
 
@@ -639,13 +787,13 @@ def generate_executive_pptx(s: Session) -> bytes:
     for c_i, h_txt in enumerate(["专家系统", "线上工作台", "核心实测指标读数", "工程与验证基线"]):
         tb7.cell(0, c_i).text = h_txt
     highlights_rows = [
-        ("Source 数据采集中台", "scrapy.luteos.com", "70 平台 / 284 唯一采集端点 (200 已实测跑通)", "注册 39 个 MCP 工具，55 个页面，2,807 项测试通过"),
-        ("Echo VOC 情报系统", "radar.luteos.com", "累计 26,154 帖 / 102,182 评论，早 07:05 10步全绿日更", "重算耗时从 1,324 秒压至 10.29 秒（提速 86 倍）"),
-        ("Emily 社媒 Agent", "social.luteos.com", "注册 41 项能力（28 项已上线实测），每周五自动推周报", "飞书社媒 Base 4 表 888 行镜像，270 测试 / 126 ADR"),
-        ("Vicky 品牌 PR Agent", "pr.luteos.com", "246 家媒体库与 347 条上线报道双向同步 (Earned 77%)", "每日 09:50 自动重算指标，核心两表能力承接度 70%"),
-        ("守衡 内容合规审查", "ca.luteos.com", "两段式审查引擎 227/227 契约自证通过，14 页审核台在线", "36 条规则词典 / 24 控制点投产，141 个自证检查器"),
-        ("Shopify 独立站智能", "shopify.luteos.com", "14 领域 178 篇文档 / 795 检索块，5 个岗位 Agent 上线", "84 条母婴合规预检规则，RAG 评测通过率 100%"),
-        ("Daisy (Know) + Main", "mas / main.luteos.com", "Know 产出 17 项可溯源技能与 1,089 条带引文知识对象", "Main 150/150 真实问答评测通过 (均分 0.99)，264 测试全过"),
+        ("Source 数据采集中台", "scrapy.luteos.com", "70 平台 / 284 端点 (200 实测) + L2-L4 授权门禁", "39 个 MCP 工具，独立站发现包 + DatasetDrift 漂移告警，2,807 测试"),
+        ("Echo VOC 情报系统", "radar.luteos.com", "712.2 万全渠道语料 + v6.4 标签字典 (2,346 行零重复)", "Reddit 10 步全绿日更 (86×提速)，社媒独有 765 类沉默痛点 Gap 雷达"),
+        ("Market 市场与经营诊断", "mkt.luteos.com", "DataPilot 24 个月 122 万行核算 (止血 87M / 造血 635M)", "mkt53 三层 TAM (53 证据源) + Sage 53 位跨境专家流 (3,088 测试)"),
+        ("Emily + Clone 内容产线", "social / video.luteos.com", "Emily 28/41 能力 + 10 品牌 Token (88分)；Clone 16 节点流水线", "Recipe (13/14 通过) + S1-S5 视频场景 + PendingReview 权利门禁"),
+        ("Vicky + GEO + Radar", "pr / geo / magpie.luteos.com", "347 条报道 (S级 100 条) + Perplexity 5/5 基线 + 315 SKU 事实", "Radar 四维达人分层 (Wave-1) + creator_id 授权七元组前置闸门"),
+        ("守衡 内容合规与索证", "ca.luteos.com", "两段式引擎 227/227 自证 + 三库 138 条合规规则收编", "集成消毒器 AI Launch Gate (工厂索证 + B1-H 外发门禁 + 104 COS 证据)"),
+        ("Daisy + Shopify + Main", "mas / shopify / main.luteos.com", "四层底座 (1,054 算法 Skill / 81 星链 Skill / 72 Hook / 48 路由)", "Shopify 360 审计 (2.2MB 卡点/弃单追回) + Fusion 选品 + 184 Agent 档案"),
     ]
     for r_i, r_vals in enumerate(highlights_rows, start=1):
         for c_i, val in enumerate(r_vals):

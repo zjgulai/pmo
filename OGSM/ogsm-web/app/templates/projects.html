@@ -57,7 +57,7 @@
             </span>
           </div>
           {% if p.owner %}
-          <div class="muted" style="font-size:12px;margin-top:4px">负责团队：{{ p.owner }} · 计划收口：{{ pv.proj_end or '待排期' }}</div>
+          <div class="muted" style="font-size:12px;margin-top:4px">负责团队：{{ p.owner }} · 甘特排期：{{ pv.proj_start }} ~ {{ pv.proj_end }}</div>
           {% endif %}
         </div>
         <div style="display:flex;gap:6px;align-items:center">
@@ -182,8 +182,8 @@
       </div>
 
       {% if pv.support_list %}
-      <details class="support-drawer">
-        <summary>展开上下游协作与补充说明</summary>
+      <details class="support-drawer" open>
+        <summary>飞书 Agent ⇄ 工作台自进化交接链 &amp; 甘特收口说明（当前 {{ pv.pct }}% · {{ pv.proj_start[5:] }} ~ {{ pv.proj_end[5:] }}）</summary>
         <ul style="margin:6px 0 0;padding-left:18px">
           {% for sline in pv.support_list %}
           <li style="margin:3px 0">{{ sline }}</li>

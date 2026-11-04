@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+{% block title %}岗位说明书与自进化标准 · ABI 品牌 & 营销 Agent{% endblock %}
+{% block body %}
+
+<div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:18px">
+  <div>
+    <h1 style="margin:0;font-size:22px;color:var(--brand-900)">ABI 组织岗位说明书 · 14 独立飞书 Agent × 工作台 SOP 自进化标准</h1>
+    <p class="muted" style="margin:4px 0 0">
+      核心铁律：Agent（飞书双向回调与执行）是终局；Web 工作台是稳定业务 SOP 的沉淀器；通过统计飞书高频问题自进化提炼脚本并反向迁入工作台。
+    </p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <a href="/roadmap" class="btn-chip active">查看甘特图与个人负载 ({{ stats.overall_pct }}%)</a>
+    <a href="/projects" class="btn-chip">产品与交接矩阵 (14)</a>
+    <a href="/sites" class="btn-chip">系统架构与 6 条交接链</a>
+    <a href="/api/export.pptx" class="btn-chip">导出 10页汇报 PPTX</a>
+  </div>
+</div>
+
+<!-- 1. 四阶自进化进度标尺（0% -> 25% -> 50% -> 75% -> 100%） -->
+<div class="card" style="margin-bottom:20px;border-color:var(--primary)">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge badge-done">制度基准 · 决策 1 / 2 / 3</span>
+      <strong style="font-size:16px;color:var(--brand-900)">「飞书专家 Agent ⇄ Web 工作台 SOP」四阶真实进度评估标尺（0% → 100%）</strong>
+    </div>
+    <span class="badge badge-ms">硬门禁：未打通独立飞书应用双向回调的能力，进度最高封顶 50%</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
+    <div style="border:1px solid var(--line-strong);background:var(--surface-subtle);border-radius:8px;padding:12px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span class="badge badge-plan">Stage 1 · 0% → 25%</span>
+        <strong style="color:var(--brand-900)">工作台基座与初版 SOP</strong>
+      </div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.55">
+        各产品 <code>*.luteos.com</code> 工作台 200 在线，完成核心数据表建模与初版固定 SOP 看板交付。<br>
+        <strong>主责配合</strong>：吴雨宁（数据架构/前端）+ 周健（全栈底座）。
+      </div>
+    </div>
+
+    <div style="border:1px solid var(--line-strong);background:var(--surface-subtle);border-radius:8px;padding:12px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span class="badge badge-doing">Stage 2 · 25% → 50%</span>
+        <strong style="color:var(--brand-900)">14 独立飞书 Bot 双向回调</strong>
+      </div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.55">
+        每个专家配备<strong>独立飞书应用</strong>（WS长连接 + Webhook），品牌市场部在飞书 <code>@Agent</code> 提需求，Agent 真实调用工具并回复<strong>可交互卡片</strong>（点按钮回调产生任务/改状态）。<br>
+        <strong>主责配合</strong>：周健（Bot网关/工具）+ 刘华丽（飞书控制台/测试）。
+      </div>
+    </div>
+
+    <div style="border:1px solid var(--line-strong);background:var(--primary-soft);border-radius:8px;padding:12px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span class="badge badge-verify">Stage 3 · 50% → 75%</span>
+        <strong style="color:var(--brand-900)">高频问题统计与 SOP 自进化</strong>
+      </div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.55">
+        自动统计品牌市场部在飞书提问<strong>≥ 10 次/周</strong>的高频问题（或人工打回修正 <strong>≥ 3 次</strong>），由 Agent 蒸馏提炼为确定性业务 SOP 与自动化脚本，并通过三道门禁测试（<strong>返工率 &lt; 20%</strong>）。<br>
+        <strong>主责配合</strong>：刘华丽（高频统计运营/盲测）+ 周健（自进化管线）。
+      </div>
+    </div>
+
+    <div style="border:1.5px solid var(--primary);background:#fff;border-radius:8px;padding:12px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span class="badge badge-done">Stage 4 · 75% → 100%</span>
+        <strong style="color:var(--brand-900)">迁移固化为工作台自动化能力</strong>
+      </div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.55">
+        经 <strong>≥ 2 周</strong>验证稳定的自进化 SOP 脚本，正式<strong>迁移固化为 Web 工作台上的自动化工位或定时流水线</strong>，自动产出业务结果，释放 Agent 算力去攻克下一批未知问题。<br>
+        <strong>主责配合</strong>：吴雨宁（工作台工位固化/推广）+ 刘华丽（验收签字）。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 三人核心铁三角 + 14 自建干活 Agent + 品牌市场部 岗位说明书 (Job Descriptions) -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
+
+  <!-- 岗位 1：周健 -->
+  <div class="card" style="margin:0;display:flex;flex-direction:column;gap:10px">
+    <div style="border-bottom:1.5px solid var(--line-strong);padding-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <span class="badge badge-g1">核心铁三角 · 01</span>
+        <strong style="font-size:18px;color:var(--brand-900);margin-left:6px">周健 · 岗位说明书</strong>
+        <div class="muted" style="font-size:12px;margin-top:2px">全栈开发总工 / 全产品项目管理 (PMO) / 数据算法研发</div>
+      </div>
+      <span class="badge badge-done">唯一主责 18 项</span>
+    </div>
+
+    <div>
+      <div class="section-label">一、 核心职责边界（What You Own）</div>
+      <ul style="margin:4px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--ink2)">
+        <li><strong>14 独立飞书 Bot 与全栈研发</strong>：复用 <code>Main (bot-gateway)</code> 与 <code>PMO (feishu_bot.py)</code> 底座，打通全部 14 个独立飞书应用的 WS 长连接、Webhook 与交互卡片动作回调（<code>card.action.trigger</code>）。</li>
+        <li><strong>核心算法与自进化引擎研发</strong>：负责 Recipe 视频拆解、Search Quality Gate 降噪、86 倍 VOC 重算、Sage 4 大确定性财务核算、DataPilot 122 万行 ETL、Fusion（<code>SHI×CVI</code>）选品、守衡两段式合规引擎（含视频 OCR/ASR）及 Daisy 48 条星链路由研发。</li>
+        <li><strong>PMO 统筹与 90 天四象限裁决</strong>：统筹 Wave 1–3 排期交付、实验预注册发号（<code>hypothesis_id</code>）与季度续投/关停裁决。</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="section-label">二、 每日 / 每周标准作业 SOP</div>
+      <ul style="margin:4px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--ink2)">
+        <li><strong>每日</strong>：响应刘华丽上报的线上 Agent 阻塞卡点与模型/容器异常；推进当期 Wave 的飞书 Bot 回调与算法开发。</li>
+        <li><strong>每周</strong>：接收刘华丽汇总的「飞书周提问 ≥ 10 次 / 人工打回 ≥ 3 次」高频问题包，在 Daisy/Know 管线中编写确定性 Python/Skill 脚本，移交吴雨宁固化至工作台。</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:auto;padding-top:8px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)">
+      <strong>名下 18 项主责能力</strong>：Emily(#4)、Clone(#5)、Vicky(#8)、GEO(#12/#13/#15)、Radar(#19)、Echo(#23)、Market(#25)、Source(#26/#27/#28)、Signal(#35)、守衡(#37)、Daisy(#40)、Main(#43)、Shopify(#47)、PMO(#48)
+    </div>
+  </div>
+
+  <!-- 岗位 2：吴雨宁 -->
+  <div class="card" style="margin:0;display:flex;flex-direction:column;gap:10px">
+    <div style="border-bottom:1.5px solid var(--line-strong);padding-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <span class="badge badge-g1">核心铁三角 · 02</span>
+        <strong style="font-size:18px;color:var(--brand-900);margin-left:6px">吴雨宁 · 岗位说明书</strong>
+        <div class="muted" style="font-size:12px;margin-top:2px">需求调研 / 前端交互设计 / 数据架构设计 / 产品推广</div>
+      </div>
+      <span class="badge badge-doing">唯一主责 15 项</span>
+    </div>
+
+    <div>
+      <div class="section-label">一、 核心职责边界（What You Own）</div>
+      <ul style="margin:4px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--ink2)">
+        <li><strong>需求调研与飞书卡片交互设计</strong>：对接品牌市场部各业务组（社媒/PR/内容/达人/选品/DTC），定义每个飞书 Agent 的提问模板、卡片按钮字段与回调任务流。</li>
+        <li><strong>全域数据架构与唯一主键设计</strong>：统一设计 9 大主键（<code>order_id</code>、<code>sku_id</code>、<code>creator_id</code>、<code>claim_id</code>、<code>ai_answer_snapshot_id</code> 等）、v6.4 标签字典（2,346 行）、BrandOS 315 SKU 事实原子、三层 TAM 证据源与 48 张 <code>abi</code> 数仓表结构。</li>
+        <li><strong>工作台前端设计与业务推广（Stage 4 收口人）</strong>：负责 23 个线上站点的前端界面设计；将自进化成熟的脚本封装为工作台可视化 SOP 工位，培训并推动品牌市场部高频使用与认领 Action（提升 <code>measuredActions</code>）。</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="section-label">二、 每日 / 每周标准作业 SOP</div>
+      <ul style="margin:4px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--ink2)">
+        <li><strong>每日</strong>：收集品牌市场部一线痛点，转化为飞书卡片原型与数据 Schema 契约交由周健开发。</li>
+        <li><strong>每周</strong>：将周健/刘华丽验证通过（返工率 &lt; 20%）的自进化 SOP 脚本更新至 Web 工作台界面，并组织品牌市场部周会复盘业务采纳率。</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:auto;padding-top:8px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)">
+      <strong>名下 15 项主责能力</strong>：Emily(#1/#3)、Vicky(#7)、GEO(#11/#14)、Radar(#17)、Echo(#20/#22)、Market(#24)、Source(#33)、Signal(#34)、Daisy(#41/#42)、Shopify(#45)、PMO(#49)
+    </div>
+  </div>
+
+  <!-- 岗位 3：刘华丽 -->
+  <div class="card" style="margin:0;display:flex;flex-direction:column;gap:10px">
+    <div style="border-bottom:1.5px solid var(--line-strong);padding-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <span class="badge badge-g1">核心铁三角 · 03</span>
+        <strong style="font-size:18px;color:var(--brand-900);margin-left:6px">刘华丽 · 岗位说明书</strong>
+        <div class="muted" style="font-size:12px;margin-top:2px">全产品测试 / 14 飞书 Agent 运营 / 控制台管理与自进化统计</div>
+      </div>
+      <span class="badge badge-verify">唯一主责 16 项</span>
+    </div>
+
+    <div>
+      <div class="section-label">一、 核心职责边界（What You Own）</div>
+      <ul style="margin:4px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--ink2)">
+        <li><strong>14 独立飞书 Bot 与工作台控制台总管</strong>：统一管理 14 个飞书应用后台配置、284 个采集端点凭据（含待配 57 项）、定时任务（07:05 Echo、08:30 PMO、09:50 Vicky 等）与大模型 Token 预算账本（<code>llm.luteos.com</code>）。</li>
+        <li><strong>高频问题统计与 SOP 自进化运营官（Stage 3 核心）</strong>：每周统计各飞书群内业务人员的提问频次、卡片打回原因与失败 Trace，筛选出<strong>「周提问 ≥ 10 次或人工纠正 ≥ 3 次」</strong>的高频候选池立项自进化。</li>
+        <li><strong>全产品测试与验收证据门禁官</strong>：执行 Eval 盲测、141 项守衡检查器、200 样本 VOC 精度门禁与 Listing 返工率（&lt;20%）统计；严守 PMO 看板第 4 列「已验证」证据硬拦截。</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="section-label">二、 每日 / 每周标准作业 SOP</div>
+      <ul style="margin:4px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--ink2)">
+        <li><strong>每日 08:30–10:00</strong>：核查 24 站点探活报告、Echo 10步晨报回执、Vicky 重算与守衡待放行队列；异常即在飞书群点「报阻塞」。</li>
+        <li><strong>每周四</strong>：输出《14 专家 Agent 飞书高频问答 Top 10 与打回原因统计表》，触发 Stage 3 自进化脚本提炼并执行门禁回归测试。</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:auto;padding-top:8px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)">
+      <strong>名下 16 项主责能力</strong>：Emily(#2)、Clone(#6)、Vicky(#9/#10)、GEO(#16)、Radar(#18)、Echo(#21)、Source(#29/#30/#31/#32)、Signal(#36)、守衡(#38/#39)、Main(#44)、Shopify(#46)
+    </div>
+  </div>
+
+</div>
+
+<!-- 3. 14 独立飞书 Agent × 工作台 Wave 1-3 贯通路线图与甘特图确切日期映射表 -->
+{% set wave_rows = [
+  ("Wave 1", "11-04 ~ 11-16", "pmo", "已在线 (双通道)", "Stage 4 标杆", "群内 @PMO 查周报/甘特/个人任务，点卡片按钮免打字+25%/完成/报阻塞", "自动聚合群内高频阻塞卡点 → 固化为每日08:30自动巡检催办与飞书表主从同步", "周健(总控) · 吴雨宁(前端/PPTX) · 刘华丽(日常巡检)"),
+  ("Wave 1", "11-04 ~ 11-16", "main", "已在线 (v1.0.5)", "Stage 4 标杆", "群内 @Main 架构/研发问答（150/150评测通过），输出标准 bot-gateway 模板", "捕获各 Bot 失败 Trace 与高频提问 → 固化为 llm.luteos.com 自动回归门禁", "周健(SDK/沙箱) · 刘华丽(Eval控制台与Token监控)"),
+  ("Wave 1", "11-04 ~ 11-16", "source", "已在线 (已验收)", "Stage 3→4 固化", "群内 @数说 提抓数需求，3秒回执+后台异步采集并返回 Dataset 卡片", "统计周触发 ≥10次的临时抓数源 → 自动生成常驻 PlatformPackage 迁入工作台", "周健(网关) · 刘华丽(284端点控制台) · 吴雨宁(主键Schema)"),
+  ("Wave 1", "11-04 ~ 11-16", "shouheng", "Wave 1 恢复运行", "Stage 2→3 自进化", "恢复 @守衡 飞书提审图文/视频/文案，返回 PASS/REVIEW/BLOCK 卡片与申诉按钮", "统计人工申诉/复核 ≥3次的模糊边界 → 自进化为新控制点规则迁入 ca.luteos.com", "刘华丽(14页审核台) · 周健(引擎/视频ASR) · 吴雨宁(138规则架构) · 品牌市场部合规代表"),
+  ("Wave 1", "11-04 ~ 11-16", "emily", "已在线 (群智能体)", "Stage 2→3 自进化", "群内 @Emily 查社媒趋势、评论5档情绪与 Brand Token 策略脚本卡片", "统计社媒运营高频选题/脚本提问 → 蒸馏为确定性脚本模板固化至工作台", "吴雨宁(Token/推广) · 刘华丽(34作业运营) · 周健(算法) · 品牌市场部社媒运营"),
+  ("Wave 1", "11-04 ~ 11-16", "echo", "单向推 → 升双向回调", "Stage 2→3 自进化", "早07:05推飞书晨报卡 + 升级群内 @Echo 按 SPU 追问差评原话与点按钮认领 Action", "统计业务高频追问的新型号/新痛点 → 自动更新 SpuBinding 与品类报告模板", "吴雨宁(v6.4字典/推广) · 刘华丽(10步管线监控) · 周健(重算引擎) · 品牌市场部产品/客服"),
+  ("Wave 2", "11-17 ~ 11-30", "shopify", "Wave 2 新建独立Bot", "Stage 1→2 过渡", "新建 @Shopify 飞书Bot，推送 5岗Agent 生成的 Listing DRAFT 审批卡与 360 性能告警卡", "统计卡片「打回修改原因」(≥3次) → 自进化更新上架 SOP（连续2周返工率<20%固化）", "吴雨宁(RAG/数仓) · 刘华丽(5岗Agent运营) · 周健(Fusion选品) · 品牌市场部DTC/选品"),
+  ("Wave 2", "11-17 ~ 11-30", "vicky", "Wave 2 新建独立Bot", "Stage 1→2 过渡", "新建 @Vicky 飞书Bot，支持群内查 246 媒体库、推荐榜单编辑、点卡片认领公关工单", "统计 PR 专员高频查询与媒介匹配条件 → 固化为工作台 Pitching Calendar 与品线报表", "刘华丽(09:50重算运营) · 吴雨宁(7表架构) · 周健(匹配算法) · 品牌市场部PR媒介"),
+  ("Wave 2", "11-17 ~ 11-30", "market", "Wave 2 新建独立Bot", "Stage 1→2 过渡", "新建 @Market 飞书Bot，群内调用 Sage/DataPilot 发起新品三层 TAM 与毛利准入测算", "统计高频选品立项测算问题 → 沉淀为标准 decision_contract 固化至工作台", "吴雨宁(43页前端/TAM) · 周健(DataPilot/Sage) · 刘华丽(审计测试) · 品牌市场部策略"),
+  ("Wave 2", "11-17 ~ 11-30", "clone", "Wave 2 新建独立Bot", "Stage 1→2 过渡", "新建 @Clone 飞书Bot，编导发参考视频链接直接回调返回钩子/节拍/字幕拆片卡片", "统计编导对拆片卡片的高频修改项 → 自进化 S1–S5 镜头配方并固化至 video.luteos.com", "周健(Recipe/16节点) · 刘华丽(14案例Eval/控制台) · 吴雨宁(推广) · 品牌市场部编导"),
+  ("Wave 3", "12-01 ~ 12-26", "daisy", "Wave 3 新建独立Bot", "Stage 2→3 自进化底座", "新建 @Daisy 飞书Bot，联通 48 条星链路由与 1,054 算法 Skill 处理跨领域复杂问答", "运行 Lane B + Know 三道门禁，将全部 14 个 Bot 的高频问答自动编译为工作台 Skill", "周健(适配层/路由) · 吴雨宁(四层知识库/CLI) · 刘华丽(三道门禁盲测)"),
+  ("Wave 3", "12-01 ~ 12-26", "signal", "Wave 3 新建独立Bot", "Stage 1 基座期", "新建 @Signal 飞书Bot，推送 SOV 异动与 9,470 竞品降价/上新卡片，支持点按钮确认归因", "根据业务在卡片标记的「真异动/误报噪音」回调 → 自进化 Search Quality Gate 降噪规则", "吴雨宁(SOV口径) · 周健(降噪/归因算法) · 刘华丽(竞品雷达运营) · 品牌市场部品牌分析"),
+  ("Wave 3", "12-01 ~ 12-26", "geo", "Wave 3 新建独立Bot", "Stage 1 基座期", "新建 @GEO 飞书Bot，群内查询 Perplexity/ChatGPT/Rufus 排名快照并回调分派优化任务", "收集群内高频询问的购买场景问题 → 自动扩充 20问/ASIN 标准库并固化为月度复测流水线", "吴雨宁(问句库架构) · 周健(采集探针/生成) · 刘华丽(复测月报) · 品牌市场部内容/SEO"),
+  ("Wave 3", "12-01 ~ 12-26", "radar", "Wave 3 新建独立Bot", "Stage 1 基座期", "新建 @Radar 飞书Bot，BD 发达人主页直接回调输出四维分层背调卡与授权七元组登记按钮", "统计 BD 高频询价与到期违约场景 → 自进化达人筛选与到期催办 SOP 固化至工作台", "吴雨宁(授权七元组架构) · 刘华丽(动态监测运营) · 周健(推荐算法) · 品牌市场部达人BD")
+] %}
+
+<div class="card" style="margin-bottom:20px">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge badge-verify">决策 1 &amp; 4 · 14 独立飞书 Bot × 甘特排期同源表</span>
+      <strong style="font-size:16px;color:var(--brand-900)">14 专家 Agent（独立飞书应用 + 工作台）Wave 1–3 贯通计划、甘特图确切日期与三方协作表</strong>
+    </div>
+    <span class="muted" style="font-size:12px">全部进度与起止日期实时同源读取自甘特图数据库（总进度：{{ stats.overall_pct }}%）</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:90px">推进波次</th>
+        <th style="width:140px">专家 Agent &amp; 工作台</th>
+        <th style="width:120px">独立飞书 Bot 状态</th>
+        <th style="width:95px">四阶真实进度</th>
+        <th style="width:205px">甘特图确切排期与节点截止日</th>
+        <th style="width:215px">飞书对话回调能力 (Agent 终局)</th>
+        <th style="width:215px">高频自进化 → 工作台固化 SOP</th>
+        <th>3人铁三角 × 品牌市场部分工</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for w_name, w_win, slug, bot_st, st_label, cb_desc, sop_desc, role_desc in wave_rows %}
+      {% set pv = pv_by_slug.get(slug) %}
+      {% set p = pv.proj if pv else None %}
+      <tr>
+        <td>
+          <span class="badge {{ 'badge-done' if w_name == 'Wave 1' else ('badge-doing' if w_name == 'Wave 2' else 'badge-plan') }}">{{ w_name }}</span>
+          <div class="muted" style="font-size:11px;margin-top:2px">{{ w_win }}</div>
+        </td>
+        <td>
+          <a href="javascript:void(0)" onclick="openProjectDrawer('{{ slug }}')" style="font-weight:700;color:var(--brand-900)">
+            {{ p.expert_name if p else slug }}
+          </a>
+          <div style="font-size:11px;color:var(--muted)"><code>{{ (p.workbench_url or '') | replace('https://', '') | replace('/', '') }}</code></div>
+        </td>
+        <td>
+          <span class="badge {{ 'badge-done' if '已在线' in bot_st else ('badge-doing' if '恢复' in bot_st or '双向' in bot_st else 'badge-plan') }}">
+            {{ bot_st }}
+          </span>
+        </td>
+        <td>
+          <strong style="font-size:14px;color:var(--brand-900)">{{ pv.pct if pv else 0 }}%</strong>
+          <div class="muted" style="font-size:11px">{{ st_label }}</div>
+        </td>
+        <td style="font-size:12px;line-height:1.5">
+          {% if pv %}
+          <div style="font-weight:700;color:var(--brand-900)">{{ pv.proj_start }} ~ {{ pv.proj_end }}</div>
+          <div class="muted" style="font-size:11.5px;margin-top:3px">
+            {% for cv in pv.cap_views %}
+            {% set c = cv.cap %}
+            {% set rel = cv.relay %}
+            <div>• {{ c.name }}：<strong>{{ c.end_date[5:] }}</strong> (接棒:{{ rel.active_owner }}, {{ c.progress_pct }}%)</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </td>
+        <td style="font-size:12.5px;line-height:1.5">{{ cb_desc }}</td>
+        <td style="font-size:12.5px;line-height:1.5">{{ sop_desc }}</td>
+        <td style="font-size:12.5px;line-height:1.5">{{ role_desc }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- 4. P0-1 飞书高频问题自进化漏斗（Stage 3 -> Stage 4 实时晋升台） -->
+<div class="card" style="margin-bottom:20px" id="sop-funnel-section">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge badge-done">P0-1 · 自进化实时漏斗</span>
+      <strong style="font-size:16px;color:var(--brand-900)">14 专家飞书高频问题自进化漏斗（Stage 3 → Stage 4 实时追踪与一键晋升台）</strong>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="badge badge-verify">已达自进化阈值 (提问≥10/周 或 打回≥3)：{{ stats.sop_ready_count }} 项</span>
+      <span class="muted" style="font-size:12px">API: <code>POST /api/sop/telemetry</code></span>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:80px">波次</th>
+        <th style="width:95px">专家 Agent</th>
+        <th>飞书群高频业务问题聚类 / 卡片打回场景</th>
+        <th style="width:110px">周提问频次<br><span style="font-weight:400;font-size:11px">(阈值 ≥10/周)</span></th>
+        <th style="width:105px">卡片打回次数<br><span style="font-weight:400;font-size:11px">(阈值 ≥3次)</span></th>
+        <th style="width:90px">近期返工率<br><span style="font-weight:400;font-size:11px">(目标 &lt;20%)</span></th>
+        <th style="width:90px">当前阶段</th>
+        <th style="width:220px">迁移固化的目标工作台 SOP 工位</th>
+        <th style="width:105px">主责 / 截止日</th>
+        <th style="width:140px">快捷模拟 / 晋升</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sc in sop_candidates %}
+      <tr>
+        <td><span class="badge {{ 'badge-done' if sc.wave == 'Wave 1' else ('badge-doing' if sc.wave == 'Wave 2' else 'badge-plan') }}">{{ sc.wave }}</span></td>
+        <td><strong style="color:var(--brand-900)">{{ sc.expert_name }}</strong></td>
+        <td style="font-size:13px">{{ sc.topic }}</td>
+        <td>
+          <strong id="ask-cnt-{{ sc.id }}" style="font-size:14px;color:{{ 'var(--done)' if sc.weekly_ask_count >= 10 else 'var(--ink)' }}">{{ sc.weekly_ask_count }}</strong> 次/周
+          {% if sc.weekly_ask_count >= 10 %}<span class="badge badge-done" style="font-size:10px;padding:1px 5px">达标</span>{% endif %}
+        </td>
+        <td>
+          <strong id="rej-cnt-{{ sc.id }}" style="font-size:14px;color:{{ '#b45309' if sc.reject_count >= 3 else 'var(--ink)' }}">{{ sc.reject_count }}</strong> 次
+          {% if sc.reject_count >= 3 %}<span class="badge badge-ms" style="font-size:10px;padding:1px 5px">触发进化</span>{% endif %}
+        </td>
+        <td>
+          <span style="font-weight:600;color:{{ 'var(--done)' if sc.rework_rate_pct < 20 else 'var(--muted)' }}">{{ sc.rework_rate_pct }}%</span>
+        </td>
+        <td>
+          <span id="stage-badge-{{ sc.id }}" class="badge {{ 'badge-done' if sc.current_stage == 'Stage 4' else ('badge-verify' if sc.current_stage == 'Stage 3' else ('badge-doing' if sc.current_stage == 'Stage 2' else 'badge-plan')) }}">
+            {{ sc.current_stage }}
+          </span>
+        </td>
+        <td style="font-size:12px;color:var(--ink2)">{{ sc.target_workbench_sop }}</td>
+        <td style="font-size:12px">
+          <strong>{{ sc.owner }}</strong>
+          <div class="muted" style="font-size:11px">{{ sc.due_date }}</div>
+        </td>
+        <td>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <button class="btn-chip" style="font-size:11px;padding:2px 6px" onclick="sendSopTelemetry({{ sc.id }}, '{{ sc.project_slug }}', 'ask')">提问+1</button>
+            <button class="btn-chip" style="font-size:11px;padding:2px 6px" onclick="sendSopTelemetry({{ sc.id }}, '{{ sc.project_slug }}', 'promote_stage')">晋升Stage</button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- 5. P0-3 品牌市场部业务动作回写账本（measuredActions Ledger） -->
+<div class="card" style="margin-bottom:20px" id="measured-actions-section">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge badge-verify">P0-3 · 解决 measuredActions=0</span>
+      <strong style="font-size:16px;color:var(--brand-900)">品牌市场部业务动作回写账本（Measured Actions Ledger · 累计已回写 <span id="ma-total-num">{{ stats.measured_actions_count }}</span> 项）</strong>
+    </div>
+    <span class="muted" style="font-size:12px">打通 L3（产出分析报告）→ L4（品牌市场部在飞书卡片点击认领/批准发布并自动回写经营结果）</span>
+  </div>
+
+  <!-- 快速登记一笔业务动作回写 -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 12px;background:var(--surface-subtle);border-radius:8px;margin-bottom:12px">
+    <select id="ma-slug" style="font-size:12px;padding:5px 8px">
+      <option value="echo">Echo (VOC洞察)</option>
+      <option value="emily">Emily (社媒Agent)</option>
+      <option value="clone">Clone (爆款复刻)</option>
+      <option value="vicky">Vicky (PR公关)</option>
+      <option value="shopify">Shopify (独立站与选品)</option>
+      <option value="shouheng">守衡 (合规与LaunchGate)</option>
+      <option value="market">Market (市场与DataPilot)</option>
+      <option value="source">Source (数说采集)</option>
+    </select>
+    <select id="ma-type" style="font-size:12px;padding:5px 8px">
+      <option value="认领痛点卡">认领痛点卡</option>
+      <option value="批准Listing草稿">批准Listing草稿</option>
+      <option value="采纳投放脚本">采纳投放脚本</option>
+      <option value="完成合规整改">完成合规整改</option>
+      <option value="认领公关工单">认领公关工单</option>
+      <option value="采纳预算与止血清单">采纳预算与止血清单</option>
+    </select>
+    <input id="ma-dept" placeholder="认领业务方（如：品牌市场部·DTC运营）" value="品牌市场部" style="width:190px;font-size:12px;padding:5px 8px">
+    <input id="ma-title" placeholder="输入业务认领的具体动作描述..." style="flex:1;min-width:220px;font-size:12px;padding:5px 8px">
+    <input id="ma-outcome" placeholder="回写结果指标（如：已上线A/B测试）" style="width:210px;font-size:12px;padding:5px 8px">
+    <button class="btn-chip active" onclick="recordMeasuredAction(this)" style="font-size:12px">登记业务回写动作</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:95px">来源专家</th>
+        <th style="width:130px">动作类型</th>
+        <th>品牌市场部认领执行的具体业务动作</th>
+        <th style="width:185px">认领业务方</th>
+        <th style="width:170px">关联回执 / 主键编号</th>
+        <th style="width:240px">回写业务结果与验证读数</th>
+        <th style="width:80px">状态</th>
+      </tr>
+    </thead>
+    <tbody id="ma-table-body">
+      {% for ba in business_actions %}
+      <tr>
+        <td><strong style="color:var(--brand-900)">{{ ba.expert_name }}</strong></td>
+        <td><span class="badge badge-g1">{{ ba.action_type }}</span></td>
+        <td style="font-size:13px">{{ ba.action_title }}</td>
+        <td style="font-size:12px;color:var(--ink2)">{{ ba.dept_actor }}</td>
+        <td><code>{{ ba.receipt_ref }}</code></td>
+        <td style="font-size:12px;color:var(--done);font-weight:600">{{ ba.outcome_metric }}</td>
+        <td><span class="badge badge-done">{{ ba.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+async function sendSopTelemetry(candId, slug, evType) {
+  const res = await fetch('/api/sop/telemetry', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({candidate_id: candId, project_slug: slug, event_type: evType})
+  });
+  const data = await res.json();
+  if (!data.ok) {
+    alert(data.error || '操作失败');
+    return;
+  }
+  const askEl = document.getElementById('ask-cnt-' + candId);
+  if (askEl) askEl.innerText = data.weekly_ask_count;
+  const stEl = document.getElementById('stage-badge-' + candId);
+  if (stEl) stEl.innerText = data.current_stage;
+}
+
+async function recordMeasuredAction(btn) {
+  const slug = document.getElementById('ma-slug').value;
+  const aType = document.getElementById('ma-type').value;
+  const dept = document.getElementById('ma-dept').value.trim() || '品牌市场部';
+  const title = document.getElementById('ma-title').value.trim();
+  const outcome = document.getElementById('ma-outcome').value.trim() || '已通过飞书卡片回调确认执行';
+  if (!title) {
+    alert('请填写具体业务动作描述');
+    return;
+  }
+  btn.disabled = true;
+  const res = await fetch('/api/sop/telemetry', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      event_type: 'measured_action',
+      project_slug: slug,
+      action_type: aType,
+      dept_actor: dept,
+      action_title: title,
+      outcome_metric: outcome
+    })
+  });
+  const data = await res.json();
+  btn.disabled = false;
+  if (data.ok) {
+    location.reload();
+  }
+}
+</script>
+
+{% endblock %}

@@ -516,7 +516,18 @@ def handle_bot_command(
                     _build_cap_quick_actions(pv["caps"], max_caps=3),
                 )
 
-        # 5b. 查询特定负责人名下任务（如 @PMO 我的任务 / @PMO 周健 / @PMO 吴雨宁 / @PMO 李倩怡 / @PMO 刘华丽 / @PMO 负责人）
+        # 5b. 查询特定负责人名下当期在手接棒任务（如 @PMO 我的任务 / @PMO 周健 / @PMO 吴雨宁 / @PMO 刘华丽 / @PMO 待办）
+        if any(w in q_low for w in ("待办", "点名", "三棒", "接棒", "todos")):
+            from .automation_suite import push_member_baton_todos
+
+            todo_res = push_member_baton_todos(s, push_to_feishu=False)
+            return (
+                f"ABI 三棒接力当期待办清单 (@吴雨宁 @周健 @刘华丽 · {date.today().isoformat()})",
+                todo_res["markdown"],
+                default_btns,
+                [],
+            )
+
         target_person_q = q_low
         if any(w in q_low for w in ("我的任务", "我的排期", "我的项目", "my task")):
             target_person_q = "周健"
@@ -524,60 +535,58 @@ def handle_bot_command(
         for w_item in data.get("owner_workloads", []):
             person_name = w_item["owner"]
             if len(person_name) >= 2 and person_name.lower() in target_person_q:
-                person_caps = [
-                    (pv["proj"].expert_name, c)
-                    for pv in data["proj_views"]
-                    for c in pv["caps"]
-                    if person_name in (c.owner or pv["proj"].owner or "")
-                ]
+                active_steps = []
+                for pv in data["proj_views"]:
+                    exp_n = pv["proj"].expert_name
+                    for cv in pv["cap_views"]:
+                        c = cv["cap"]
+                        rel = cv["relay"]
+                        for st_obj in rel["steps"]:
+                            if st_obj["owner"] == person_name and st_obj["is_active"]:
+                                active_steps.append((exp_n, c, st_obj))
+
                 today_d = date.today()
                 lines = [
-                    f"**负责人**：{person_name}｜**名下能力总数**：{w_item['total']} 项（已完成 {w_item['done']} / 进行中 {w_item['doing']} / 方案中 {w_item['plan']}，平均进度 **{w_item['pct']}%**）",
+                    f"**成员**：@{person_name}（{w_item.get('role_desc', '')}）",
+                    f"**全量工序（49道）**：已交棒 {w_item['done']} / **当期在手接棒 {w_item.get('active_baton', len(active_steps))}** / 待上游交棒 {w_item['plan']}｜工序均分 **{w_item['pct']}%**",
                     "",
-                    "**名下能力排期与剩余天数明细**：",
+                    f"**当前球在 @{person_name} 手里的在手接棒任务（共 {len(active_steps)} 项）**：",
                 ]
                 raw_caps_only = []
-                for exp_n, c in person_caps:
+                for exp_n, c, st_obj in active_steps:
                     raw_caps_only.append(c)
-                    day_info = "待排期"
-                    if c.end_date:
-                        try:
-                            dl = (date.fromisoformat(c.end_date[:10]) - today_d).days
-                            if c.status == "已完成":
-                                day_info = f"{c.end_date} 已交付"
-                            elif dl < 0:
-                                day_info = f"{c.end_date} (已逾期 {-dl} 天)"
-                            else:
-                                day_info = f"{c.end_date} (剩 {dl} 天)"
-                        except ValueError:
-                            day_info = c.end_date
+                    dl = (date.fromisoformat(st_obj["end_date"]) - today_d).days
+                    day_info = f"{st_obj['end_date']} (剩 {dl} 天)" if dl >= 0 else f"{st_obj['end_date']} (已超 {-dl} 天)"
                     lines.append(
-                        f"- **[{exp_n}] {c.name}**：`{c.status} {c.progress_pct}%`｜截止：{day_info}"
+                        f"- **[{exp_n}] {c.name}**｜本棒 `{st_obj['step_code']}:{st_obj['pct']}%`（功能总进度 {c.progress_pct}%）｜本棒截止：{day_info}\n"
+                        f"  └ 准出交接物：{st_obj['deliverable']}"
                     )
                 return (
-                    f"负责人工作负载与任务清单 · {person_name}",
+                    f"三棒接力当期在手任务清单 · @{person_name}",
                     "\n".join(lines),
                     default_btns,
                     _build_cap_quick_actions(raw_caps_only, max_caps=3),
                 )
 
         if any(w in q_low for w in ("负责人", "负载", "分工", "workload", "owner")):
-            lines = ["**各负责人工作负载与平均完成度**：", ""]
+            lines = ["**3 人三棒接力闭环（P1 吴雨宁 → P2 周健 → P3 刘华丽）工作负载矩阵**：", ""]
             for w_item in data.get("owner_workloads", []):
                 lines.append(
-                    f"- **{w_item['owner']}**：共 **{w_item['total']}** 项（已完成 {w_item['done']} / 进行中 {w_item['doing']} / 方案中 {w_item['plan']}）｜平均进度 **{w_item['pct']}%**"
+                    f"- **@{w_item['owner']}**（{w_item.get('step_code', '')}）：49道工序已交棒 {w_item['done']} / **当期在手接棒 {w_item.get('active_baton', 0)}** / 待上游交棒 {w_item['plan']}｜工序总进度 **{w_item['pct']}%**"
                 )
             lines.append("")
-            lines.append("可发送 `@PMO 我的任务`、`@PMO 周健`、`@PMO 吴雨宁`、`@PMO 李倩怡` 或 `@PMO 刘华丽` 查看个人名下具体能力排期并直接点击卡片按钮改状态。")
-            return ("ABI 品牌 Agent 负责人工作负载矩阵", "\n".join(lines), default_btns, [])
+            lines.append("可发送 `@PMO 待办`、`@PMO 周健`、`@PMO 吴雨宁` 或 `@PMO 刘华丽` 查看个人当期在手接棒任务并直接点按钮推进交棒。")
+            return ("ABI 品牌 Agent 三棒接力负载矩阵", "\n".join(lines), default_btns, [])
 
         # 6. 默认帮助与总览菜单
         st = data["stats"]
         help_lines = [
-            f"当前纳管 **14 个专家 Agent 产品项目**、**{st['cap_total']} 项能力图谱**（总进度 **{st['overall_pct']}%**，已实测验证 **{st['cap_verified']} 项**，在线站点 **{st['site_online']}/{st['site_total']}**）。",
+            f"当前纳管 **14 个专家 Agent 产品项目**、**{st['cap_total']} 项功能**、**147 道三棒接力工序**（总进度 **{st['overall_pct']}%**，已实测验证 **{st['cap_verified']} 项**，在线站点 **{st['site_online']}/{st['site_total']}**）。",
+            "",
+            "**三棒接力闭环机制**：每项功能均按 `P1 吴雨宁（需求/前端/架构 30%） → P2 周健（全栈/飞书Bot/算法 40%） → P3 刘华丽（测试/Agent运营 + 联合吴雨宁推广 30%）` 串联交付；每周一、周三 09:00 自动在群内 @三人 播报当期在手待办。",
             "",
             "**在群内 @PMO 支持以下实时指令**：",
-            "- `@PMO 我的任务` 或 `@PMO 周健` / `@PMO 吴雨宁` / `@PMO 李倩怡` / `@PMO 刘华丽`：查询个人名下任务、剩余天数并支持一键点按钮改进度",
+            "- `@PMO 待办` 或 `@PMO 周健` / `@PMO 吴雨宁` / `@PMO 刘华丽`：查询个人当期在手接棒（Active Baton）待办任务并一键点按钮交棒",
             "- `@PMO 周报` 或 `@PMO 进度`：获取最新周度进展对比与里程碑简报",
             "- `@PMO 里程碑` 或 `@PMO 甘特`：查看近 4 周待交付关键里程碑排期",
             "- `@PMO 探活`：实时并发检测全部 24 个工作台站点 HTTP 状态与延迟",

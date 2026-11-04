@@ -1,29 +1,29 @@
 flowchart TB
-  %% ABI 品牌 & 营销 Agent 全景系统架构 · 14 大产品与数据流向
-  pmo["<b>PMO · OGSM管理工作台 pmo.luteos.com</b><br/>1O-3G-6S-14产品统筹 · 两级甘特排期 · 四列看板 · 实测报告中心<br/>战略全景与甘特看板 · 49项能力同源驱动<br/>实测报告中心 · 9大专家12份报告直读"]:::portal
-  daisy["<b>Daisy · 多智能体门户 mas.luteos.com</b><br/>9大Agent统一适配层 · 品牌知识库(asset) · 业务Skills转化管线(Know)<br/>品牌知识库 · 品牌事实沉淀<br/>Skills平台(Know) · 17技能/1089条IR"]:::portal
-  echo["<b>Echo · VOC消费者之声 radar.luteos.com</b><br/>2.6万帖/10.2万评 · 10步无人值守日更 · 86倍提速<br/>子站: 品类洞察 business · 品类报告 report · 插件 plugin<br/>每日自动产出: 18选题 / 7研发痛点线索 / 12竞品对比"]:::g2
-  market["<b>Market · 市场洞察 mkt.luteos.com</b><br/>品类容量与价格带分析 · 竞品格局拆解<br/>联动 Sage 跨境专家台 (53位专家工作流)<br/>4大跨境电商确定性核算合规引擎 (3088测试通过)"]:::g2
-  signal["<b>Signal · 品牌声量 signal.luteos.com</b><br/>多源采集 → 异动检测 → 归因分析 → 告警<br/>品牌曝光与搜索热度日趋势监控<br/>声量异常波动归因与竞品新品发布节奏追踪"]:::g2
-  emily["<b>Emily · 社媒Agent</b><br/>social.luteos.com<br/>28/41能力上线 · 4表888行镜像<br/>趋势洞察→内容策略→脚本生成"]:::g1
-  clone["<b>Clone · 爆款复刻</b><br/>video.luteos.com<br/>Recipe引擎 · 13/14评测通过<br/>钩子/节拍/口播/字幕拆解复刻"]:::g1
-  vicky["<b>Vicky · GEO · Radar</b><br/>pr / geo / magpie.luteos.com<br/>Vicky: 246媒体库/347报道同步<br/>GEO: AI引擎可见度6步闭环<br/>Radar: IP粉丝分析与动态监测"]:::g1
-  shouheng["<b>守衡 · 内容治理</b><br/>ca.luteos.com<br/>227/227契约自证 · 14页审核台<br/>36规则/24控制点 · 合规放行闸"]:::commerce
-  shopify["<b>Shopify · 独立站</b><br/>shopify.luteos.com<br/>知识站 platform-shopify (178篇)<br/>AI选品 product · 5岗Agent上架"]:::commerce
-  source["<b>Source · 多平台数据采集中台 (Data Intelligence Hub) scrapy.luteos.com</b><br/>70 平台 / 284 唯一采集端点 (200 已实测) · 39 个 MCP 工具 · 55 个前后端页面 · 2807 项测试<br/>统一采集调度与Monitor → TikTok/Reddit/YT/IG/FB/Trends MCP → 统一表结构建模 → 支撑上游六大Agent"]:::infra
-  main["<b>Main · 全栈研发与模型评测底座 main.luteos.com</b><br/>单向依赖 Agent SDK Runtime · 150/150 问答评测通过 (均分 0.99)<br/>模型选型与评测站: llm.luteos.com (264单元测试全过)<br/>为全仓 Agent 提供统一运行时、预算控制与 Eval 门禁"]:::infra
-  pmo -.->|"OGSM排期与日报回传"| echo
-  daisy -.->|"品牌事实库与Skills下发"| market
-  daisy -.->|"统一适配层接入"| signal
-  echo -->|"用户痛点→社媒选题"| emily
-  market -->|"竞品与品类机会输入"| vicky
+  %% ABI 品牌 & 营销 Agent 全景系统架构 · 14 大产品与 6 条跨岗交接链
+  pmo["<b>PMO · OGSM管理工作台 pmo.luteos.com</b><br/>1O-3G-6S-14产品统筹 · 22份历史资产收编 · 飞书表双向写回 · 90天四象限裁决<br/>全景导图与甘特看板 · 49能力 + 6条跨岗交接链<br/>证据门禁与实测库 · L0-L4硬拦截 + 10页PPTX"]:::portal
+  daisy["<b>Daisy · 多智能体与四层知识底座 mas.luteos.com</b><br/>事实层(asset) · 规则层(wiki 164契约) · 技能层(skills) · 路由层(brand 48路由)<br/>品牌事实与Token库 · 315 SKU原子/2.3万单元<br/>星链与算法Skills池 · 1054算法/81星链/72Hook"]:::portal
+  echo["<b>Echo · VOC消费者之声 radar.luteos.com</b><br/>712.2万全渠道VOC · v6.4标签字典(2346行) · Reddit日更86×提速<br/>子站: 机会卡 business(VOA) · 报告 report · 插件 plugin<br/>跨渠道Gap雷达(社媒独有765痛点) · 29张Superset看板"]:::g2
+  market["<b>Market · 市场与经营诊断 mkt.luteos.com</b><br/>三层TAM与53证据源 · DataPilot 122万行全渠道核算<br/>DataPilot: 止血87M(764亏损SKU) / 造血635M / 14渠道ROAS<br/>Sage: 53位跨境专家工作流 + 4大确定性核算引擎"]:::g2
+  signal["<b>Signal · 品牌声量与竞品雷达 signal.luteos.com</b><br/>Melwater 34.7万文档ETL · Search Quality Gate 降噪<br/>加权SOV与净情感同报 · 阻断 query_noise 伪危机<br/>BrandOS 10品牌 / 9,470个竞品ASIN价格与转换雷达"]:::g2
+  emily["<b>Emily · 社媒Agent</b><br/>social.luteos.com<br/>28/41能力 · 10品牌Token(88分)<br/>社媒VOC→投放ROI交叉归因"]:::g1
+  clone["<b>Clone · 爆款复刻</b><br/>video.luteos.com<br/>Recipe(13/14) + 16节点流水线<br/>S1-S5场景 · 待审包权利门禁"]:::g1
+  vicky["<b>Vicky · GEO · Radar</b><br/>pr / geo / magpie.luteos.com<br/>Vicky: 246媒体/100篇S级报道<br/>GEO: Perplexity 5/5基线+315SKU<br/>Radar: 4维达人分层+授权七元组"]:::g1
+  shouheng["<b>守衡 · 合规与索证</b><br/>ca.luteos.com<br/>36守衡+84母婴+18平台规则卡<br/>消毒器LaunchGate/104 COS证据"]:::commerce
+  shopify["<b>Shopify · 转化与选品</b><br/>shopify.luteos.com<br/>360审计(2.2MB卡点/弃单追回)<br/>Fusion选品(SHI×CVI) · 5岗Agent"]:::commerce
+  source["<b>Source · 多平台数据采集中台 (Data Intelligence Hub) scrapy.luteos.com</b><br/>70 平台 / 284 端点 (200 实测) · L2-L4 授权门禁 · 独立站商品发现包 · DatasetDriftEvent 漂移告警<br/>L2-L4门禁与幂等锁 → TikTok/Reddit/YT/IG/独立站包 → order_id/sku_id主数据 → 支撑上游六大Agent"]:::infra
+  main["<b>Main · 全栈研发与模型评测底座 main.luteos.com</b><br/>Agent SDK Runtime · 184 Profile分发 · 72 MCP连接器蓝图 · 150/150 评测通过<br/>模型评测站: llm.luteos.com (264单测全过 · 容器安全沙箱)<br/>提供统一运行时、预算控制、MCP网关与 L0-L4 发布自检"]:::infra
+  pmo -.->|"证据回传与四象限裁决"| echo
+  daisy -.->|"315 SKU原子与48路由下发"| market
+  daisy -.->|"统一适配层与CLI接入"| signal
+  echo -->|"v6.4痛点卡→BrandToken策略"| emily
+  market -->|"TAM准入与边际ROAS输入"| vicky
   emily -->|"脚本"| clone
-  clone -->|"分发"| vicky
-  vicky -->|"提审"| shouheng
+  clone -->|"授权"| vicky
+  vicky -->|"索证"| shouheng
   shouheng -->|"放行"| shopify
-  source -->|"TK/IG/YT趋势供给"| emily
-  source -->|"70平台/284端点采集供给"| vicky
-  main -.->|"Runtime与模型评测"| shouheng
+  source -->|"多源趋势与插件补采"| emily
+  source -->|"70平台/Drift告警/SKU主键"| vicky
+  main -.->|"沙箱Runtime与72 MCP网关"| shouheng
   linkStyle 0 stroke:#b48cff,stroke-width:1.5px
   linkStyle 1 stroke:#5ad1e6,stroke-width:1.5px
   linkStyle 2 stroke:#5ad1e6,stroke-width:1.5px

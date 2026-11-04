@@ -124,6 +124,126 @@ def _kanban_col_for(c: models.CapabilityItem) -> str:
     return "plan"
 
 
+def _compute_cap_relay(c: models.CapabilityItem, today_d: date) -> dict:
+    """将每项功能拆解为『吴雨宁(P1 需求/前端/架构 30%) → 周健(P2 全栈/Bot/算法 40%) → 刘华丽(P3 测试/运营/联合吴雨宁推广 30%)』三棒串联工序。"""
+    sd = _parse_date(c.start_date) or date(2026, 10, 15)
+    ed = _parse_date(c.end_date) or date(2026, 11, 30)
+    if ed < sd:
+        ed = sd
+    span = max(3, (ed - sd).days + 1)
+    d1 = max(1, int(round(span * 0.30)))
+    d2 = max(1, int(round(span * 0.40)))
+
+    p1_s = sd
+    p1_e = min(ed, p1_s + timedelta(days=d1 - 1))
+    p2_s = min(ed, p1_e + timedelta(days=1))
+    p2_e = min(ed, p2_s + timedelta(days=d2 - 1))
+    p3_s = min(ed, p2_e + timedelta(days=1))
+    p3_e = ed
+
+    pct = c.progress_pct or 0
+    if pct >= 100 or c.status == "已完成":
+        p1_pct, p2_pct, p3_pct = 100, 100, 100
+        p1_st, p2_st, p3_st = "已完成", "已完成", "已完成"
+        active_owner = "刘华丽"
+        active_step = "P3 已完成闭环"
+    elif pct >= 70:
+        p1_pct, p2_pct = 100, 100
+        p3_pct = min(95, max(10, int(round((pct - 70) / 30 * 100))))
+        p1_st, p2_st, p3_st = "已完成", "已完成", "进行中"
+        active_owner = "刘华丽"
+        active_step = "P3 测试/Agent运营/推广"
+        # P2 已完成交棒，确保 P3 包含当前收口窗口且不晚于 ed
+        if p2_e >= ed:
+            p2_e = max(sd, ed - timedelta(days=2))
+            p3_s = min(ed, p2_e + timedelta(days=1))
+    elif pct >= 30:
+        p1_pct = 100
+        p2_pct = min(95, max(15, int(round((pct - 30) / 40 * 100))))
+        p3_pct = 0
+        p1_st, p2_st, p3_st = "已完成", "进行中", "待接棒"
+        active_owner = "周健"
+        active_step = "P2 全栈/飞书Bot/算法"
+        # 当期正在执行 P2（周健接棒中），为 P3 预留收口前最后 3~5 天验收期，避免长周期项目按 30/40/30 等比例切分导致 P2 虚标过期
+        p3_days = min(5, max(2, int(round((ed - max(sd, today_d)).days * 0.35))))
+        p2_e = max(today_d + timedelta(days=1), ed - timedelta(days=p3_days))
+        p2_e = min(ed - timedelta(days=1), p2_e) if ed > sd else ed
+        if p1_e >= p2_e:
+            p1_e = max(sd, p2_e - timedelta(days=2))
+        p2_s = min(p2_e, p1_e + timedelta(days=1))
+        p3_s = min(ed, p2_e + timedelta(days=1))
+        p3_e = ed
+    else:
+        p1_pct = max(15, int(round(pct / 30 * 100)))
+        p2_pct, p3_pct = 0, 0
+        p1_st, p2_st, p3_st = "进行中", "待接棒", "待接棒"
+        active_owner = "吴雨宁"
+        active_step = "P1 需求/前端/数据架构"
+        if p1_e < today_d and ed > today_d:
+            rem_days = (ed - today_d).days
+            p1_e = today_d + timedelta(days=max(1, int(rem_days * 0.3)))
+            p2_s = p1_e + timedelta(days=1)
+            p2_e = p2_s + timedelta(days=max(1, int(rem_days * 0.4)))
+            p3_s = min(ed, p2_e + timedelta(days=1))
+            p3_e = ed
+
+    s1_str, e1_str = p1_s.isoformat(), p1_e.isoformat()
+    s2_str, e2_str = p2_s.isoformat(), p2_e.isoformat()
+    s3_str, e3_str = p3_s.isoformat(), p3_e.isoformat()
+
+    steps = [
+        {
+            "step_code": "P1",
+            "step_title": "需求调研 / 前端设计 / 数据架构",
+            "owner": "吴雨宁",
+            "collab": "对接品牌市场部",
+            "weight": 30,
+            "pct": p1_pct,
+            "status": p1_st,
+            "is_active": (active_owner == "吴雨宁" and c.status != "已完成"),
+            "start_date": s1_str,
+            "end_date": e1_str,
+            "deliverable": f"产出 {c.name} 数据表 Schema、飞书交互卡片原型与工作台 UI 组件",
+            "gbar": _calc_gantt_bar(s1_str, e1_str, today_d, "已完成" if p1_st == "已完成" else "进行中"),
+        },
+        {
+            "step_code": "P2",
+            "step_title": "全栈开发 / 飞书Bot回调 / 算法研发",
+            "owner": "周健",
+            "collab": "承接 P1 契约",
+            "weight": 40,
+            "pct": p2_pct,
+            "status": p2_st,
+            "is_active": (active_owner == "周健" and c.status != "已完成"),
+            "start_date": s2_str,
+            "end_date": e2_str,
+            "deliverable": f"实现 {c.name} 全栈 API、独立飞书 Bot 双向回调与核心算法/自进化脚本",
+            "gbar": _calc_gantt_bar(s2_str, e2_str, today_d, "已完成" if p2_st == "已完成" else "进行中"),
+        },
+        {
+            "step_code": "P3",
+            "step_title": "测试验收 / Agent运营 / 工作台推广闭环",
+            "owner": "刘华丽",
+            "collab": "联合吴雨宁向品牌部推广",
+            "weight": 30,
+            "pct": p3_pct,
+            "status": p3_st,
+            "is_active": (active_owner == "刘华丽" and c.status != "已完成"),
+            "start_date": s3_str,
+            "end_date": e3_str,
+            "deliverable": f"执行 {c.name} 门禁测试(挂evidence_url)、控制台高频统计(≥10次/周)并联合吴雨宁向品牌市场部推广固化",
+            "gbar": _calc_gantt_bar(s3_str, e3_str, today_d, "已完成" if p3_st == "已完成" else "进行中"),
+        },
+    ]
+    active_step_obj = next((st for st in steps if st["owner"] == active_owner), steps[-1])
+    return {
+        "active_owner": active_owner,
+        "active_step": active_step,
+        "active_end_date": active_step_obj["end_date"],
+        "steps": steps,
+    }
+
+
 def _assemble_scenario_stations(steps: list[str], cap_views: list[dict]) -> list[dict]:
     """将业务场景的步骤条（Step 1 → Step 2...）与该场景下的能力模块精准装配到对应工位。"""
     if not steps:
@@ -236,11 +356,13 @@ def build_tree_data(s: Session) -> dict:
             overdue_count += 1
         kcol = _kanban_col_for(c)
         p_obj = proj_map.get(c.project_slug)
+        relay = _compute_cap_relay(c, today_d)
 
         c_view = {
             "cap": c,
             "gbar": gbar,
             "kcol": kcol,
+            "relay": relay,
             "proj_expert": p_obj.expert_name if p_obj else c.project_slug,
             "proj_name": p_obj.product_name if p_obj else "",
             "goal_code": p_obj.goal_code if p_obj else "G1",
@@ -381,22 +503,24 @@ def build_tree_data(s: Session) -> dict:
             "support": support_list,
             "caps": [
                 {
-                    "id": c.id,
-                    "name": c.name,
-                    "desc": c.description,
-                    "scenario": c.scenario_line,
-                    "status": c.status,
-                    "verify_state": c.verify_state,
-                    "pct": c.progress_pct,
-                    "start_date": c.start_date,
-                    "end_date": c.end_date,
-                    "owner": c.owner or p.owner,
-                    "is_milestone": c.is_milestone,
-                    "integ_name": c.integration_name,
-                    "integ_url": c.integration_url,
-                    "evidence_url": getattr(c, "evidence_url", "") or "",
+                    "id": cv["cap"].id,
+                    "name": cv["cap"].name,
+                    "desc": cv["cap"].description,
+                    "scenario": cv["cap"].scenario_line,
+                    "status": cv["cap"].status,
+                    "verify_state": cv["cap"].verify_state,
+                    "pct": cv["cap"].progress_pct,
+                    "start_date": cv["cap"].start_date,
+                    "end_date": cv["cap"].end_date,
+                    "owner": cv["relay"]["active_owner"],
+                    "active_step": cv["relay"]["active_step"],
+                    "relay_steps": cv["relay"]["steps"],
+                    "is_milestone": cv["cap"].is_milestone,
+                    "integ_name": cv["cap"].integration_name,
+                    "integ_url": cv["cap"].integration_url,
+                    "evidence_url": getattr(cv["cap"], "evidence_url", "") or "",
                 }
-                for c in p_caps
+                for cv in p_cap_views
             ],
         }
 
@@ -484,39 +608,49 @@ def build_tree_data(s: Session) -> dict:
         "latest_reports": latest_reports[:6],
     }
 
-    # 按负责人聚合工作负载矩阵（支持将 "吴雨宁 / 周健" 拆分统计到个人，并统计临期/逾期项）
-    owner_buckets: dict[str, list[models.CapabilityItem]] = {}
-    for c in caps:
-        raw_owner = (c.owner or "待定").strip()
-        parts = [x.strip() for x in raw_owner.replace("、", "/").split("/") if x.strip()]
-        for person in (parts or ["待定"]):
-            owner_buckets.setdefault(person, []).append(c)
-
+    # 按三棒接力闭环（吴雨宁 P1 → 周健 P2 → 刘华丽 P3）统计全量 49 项功能中各成员的工序完成度与当前在手接棒（Active Baton）
+    all_cap_views = [cv for pv in proj_views for cv in pv["cap_views"]]
+    role_meta = [
+        ("吴雨宁", "P1", "第一棒：需求调研 / 前端设计 / 数据架构 (+终棒推广)"),
+        ("周健", "P2", "第二棒：全栈开发 / 独立飞书Bot回调 / 算法研发"),
+        ("刘华丽", "P3", "第三棒：测试验收 / Agent控制台运营 / 高频统计自进化"),
+    ]
     owner_workloads = []
-    for person, plist in owner_buckets.items():
-        tot = len(plist)
-        done_c = sum(1 for x in plist if x.status == "已完成")
-        doing_c = sum(1 for x in plist if x.status == "进行中")
-        plan_c = sum(1 for x in plist if x.status == "方案中")
-        avg_p = int(round(sum(x.progress_pct or 0 for x in plist) / tot)) if tot else 0
+    for person, s_code, role_desc in role_meta:
+        step_items = []
+        active_baton_count = 0
         urgent_c = 0
-        for x in plist:
-            if x.status != "已完成" and x.end_date:
-                ed = _parse_date(x.end_date)
+        for cv in all_cap_views:
+            c = cv["cap"]
+            rel = cv["relay"]
+            st_obj = next((x for x in rel["steps"] if x["owner"] == person), None)
+            if not st_obj:
+                continue
+            step_items.append(st_obj)
+            if st_obj["is_active"]:
+                active_baton_count += 1
+                ed = _parse_date(st_obj["end_date"])
                 if ed and (ed - today_d).days <= 7:
                     urgent_c += 1
+        tot = len(step_items)
+        done_c = sum(1 for x in step_items if x["status"] == "已完成")
+        doing_c = sum(1 for x in step_items if x["status"] == "进行中")
+        plan_c = sum(1 for x in step_items if x["status"] == "待接棒")
+        avg_p = int(round(sum(x["pct"] for x in step_items) / tot)) if tot else 0
         owner_workloads.append(
             {
                 "owner": person,
+                "step_code": s_code,
+                "role_desc": role_desc,
                 "total": tot,
                 "done": done_c,
                 "doing": doing_c,
                 "plan": plan_c,
                 "pct": avg_p,
+                "active_baton": active_baton_count,
                 "urgent": urgent_c,
             }
         )
-    owner_workloads.sort(key=lambda x: (-x["total"], -x["pct"]))
 
     try:
         recent_audits = s.exec(
@@ -525,12 +659,34 @@ def build_tree_data(s: Session) -> dict:
     except Exception:
         recent_audits = []
 
+    try:
+        sop_candidates = s.exec(
+            select(models.SopEvolutionCandidate).order_by(
+                models.SopEvolutionCandidate.weekly_ask_count.desc(),
+                models.SopEvolutionCandidate.id,
+            )
+        ).all()
+    except Exception:
+        sop_candidates = []
+
+    try:
+        business_actions = s.exec(
+            select(models.BusinessActionLedger).order_by(models.BusinessActionLedger.id.desc()).limit(30)
+        ).all()
+    except Exception:
+        business_actions = []
+
+    pv_by_slug = {pv["proj"].slug: pv for pv in proj_views}
+    stats["measured_actions_count"] = len(business_actions)
+    stats["sop_ready_count"] = sum(1 for sc in sop_candidates if sc.weekly_ask_count >= 10 or sc.reject_count >= 3)
+
     return {
         "objective": OBJECTIVE_TEXT,
         "goal_tree": goal_tree,
         "goals": goals,
         "strategies": strategies,
         "proj_views": proj_views,
+        "pv_by_slug": pv_by_slug,
         "kanban_cols": kanban_cols,
         "milestones": milestones,
         "gantt_months": gantt_months,
@@ -540,6 +696,8 @@ def build_tree_data(s: Session) -> dict:
         "radar_focus": radar_focus,
         "owner_workloads": owner_workloads,
         "recent_audits": recent_audits,
+        "sop_candidates": sop_candidates,
+        "business_actions": business_actions,
         "drawer_json": json.dumps(drawer_dict, ensure_ascii=False),
     }
 
@@ -596,6 +754,12 @@ def presentation_mode(request: Request, s: Session = Depends(get_session)):
 @app.get("/sites", response_class=HTMLResponse)
 def workbenches_directory(request: Request, s: Session = Depends(get_session)):
     return render(request, "sites.html", ctx(request, s, active_nav="sites"))
+
+
+@app.get("/sop", response_class=HTMLResponse)
+def sop_job_descriptions(request: Request, s: Session = Depends(get_session)):
+    """页面 5：3人核心铁三角 × 14独立飞书Agent × 品牌市场部 岗位说明书与四阶自进化标准。"""
+    return render(request, "sop.html", ctx(request, s, active_nav="sop"))
 
 
 @app.get("/board")
@@ -923,6 +1087,14 @@ def export_ogsm_csv(s: Session = Depends(get_session)):
             p = pv["proj"]
             for cv in pv["cap_views"]:
                 c = cv["cap"]
+                rel = cv["relay"]
+                s_p1, s_p2, s_p3 = rel["steps"][0], rel["steps"][1], rel["steps"][2]
+                relay_summary = (
+                    f"P1吴雨宁({s_p1['start_date'][5:]}~{s_p1['end_date'][5:]}:{s_p1['pct']}%) → "
+                    f"P2周健({s_p2['start_date'][5:]}~{s_p2['end_date'][5:]}:{s_p2['pct']}%) → "
+                    f"P3刘华丽({s_p3['start_date'][5:]}~{s_p3['end_date'][5:]}:{s_p3['pct']}%)｜"
+                    f"当前接棒:{rel['active_owner']}"
+                )
                 writer.writerow(
                     [
                         seq,
@@ -939,7 +1111,7 @@ def export_ogsm_csv(s: Session = Depends(get_session)):
                         f"{c.progress_pct}%",
                         c.start_date or "待排期",
                         c.end_date or "待排期",
-                        c.owner or p.owner,
+                        relay_summary,
                         "是" if c.is_milestone else "否",
                         f"{c.integration_name} ({c.integration_url})" if c.integration_name else "",
                     ]
@@ -1302,6 +1474,18 @@ def api_patrol_and_reminder(
     return run_patrol_and_reminder(s, push_to_feishu=push, days_threshold=days)
 
 
+@app.post("/api/feishu/push-member-todos")
+def api_push_member_baton_todos(
+    payload: dict = Body(default={}),
+    s: Session = Depends(get_session),
+):
+    """能力 5：每周一、周三定时（或手动点击）向飞书群推送 @吴雨宁 @周健 @刘华丽 个人当期在手接棒（Active Baton）待办任务清单。"""
+    from .automation_suite import push_member_baton_todos
+
+    push = bool(payload.get("push_to_feishu", True))
+    return push_member_baton_todos(s, push_to_feishu=push)
+
+
 @app.get("/api/export.pptx")
 def api_export_executive_pptx(s: Session = Depends(get_session)):
     """能力 4：动态生成 10 页可编辑部门项目汇报 PPTX。"""
@@ -1328,6 +1512,8 @@ def api_export_full_backup(s: Session = Depends(get_session)):
         "capabilities": [c.model_dump(mode="json") for c in s.exec(select(models.CapabilityItem).order_by(models.CapabilityItem.sort)).all()],
         "snapshots": [sn.model_dump(mode="json") for sn in s.exec(select(models.ProgressSnapshot).order_by(models.ProgressSnapshot.id.desc()).limit(20)).all()],
         "audit_logs": [al.model_dump(mode="json") for al in s.exec(select(models.ChangeAuditLog).order_by(models.ChangeAuditLog.id.desc()).limit(100)).all()],
+        "sop_candidates": [sc.model_dump(mode="json") for sc in s.exec(select(models.SopEvolutionCandidate)).all()],
+        "business_actions": [ba.model_dump(mode="json") for ba in s.exec(select(models.BusinessActionLedger)).all()],
     }
     return Response(
         content=json.dumps(payload, ensure_ascii=False, indent=2),
@@ -1336,6 +1522,76 @@ def api_export_full_backup(s: Session = Depends(get_session)):
             "Content-Disposition": f'attachment; filename="ABI_PMO_Backup_{date.today().isoformat()}.json"'
         },
     )
+
+
+@app.post("/api/sop/telemetry")
+def api_sop_telemetry(
+    payload: dict = Body(default={}),
+    s: Session = Depends(get_session),
+):
+    """P0-1 & P0-3 标准上报接口：供 14 个独立飞书 Bot 回调上报高频提问(+1)、人工打回(+1)、Stage 晋升或业务认领动作（measuredActions）。
+
+    支持 event_type:
+    - "ask": 飞书提问计数 +1
+    - "reject": 卡片打回修改计数 +1
+    - "promote_stage": 将候选 SOP 晋升至下一 Stage（Stage 1 -> Stage 2 -> Stage 3 -> Stage 4）
+    - "measured_action": 新增一条品牌市场部业务认领回写记录
+    """
+    ev_type = str(payload.get("event_type") or "ask").strip()
+    slug = str(payload.get("project_slug") or "emily").strip().lower()
+    cand_id = int(payload.get("candidate_id") or 0)
+
+    if ev_type == "measured_action":
+        proj = s.exec(select(models.ProductProject).where(models.ProductProject.slug == slug)).first()
+        exp_name = proj.expert_name if proj else slug.upper()
+        act = models.BusinessActionLedger(
+            project_slug=slug,
+            expert_name=exp_name,
+            action_type=str(payload.get("action_type") or "认领执行").strip()[:40],
+            action_title=str(payload.get("action_title") or "飞书卡片一键认领业务动作").strip()[:240],
+            dept_actor=str(payload.get("dept_actor") or "品牌市场部").strip()[:60],
+            receipt_ref=str(payload.get("receipt_ref") or f"{slug}-act#{int(time.time()) % 10000:04d}").strip()[:60],
+            outcome_metric=str(payload.get("outcome_metric") or "已通过飞书卡片回调确认执行").strip()[:160],
+            status="已回写",
+        )
+        s.add(act)
+        s.commit()
+        s.refresh(act)
+        total_acts = len(s.exec(select(models.BusinessActionLedger)).all())
+        return {"ok": True, "event_type": ev_type, "action_id": act.id, "measured_actions_total": total_acts}
+
+    cand = (
+        s.get(models.SopEvolutionCandidate, cand_id)
+        if cand_id
+        else s.exec(select(models.SopEvolutionCandidate).where(models.SopEvolutionCandidate.project_slug == slug)).first()
+    )
+    if not cand:
+        return JSONResponse({"ok": False, "error": f"未找到 {slug} 的自进化候选记录"}, status_code=404)
+
+    if ev_type == "ask":
+        cand.weekly_ask_count += 1
+    elif ev_type == "reject":
+        cand.reject_count += 1
+    elif ev_type == "promote_stage":
+        order = ["Stage 1", "Stage 2", "Stage 3", "Stage 4"]
+        cur_idx = order.index(cand.current_stage) if cand.current_stage in order else 0
+        cand.current_stage = order[min(len(order) - 1, cur_idx + 1)]
+        if cand.current_stage == "Stage 4":
+            cand.rework_rate_pct = min(cand.rework_rate_pct, 12)
+
+    cand.updated_at = datetime.now(timezone.utc)
+    s.add(cand)
+    s.commit()
+    s.refresh(cand)
+    return {
+        "ok": True,
+        "candidate_id": cand.id,
+        "project_slug": cand.project_slug,
+        "weekly_ask_count": cand.weekly_ask_count,
+        "reject_count": cand.reject_count,
+        "rework_rate_pct": cand.rework_rate_pct,
+        "current_stage": cand.current_stage,
+    }
 
 
 # ───────────────────────────── 实测报告与文档查阅 ─────────────────────────────

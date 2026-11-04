@@ -1,8 +1,8 @@
 {
   "lang": "zh-CN",
   "pageTitle": "ABI 品牌 & 营销 Agent 全景系统架构图",
-  "title": "ABI 品牌 & 营销 Agent 全景系统架构 · 14 大产品与数据流向",
-  "subtitle": "顶层统筹与知识门户 → G2 敏捷洞察层 → G1 内容声量与公关层 → G3 合规放行与独立站转化 → 底层采集中台与研发底座",
+  "title": "ABI 品牌 & 营销 Agent 全景系统架构 · 14 大产品与 6 条跨岗交接链",
+  "subtitle": "统筹门户与四层知识底座 (G3) → G2 敏捷洞察与止血造血层 → G1 声量增长与权威引用层 → G3 合规门禁与独立站转化 → 底层采集中台与研发沙箱",
   "width": 1280,
   "statusLabels": {
     "ok": "已投产",
@@ -10,17 +10,17 @@
     "none": "方案中"
   },
   "layers": [
-    { "id": "portal", "label": "统筹门户与多智能体知识底座 (G3)", "color": "green" },
-    { "id": "g2", "label": "G2 声量敏捷响应与市场洞察群", "color": "blue" },
+    { "id": "portal", "label": "统筹门户与四层知识底座 (G3)", "color": "green" },
+    { "id": "g2", "label": "G2 声量敏捷响应与经营洞察群", "color": "blue" },
     { "id": "g1", "label": "G1 多渠道声量增长产品群", "color": "cyan" },
-    { "id": "commerce", "label": "G3 内容合规闸门与独立站运营", "color": "purple" },
-    { "id": "infra", "label": "多平台数据采集与全栈研发底座", "color": "amber" }
+    { "id": "commerce", "label": "G3 合规门禁与独立站转化", "color": "purple" },
+    { "id": "infra", "label": "多平台采集中台与全栈研发底座", "color": "amber" }
   ],
   "flows": [
-    { "id": "data", "label": "上游多平台数据采集供给", "color": "amber" },
-    { "id": "biz", "label": "洞察 → 策略 → 脚本 → 合规 → 独立站上架", "color": "green" },
-    { "id": "kb", "label": "知识库 / Skills / 模型评测支撑", "color": "cyan", "dash": true },
-    { "id": "gov", "label": "实测报告回传与 OGSM 进度统筹", "color": "purple", "dash": true }
+    { "id": "data", "label": "上游多平台数据采集与 Drift 信号供给", "color": "amber" },
+    { "id": "biz", "label": "洞察 → 策略 → 复刻 → 合规门禁 → 独立站转化", "color": "green" },
+    { "id": "kb", "label": "四层知识库 / 1054 Skill / 72 Hook / 48 路由下发", "color": "cyan", "dash": true },
+    { "id": "gov", "label": "L0-L4 实测证据回传、飞书同步与 90 天四象限裁决", "color": "purple", "dash": true }
   ],
   "nodes": [
     {
@@ -29,11 +29,11 @@
       "layer": "portal",
       "x": 24, "y": 155, "w": 590,
       "title": "PMO · OGSM管理工作台 {gr:pmo.luteos.com}",
-      "sub": "1O-3G-6S-14产品统筹 · 两级甘特排期 · 四列看板 · 实测报告中心",
+      "sub": "1O-3G-6S-14产品统筹 · 22份历史资产收编 · 飞书表双向写回 · 90天四象限裁决",
       "status": "ok",
       "rows": [
-        { "id": "r-pmo-tree", "name": "战略全景与甘特看板", "desc": "49项能力同源驱动", "bar": 100, "color": "green" },
-        { "id": "r-pmo-rep", "name": "实测报告中心", "desc": "9大专家12份报告直读", "bar": 100, "color": "green" }
+        { "id": "r-pmo-tree", "name": "全景导图与甘特看板", "desc": "49能力 + 6条跨岗交接链", "bar": 100, "color": "green" },
+        { "id": "r-pmo-rep", "name": "证据门禁与实测库", "desc": "L0-L4硬拦截 + 10页PPTX", "bar": 100, "color": "green" }
       ]
     },
     {
@@ -41,12 +41,12 @@
       "short": "Daisy",
       "layer": "portal",
       "x": 666, "y": 155, "w": 590,
-      "title": "Daisy · 多智能体门户 {gr:mas.luteos.com}",
-      "sub": "9大Agent统一适配层 · 品牌知识库(asset) · 业务Skills转化管线(Know)",
+      "title": "Daisy · 多智能体与四层知识底座 {gr:mas.luteos.com}",
+      "sub": "事实层(asset) · 规则层(wiki 164契约) · 技能层(skills) · 路由层(brand 48路由)",
       "status": "dev",
       "rows": [
-        { "id": "r-daisy-asset", "name": "品牌知识库", "ref": "asset.luteos.com", "desc": "品牌事实沉淀", "bar": 80, "color": "green" },
-        { "id": "r-daisy-skills", "name": "Skills平台(Know)", "ref": "skills.luteos.com", "desc": "17技能/1089条IR", "bar": 90, "color": "green" }
+        { "id": "r-daisy-asset", "name": "品牌事实与Token库", "ref": "asset.luteos.com", "desc": "315 SKU原子/2.3万单元", "bar": 85, "color": "green" },
+        { "id": "r-daisy-skills", "name": "星链与算法Skills池", "ref": "brand/skills", "desc": "1054算法/81星链/72Hook", "bar": 90, "color": "green" }
       ]
     },
 
@@ -56,11 +56,11 @@
       "layer": "g2",
       "x": 24, "y": 395, "w": 430,
       "title": "Echo · VOC消费者之声 {bl:radar.luteos.com}",
-      "sub": "2.6万帖/10.2万评 · 10步无人值守日更 · 86倍提速",
+      "sub": "712.2万全渠道VOC · v6.4标签字典(2346行) · Reddit日更86×提速",
       "status": "ok",
       "lines": [
-        "子站: 品类洞察 business · 品类报告 report · 插件 plugin",
-        "每日自动产出: 18选题 / 7研发痛点线索 / 12竞品对比"
+        "子站: 机会卡 business(VOA) · 报告 report · 插件 plugin",
+        "跨渠道Gap雷达(社媒独有765痛点) · 29张Superset看板"
       ]
     },
     {
@@ -68,12 +68,12 @@
       "short": "Market",
       "layer": "g2",
       "x": 490, "y": 395, "w": 365,
-      "title": "Market · 市场洞察 {bl:mkt.luteos.com}",
-      "sub": "品类容量与价格带分析 · 竞品格局拆解",
+      "title": "Market · 市场与经营诊断 {bl:mkt.luteos.com}",
+      "sub": "三层TAM与53证据源 · DataPilot 122万行全渠道核算",
       "status": "dev",
       "lines": [
-        "联动 Sage 跨境专家台 (53位专家工作流)",
-        "4大跨境电商确定性核算合规引擎 (3088测试通过)"
+        "DataPilot: 止血87M(764亏损SKU) / 造血635M / 14渠道ROAS",
+        "Sage: 53位跨境专家工作流 + 4大确定性核算引擎"
       ]
     },
     {
@@ -81,12 +81,12 @@
       "short": "Signal",
       "layer": "g2",
       "x": 890, "y": 395, "w": 366,
-      "title": "Signal · 品牌声量 {bl:signal.luteos.com}",
-      "sub": "多源采集 → 异动检测 → 归因分析 → 告警",
-      "status": "none",
+      "title": "Signal · 品牌声量与竞品雷达 {bl:signal.luteos.com}",
+      "sub": "Melwater 34.7万文档ETL · Search Quality Gate 降噪",
+      "status": "dev",
       "lines": [
-        "品牌曝光与搜索热度日趋势监控",
-        "声量异常波动归因与竞品新品发布节奏追踪"
+        "加权SOV与净情感同报 · 阻断 query_noise 伪危机",
+        "BrandOS 10品牌 / 9,470个竞品ASIN价格与转换雷达"
       ]
     },
 
@@ -99,8 +99,8 @@
       "sub": "social.luteos.com",
       "status": "ok",
       "lines": [
-        "28/41能力上线 · 4表888行镜像",
-        "趋势洞察→内容策略→脚本生成"
+        "28/41能力 · 10品牌Token(88分)",
+        "社媒VOC→投放ROI交叉归因"
       ]
     },
     {
@@ -112,35 +112,35 @@
       "sub": "video.luteos.com",
       "status": "dev",
       "lines": [
-        "Recipe引擎 · 13/14评测通过",
-        "钩子/节拍/口播/字幕拆解复刻"
+        "Recipe(13/14) + 16节点流水线",
+        "S1-S5场景 · 待审包权利门禁"
       ]
     },
     {
       "id": "vicky",
       "short": "Vicky/GEO/Radar",
       "layer": "g1",
-      "x": 547, "y": 625, "w": 240,
+      "x": 547, "y": 625, "w": 238,
       "title": "Vicky · GEO · Radar",
       "sub": "pr / geo / magpie.luteos.com",
       "status": "ok",
       "lines": [
-        "Vicky: 246媒体库/347报道同步",
-        "GEO: AI引擎可见度6步闭环",
-        "Radar: IP粉丝分析与动态监测"
+        "Vicky: 246媒体/100篇S级报道",
+        "GEO: Perplexity 5/5基线+315SKU",
+        "Radar: 4维达人分层+授权七元组"
       ]
     },
     {
       "id": "shouheng",
       "short": "守衡",
       "layer": "commerce",
-      "x": 820, "y": 625, "w": 205,
-      "title": "守衡 · 内容治理",
+      "x": 822, "y": 625, "w": 203,
+      "title": "守衡 · 合规与索证",
       "sub": "ca.luteos.com",
       "status": "ok",
       "lines": [
-        "227/227契约自证 · 14页审核台",
-        "36规则/24控制点 · 合规放行闸"
+        "36守衡+84母婴+18平台规则卡",
+        "消毒器LaunchGate/104 COS证据"
       ]
     },
     {
@@ -148,12 +148,12 @@
       "short": "Shopify",
       "layer": "commerce",
       "x": 1055, "y": 625, "w": 201,
-      "title": "Shopify · 独立站",
+      "title": "Shopify · 转化与选品",
       "sub": "shopify.luteos.com",
       "status": "ok",
       "lines": [
-        "知识站 platform-shopify (178篇)",
-        "AI选品 product · 5岗Agent上架"
+        "360审计(2.2MB卡点/弃单追回)",
+        "Fusion选品(SHI×CVI) · 5岗Agent"
       ]
     },
 
@@ -163,9 +163,9 @@
       "layer": "infra",
       "x": 24, "y": 875, "w": 763,
       "title": "Source · 多平台数据采集中台 (Data Intelligence Hub) {am:scrapy.luteos.com}",
-      "sub": "70 平台 / 284 唯一采集端点 (200 已实测) · 39 个 MCP 工具 · 55 个前后端页面 · 2807 项测试",
+      "sub": "70 平台 / 284 端点 (200 实测) · L2-L4 授权门禁 · 独立站商品发现包 · DatasetDriftEvent 漂移告警",
       "status": "ok",
-      "pipeline": ["统一采集调度与Monitor", "TikTok/Reddit/YT/IG/FB/Trends MCP", "统一表结构建模", "支撑上游六大Agent"]
+      "pipeline": ["L2-L4门禁与幂等锁", "TikTok/Reddit/YT/IG/独立站包", "order_id/sku_id主数据", "支撑上游六大Agent"]
     },
     {
       "id": "main",
@@ -173,11 +173,11 @@
       "layer": "infra",
       "x": 820, "y": 875, "w": 436,
       "title": "Main · 全栈研发与模型评测底座 {am:main.luteos.com}",
-      "sub": "单向依赖 Agent SDK Runtime · 150/150 问答评测通过 (均分 0.99)",
+      "sub": "Agent SDK Runtime · 184 Profile分发 · 72 MCP连接器蓝图 · 150/150 评测通过",
       "status": "ok",
       "lines": [
-        "模型选型与评测站: llm.luteos.com (264单元测试全过)",
-        "为全仓 Agent 提供统一运行时、预算控制与 Eval 门禁"
+        "模型评测站: llm.luteos.com (264单测全过 · 容器安全沙箱)",
+        "提供统一运行时、预算控制、MCP网关与 L0-L4 发布自检"
       ]
     }
   ],
@@ -187,41 +187,41 @@
       "to": "echo.t@0.35",
       "flow": "gov",
       "arrow": "both",
-      "label": "OGSM排期与日报回传",
+      "label": "证据回传与四象限裁决",
       "mid": 355,
-      "log": "9大专家每日实测报告汇总至PMO门户，联动甘特图与四列看板"
+      "log": "14大Agent上报实测证据与measuredActions业务回写，联动飞书表与90天四象限裁决"
     },
     {
       "from": "daisy.b@0.3",
       "to": "market.t@0.6",
       "flow": "kb",
-      "label": "品牌事实库与Skills下发",
+      "label": "315 SKU原子与48路由下发",
       "mid": 355,
-      "log": "Daisy(asset/skills)向各业务Agent下发品牌知识与17项可溯源技能"
+      "log": "Daisy四层底座(asset/wiki/skills/brand)下发315 SKU事实原子、72个Hook与48条路由"
     },
     {
       "from": "daisy.b@0.75",
       "to": "signal.t@0.5",
       "flow": "kb",
-      "label": "统一适配层接入",
+      "label": "统一适配层与CLI接入",
       "mid": 355,
-      "log": "9个专家Agent通过Daisy适配层与CLI统一入口收拢"
+      "log": "9个专家Agent通过Daisy适配层、164份API契约与CLI统一入口收拢"
     },
     {
       "from": "echo.b@0.3",
       "to": "emily.t@0.5",
       "flow": "biz",
-      "label": "用户痛点→社媒选题",
+      "label": "v6.4痛点卡→BrandToken策略",
       "mid": 585,
-      "log": "Echo每日产出18选题与7研发痛点输入Emily生成社媒策略"
+      "log": "Echo输出v6.4标准痛点卡与用户原话，Emily注入BrandToken护栏(≥85分)生成策略"
     },
     {
       "from": "market.b@0.5",
       "to": "vicky.t@0.5",
       "flow": "biz",
-      "label": "竞品与品类机会输入",
+      "label": "TAM准入与边际ROAS输入",
       "mid": 585,
-      "log": "市场与竞品洞察输入Vicky公关线与GEO权威问句库"
+      "log": "Market输出三层TAM、DataPilot边际ROAS与竞品格局，驱动Vicky榜单攻关与GEO问句"
     },
     {
       "from": "emily.r",
@@ -229,23 +229,24 @@
       "flow": "biz",
       "label": "脚本",
       "labelSide": "above",
-      "log": "Emily发现爆款趋势交由Clone拆解生成品牌可拍脚本"
+      "log": "Emily策略Brief交由Clone按S1-S5场景拆解并封装PendingReviewAssetPacket"
     },
     {
       "from": "clone.r",
       "to": "vicky.l",
       "flow": "biz",
-      "label": "分发",
+      "label": "授权",
       "labelSide": "above",
-      "log": "社媒内容与公关媒介、AI搜索权威内容联动分发"
+      "log": "Clone二创关联Radar达人授权七元组(rights_ref)，S级权威报道同步GEO事实库"
     },
     {
       "from": "vicky.r",
       "to": "shouheng.l",
       "flow": "biz",
-      "label": "提审",
+      "label": "索证",
       "labelSide": "above",
-      "log": "内容与宣称进入守衡两段式引擎做合规审查与证据复核"
+      "labelOffset": [2, -6],
+      "log": "内容宣称与选品进入守衡138条规则池及消毒器LaunchGate工厂索证复核"
     },
     {
       "from": "shouheng.r",
@@ -253,35 +254,35 @@
       "flow": "biz",
       "label": "放行",
       "labelSide": "above",
-      "log": "守衡+84条母婴规则预检通过后生成Shopify商品DRAFT"
+      "log": "守衡放行后由accio_to_shopify生成DRAFT，联动360性能护栏与SCM库存守卫"
     },
     {
       "from": "source.t@0.18",
       "to": "emily.b@0.5",
       "flow": "data",
-      "label": "TK/IG/YT趋势供给",
+      "label": "多源趋势与插件补采",
       "mid": 830,
-      "log": "Source向Emily/Clone供给TikTok/IG/YT热门趋势与评论数据"
+      "log": "Source与plugin.luteos.com向Echo/Emily供给TikTok/Reddit/Amazon真实语料"
     },
     {
       "from": "source.t@0.75",
       "to": "vicky.b@0.5",
       "flow": "data",
-      "label": "70平台/284端点采集供给",
+      "label": "70平台/Drift告警/SKU主键",
       "mid": 830,
-      "log": "Source支撑GEO、Vicky、Echo、Signal、Emily、Radar六方数据供给"
+      "log": "Source提供order_id/sku_id统一主数据与独立站DatasetDriftEvent价格库存告警"
     },
     {
       "from": "main.t@0.35",
       "to": "shouheng.b@0.5",
       "flow": "kb",
-      "label": "Runtime与模型评测",
+      "label": "沙箱Runtime与72 MCP网关",
       "mid": 830,
-      "log": "Main与llm.luteos.com提供统一Agent运行时与Eval门禁"
+      "log": "Main提供184个Agent Profile分发、容器安全沙箱、72个MCP连接器与Eval门禁"
     }
   ],
   "log": {
-    "title": "ABI 品牌 Agent 跨系统数据流与协同实测链路 (Live Trace)",
+    "title": "ABI Native Agent 组织 · 6 条跨岗标准交接链实时追踪 (Handoff Live Trace)",
     "live": { "rows": 6 }
   }
 }

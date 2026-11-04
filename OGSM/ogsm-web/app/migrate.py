@@ -1,15 +1,15 @@
 """V3 数据初始化与平滑迁移入口。
 
 生产容器启动时执行 `python -m app.migrate`：
-- 自动补齐 V3 新增的排期与甘特图列（progress_pct, start_date, end_date, owner, is_milestone）
+- 自动补齐 V3 新增的排期与甘特图列（progress_pct, start_date, end_date, owner, is_milestone, evidence_url）
 - 若数据库中尚无排期日期数据，自动写入 V3 完整 14 个产品项目与 49 项带排期能力点
-- 若已有排期数据，则保留 PMO 在前台或后台修改过的最新记录
+- 若已有排期数据，保留 PMO 或飞书表同步过的排期/负责人，同时平滑同步 22 份历史产品报告淘金收编的最新内容描述与指标
 """
 from sqlmodel import Session, SQLModel, select
 
 from .db import engine
 from .models import CapabilityItem, ProductProject
-from .seed import _ensure_v3_columns, backfill_evidence_urls, seed
+from .seed import _ensure_v3_columns, backfill_evidence_urls, seed, sync_enriched_content
 
 
 def main() -> None:
@@ -24,7 +24,12 @@ def main() -> None:
         print(f"[migrate] 检测到项目数={len(projs)} 或尚未初始化甘特图排期，执行初始化")
         seed(force_reset=True)
     else:
-        print(f"[migrate] 已存在 {len(projs)} 个项目与排期数据，保留现有状态")
+        with Session(engine) as s:
+            res = sync_enriched_content(s)
+            print(
+                f"[migrate] 已存在 {len(projs)} 个项目与排期数据，已平滑同步淘金内容 "
+                f"(projects={res['updated_projects']}, capabilities={res['updated_capabilities']})"
+            )
 
     with Session(engine) as s:
         n = backfill_evidence_urls(s)

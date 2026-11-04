@@ -801,12 +801,12 @@ details.support-drawer summary {
   overflow-x: auto;
 }
 .gantt-table {
-  min-width: 1180px;
+  min-width: 1240px;
   width: 100%;
 }
 .gantt-header {
   display: grid;
-  grid-template-columns: 300px 95px 80px 1fr;
+  grid-template-columns: 380px 105px 65px 1fr;
   background: var(--surface-subtle);
   border-bottom: 1px solid var(--line-strong);
   font-size: 12px;
@@ -834,7 +834,7 @@ details.support-drawer summary {
 
 .gantt-row {
   display: grid;
-  grid-template-columns: 300px 95px 80px 1fr;
+  grid-template-columns: 380px 105px 65px 1fr;
   border-bottom: 1px solid var(--line);
   align-items: center;
   font-size: 13px;
@@ -847,14 +847,15 @@ details.support-drawer summary {
 }
 .gantt-row-cap { background: var(--card); }
 .gantt-cell-title {
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-right: 1px solid var(--line);
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 .gantt-cell-meta {
-  padding: 9px 10px;
+  padding: 8px 8px;
   border-right: 1px solid var(--line);
   font-size: 12px;
   color: var(--ink2);
@@ -864,6 +865,7 @@ details.support-drawer summary {
   position: relative;
   height: 40px;
   padding: 0;
+  overflow: visible;
 }
 .gantt-today-line {
   position: absolute;
@@ -894,19 +896,20 @@ details.support-drawer summary {
   border-radius: 4px;
   background: var(--surface-subtle);
   border: 1px solid var(--line-strong);
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   align-items: center;
-  min-width: 32px;
+  min-width: 18px;
 }
 .gantt-bar-outer.bar-proj {
-  height: 16px;
-  top: 12px;
+  height: 18px;
+  top: 11px;
   background: var(--primary-soft);
   border-color: #86efac;
 }
 .gantt-bar-fill {
   height: 100%;
+  border-radius: 3px;
   transition: width 0.25s;
 }
 .fill-已完成 { background: #86efac; }
@@ -914,15 +917,25 @@ details.support-drawer summary {
 .fill-方案中 { background: #cbd5e1; }
 .gantt-bar-label {
   position: absolute;
-  inset: 0;
-  display: flex;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 7px;
-  font-size: 12px;
+  gap: 6px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.86);
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--brand-950);
   white-space: nowrap;
+  z-index: 12;
+  pointer-events: none;
+}
+.gantt-bar-label.label-left {
+  left: auto;
+  right: 6px;
 }
 
 /* ── 4-Column Kanban Board (/roadmap - No Side-Tab Slop) ── */

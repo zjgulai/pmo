@@ -116,3 +116,41 @@ class ChangeAuditLog(SQLModel, table=True):
     actor: str = "PMO"
     summary: str = ""  # 如 进度 60% -> 80%，状态 进行中 -> 已完成
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class SopEvolutionCandidate(SQLModel, table=True):
+    """P0-1 飞书高频问题自进化漏斗：记录各专家飞书 Bot 高频提问（≥10次/周）或打回（≥3次）转化为工作台 SOP 的实时状态。"""
+
+    __tablename__ = "sop_evolution_candidate"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    project_slug: str = Field(index=True)
+    expert_name: str = ""
+    wave: str = "Wave 1"  # Wave 1 / Wave 2 / Wave 3
+    topic: str = ""  # 高频问题聚类主题
+    weekly_ask_count: int = 0  # 飞书群周提问/触发次数（阈值 ≥10）
+    reject_count: int = 0  # 卡片打回/人工纠正次数（阈值 ≥3）
+    rework_rate_pct: int = 100  # 近期脚本返工率%（晋升阈值 <20%）
+    current_stage: str = "Stage 2"  # Stage 1 / Stage 2 / Stage 3 / Stage 4
+    target_workbench_sop: str = ""  # 迁移固化到的工作台工位名称
+    owner: str = "刘华丽"  # 运营/研发/固化主责人
+    due_date: str = ""  # 对应甘特图收口日期 YYYY-MM-DD
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class BusinessActionLedger(SQLModel, table=True):
+    """P0-3 品牌市场部业务动作回写账本（measuredActions）：记录业务人员在飞书卡片点按钮认领/批准发布/完成整改的真实闭环动作。"""
+
+    __tablename__ = "business_action_ledger"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    project_slug: str = Field(index=True)
+    expert_name: str = ""
+    action_type: str = ""  # 认领痛点卡 / 批准Listing草稿 / 采纳投放脚本 / 完成合规整改 / 采纳预算变更
+    action_title: str = ""  # 具体业务动作说明
+    dept_actor: str = "品牌市场部"  # 认领执行的业务子团队
+    receipt_ref: str = ""  # 关联的 gate_receipt 或对象主键（如 sku_id / claim_id）
+    outcome_metric: str = ""  # 回写的业务结果或验证状态
+    status: str = "已回写"  # 已认领 / 执行中 / 已回写
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
