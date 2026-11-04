@@ -29,7 +29,7 @@
 | 2 | Agent 默认 Space 正确 | ✅ | `pmo-guardian` → `abi-pmo` |
 | 3 | Context Bundle 完整 | ✅ | `nmem context --space abi-pmo --agent-id pmo-guardian` 输出 Space/3 Rules/WM |
 | 4 | Library 全 indexed | ✅ | 10/10 切片成功；6 `extracted` + 4 `indexed`，错误 0（按现场修正，`extracted` 亦为成功态） |
-| 5 | 图谱可视 | ✅ 部分完成 | 46 张 canonical 中 18 张已建立实体连接（如 `pmo-l2-keys9` 挂 20 个实体）；剩余 28 张已排队；实体类型多为通用词表，尚未全部映射到 14 类本体 |
+| 5 | 图谱可视 | ✅ 记忆级完成 | 46/46 canonical 记忆级连通（130 条显式语义链接：`nmem memories link add`）；实体级 18/46（LLM 抽取部分完成）；实体类型待 `ontology retype` 映射到 14 类本体 |
 | 6 | 语义检索高置信 | ✅ | Golden Query 见 §3 |
 | 7 | 单元测试通过 | ✅ | `python -m unittest discover -s OGSM/ogsm-web/tests -v` → 9/9 OK |
 | 8 | 规范化 Git 提交 | ✅ | 约定式提交（仅新增/修改记忆相关文件） |
@@ -66,7 +66,8 @@
 
 | 项 | 状态 | 说明 | 下一步 |
 |---|---|---|---|
-| KG 实体抽取 | ✅ 部分完成（18/46） | 18 张 canonical 已建立实体连接；剩余 28 张已排队；background 使用唯一成功过的 `minimax-m3.1-flash`；Magpie 模型检查见 §5.2 | 后台分波继续；完成后用 `nmem graph expand` 逐卡验收；实体类型可后续用 `ontology retype` 映射 |
+| KG 图谱（记忆级） | ✅ 完成（46/46） | 130 条显式语义链接；每张 canonical 至少 1 条链接；`pmo-l4-emily` 可一跳跳到 G1、交接链、四阶、能力与波次 | 由 `link_memories_to_graph.py` 幂等维护 |
+| KG 实体级 | ⚠️ 部分（18/46） | LLM 抽取已连接 18 张（如 `pmo-l2-keys9` 挂 20 个实体）；剩余 28 张因 provider 兼容性未完成 | 需要时走 B 批（转换代理 + 一次 nmem 重启）；当前已暂停 `autoKGExtraction` |
 | 大文件 source extraction | ⚠️ 偶发重试 | metric/key-registry/raci/api-surface 抽取曾因输出预算触顶失败；Library 索引与 chunk 检索不受影响 | 不重灌；关键结论已由 canonical 46 卡覆盖 |
 | Top1 排名优化 | ⚠️ 2 条 <0.70 | Stage 4 / Emily 被指标协议抽取记忆抢位 | 观察 nmem 检索升级；不为验收过拟合 |
 | 产品侧记忆入口 | 未做（按计划 P2） | `app/memory.py` 已就绪但未挂载 API | 出现“问 PMO”需求时再接 |
@@ -107,11 +108,21 @@ Magpie 运行在 `127.0.0.1:3425`，`/v1/models` 暴露 242 个模型。按“�
 
 **04:00 观察**：cooldown 结束后首波 backfill `partial events=0`，18/46 未变化；系统仍把该 lane 标注为 `background_model_incompatible`，28 张单卡定向任务处于排队但未推进。若要真正跑完剩余 28 张，需要请求转换代理或 nmem 侧支持简化 schema。
 
+### 5.3 A 批显式链接执行结果（2026-11-04）
+
+不依赖 LLM 的确定性补图已完成：
+
+- 脚本：`link_memories_to_graph.py`（幂等，可重跑）
+- 链接：**130 条**（14 项目卡 × 7 锚点 + 32 条核心互链，去重后）
+- 验收：**46/46 canonical 记忆级连通**；`pmo-l4-emily` 一跳可见 OGSM 代际、G1–G3、18 项登记、6 条交接链、四阶、能力基线、Wave 风险
+- 链接类型：`SUPPORTS` / `CONTRIBUTES_TO` / `PARTICIPATES_IN` / `EVOLVES_IN` / `DELIVERS` / `DECOMPOSES_TO` / `MEASURED_BY` / `DEPENDS_ON` / `GATED_BY` / `EVIDENCED_BY` / `TRACKS` / `MITIGATES`
+- 期间已暂停 `autoKGExtraction`，停止 minimax 空转；如需实体级补全再走 B 批
+
 ## 6. 下一步（建议）
 
-**决策（2026-11-04）**：用户指定检查 Magpie 可用模型。检查完成：`vod/gpt-5.3-chat` 等可处理小结构化请求，但真实 KG 请求经 Magpie 502/超时；background 保留唯一成功过的 `minimax-m3.1-flash`，已连接 18/46 canonical，剩余 28 张后台分波继续。不重启共享服务；不在其它空间重复试错。
+**决策（2026-11-04）**：用户指定检查 Magpie 可用模型；检查完成后执行 A 批显式链接。结果：记忆级 **46/46 连通（130 条链接）**；实体级 18/46。`autoKGExtraction` 已暂停，停止 minimax 空转；B 批（转换代理 + 一次 nmem 重启）仅在你需要实体级补全时执行。
 
-1. 等后台分波完成后，用 `nmem graph expand <id>` 逐卡验收剩余 28 张；`nmem ontology show --space-id abi-pmo` 检查 14 类覆盖，必要时用 `ontology retype` 映射通用实体类型。
-2. 每周更新 Working Memory（Wave 进度、临期里程碑、风险）。
-3. 月度用 `distill_memories_to_nmem.py` 重跑 L4 项目画像，保持数字与 seed.py 一致。
-4. 如需 Linear：用 `TICKETS.csv` 导入；当前 17 done / 1 partial。
+1. 每周更新 Working Memory（Wave 进度、临期里程碑、风险）；L4 画像更新后重跑 `link_memories_to_graph.py` 保持链接引用有效。
+2. 月度用 `distill_memories_to_nmem.py` 重跑 L4 项目画像，保持数字与 seed.py 一致。
+3. 如需实体级补全：走 B 批（代理 + 重启），完成后用 `nmem ontology retype` 映射 14 类实体，再跑 Golden Query 回归。
+4. 如需 Linear：用 `TICKETS.csv` 导入；当前 17 done / 1 partial（记忆级已完成，实体级部分）。

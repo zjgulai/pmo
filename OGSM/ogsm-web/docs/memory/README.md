@@ -13,6 +13,7 @@
 | `ontology_patch.draft.json` | 14 类对象 + 16 类关系（已 apply，revision 7） |
 | `sources.yaml` | 10 份 Library 真源、排除项、解析检查 |
 | `distill_memories_to_nmem.py` | 幂等蒸馏脚本；改内容后重跑即可 upsert |
+| `link_memories_to_graph.py` | A 批显式语义链接脚本（幂等）；已写入 130 条链接，46/46 记忆级连通 |
 
 ## 运行态
 
@@ -21,6 +22,7 @@
 - Rules：`pmo_core_persona`(100) / `pmo_repo_boundary`(90) / `pmo_memory_write_discipline`(80)
 - 记忆：46 canonical + library 抽取记忆（持续增加）；15 条重复抽取已 supersede + archive
 - Library：10/10 切片成功（6 extracted / 4 indexed，错误 0；`extracted` 按现场修正亦为成功态）
+- 图谱：46/46 记忆级连通（130 条显式链接）；实体级 18/46（LLM 抽取部分完成，`autoKGExtraction` 暂停）
 - 读侧：`OGSM/ogsm-web/app/memory.py`，3 秒超时 + 静默降级；测试 `OGSM/ogsm-web/tests/test_pmo_nmem_recall.py` 9/9
 
 ## 常用命令

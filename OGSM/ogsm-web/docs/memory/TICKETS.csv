@@ -12,7 +12,7 @@ PMO-MEM-010,E3 蒸馏,蒸馏 L4 组合画像 19 条,P0,5,006,AI Agent,吴雨宁,
 PMO-MEM-011,E3 蒸馏,去重、冲突、来源、长度校验,P0,3,007-010,AI Agent,PMO,QC report,46 条、0 重复 ID、100% 来源、单条 <=600 字、0 未解决冲突,done,46/46 canonical 存在；0 重复标题；0 超 600 字；100% 含来源
 PMO-MEM-012,E4 图谱,编写并校验 ontology patch,P0,3,002,AI Agent,周健,ontology_patch.draft.json,JSON 合法；14 对象 + 16 关系；scope 明确,done,ontology_patch.draft.json 合法：14 对象 + 16 关系
 PMO-MEM-013,E4 图谱,apply 本体并检查覆盖率,P0,1,012,AI Agent,周健,ontology applied,ontology show 14 类实体覆盖 > 0；scope 未污染其他 Space,done,revision 7 已 apply 到 space abi-pmo；实体覆盖待 KG backfill 完成
-PMO-MEM-014,E4 图谱,核心实体补链与别名治理,P0,3,"011,013",AI Agent,吴雨宁,entity links,14 Agent、6 交接链、G1-G3 可从记忆多跳到达；别名不重复,partial,本体 revision 7 已 apply；KG 已连接 18/46 canonical（如 pmo-l2-keys9 挂 20 实体），剩余 28 张后台分波；Magpie 检查完成：vod/gpt-5.3-chat 等小请求可用但真实 KG 请求 502/超时；background 保留唯一成功过的 minimax-m3.1-flash；详见 EXECUTION-REPORT §5.2
+PMO-MEM-014,E4 图谱,核心实体补链与别名治理,P0,3,"011,013",AI Agent,吴雨宁,entity links,14 Agent、6 交接链、G1-G3 可从记忆多跳到达；别名不重复,partial,记忆级完成：46/46 canonical 连通，130 条显式链接（link_memories_to_graph.py 幂等）；实体级 18/46，剩余 28 张因 provider 兼容性未完成，autoKGExtraction 已暂停；Magpie 检查见 EXECUTION-REPORT §5.2/§5.3
 PMO-MEM-015,E5 运行时,环境变量与 AGENTS.md 开机约定,P0,1,002,AI Agent,周健,.claude/settings.local.json + AGENTS.md,新会话可自动加载 Context Bundle；env 不泄密,done,.claude/settings.local.json 注入 NMEM_SPACE/NMEM_AGENT_ID；新增 AGENTS.md
 PMO-MEM-016,E5 运行时,3 秒 Recall Helper + 降级测试,P1,4,"002,011",AI Agent,周健,app/memory.py + test_pmo_nmem_recall.py,真实检索通过；超时/离线返回空串不抛错；产品主链路不受影响,done,app/memory.py + tests 9/9 通过（真实检索/超时/离线/坏 JSON/低分）
 PMO-MEM-017,E6 验收,12 条 Golden Query 验收,P0,2,"011,013,016",AI Agent,PMO,acceptance report,10/12 Top1 >=0.70；12/12 Top3 命中；跨空间 0 命中,done,Top1 分数>=0.70：10/12；Top3 命中：12/12；跨空间隔离通过
